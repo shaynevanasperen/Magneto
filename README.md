@@ -1,5 +1,7 @@
 <img src="Data.Operations.png" align="right" />
-
+[![Build status](https://ci.appveyor.com/api/projects/status/804fxi7wu81s9svo?svg=true)](https://ci.appveyor.com/project/shaynevanasperen/nhibernate-sessions)
+[![NuGet Version](http://img.shields.io/nuget/v/Data.Operations.svg?style=flat)](https://www.nuget.org/packages/Data.Operations)
+[![NuGet Downloads](http://img.shields.io/nuget/dt/Data.Operations.svg?style=flat)](https://www.nuget.org/packages/Data.Operations)
 Data.Operations
 ===============
 
