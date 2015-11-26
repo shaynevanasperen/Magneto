@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+		<authors>Shayne van Asperen</authors>
+		<owners>Shayne van Asperen</owners>
+		<licenseUrl>https://github.com/shaynevanasperen/Data.Operations/blob/master/LICENSE</licenseUrl>
+		<projectUrl>https://github.com/shaynevanasperen/Data.Operations</projectUrl>
+		<iconUrl>https://raw.githubusercontent.com/shaynevanasperen/Data.Operations/master/Data.Operations.png</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>A data access library for .NET combining the mediator pattern and the query object pattern, with caching, async and easy mocking of queries and commands</description>
+		<language>en-US</language>
+		<tags>query command object queryobject commandobject mediator cache caching async mock mocking</tags>
+	</metadata>
+</package>

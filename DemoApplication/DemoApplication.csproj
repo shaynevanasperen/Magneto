@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{54759EEF-B921-4B30-97BC-5C8DEC740E8B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DemoApplication</RootNamespace>
+    <AssemblyName>DemoApplication</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentNHibernate.2.0.3.0\lib\net40\FluentNHibernate.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mehdime.Entity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mehdime.Entity.1.0.0\lib\Mehdime.Entity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NHibernate.Sessions, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHibernate.Sessions.2.0.0-beta-1\lib\net451\NHibernate.Sessions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DomainModel\MultipleDatabases\ConnectionStrings.cs" />
+    <Compile Include="ConsoleLogExtension.cs" />
+    <Compile Include="DomainModel\MultipleDatabases\IUserAlertService.cs" />
+    <Compile Include="DomainModel\MultipleDatabases\SampleDataFactory.cs" />
+    <Compile Include="DomainModel\MultipleDatabases\TodoItem.cs" />
+    <Compile Include="DomainModel\MultipleDatabases\User.cs" />
+    <Compile Include="DomainModel\Priority.cs" />
+    <Compile Include="DomainModel\SingleDatabase\IUserAlertService.cs" />
+    <Compile Include="EntityFramework\DbContextScope\DbContextScopeDemo.cs" />
+    <Compile Include="EntityFramework\DbContextScope\DbContextScopeScenarios.cs" />
+    <Compile Include="EntityFramework\DbContextScope\Migrations\TodoItems\201511070232294_InitialSchema.cs" />
+    <Compile Include="EntityFramework\DbContextScope\Migrations\TodoItems\201511070232294_InitialSchema.Designer.cs">
+      <DependentUpon>201511070232294_InitialSchema.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EntityFramework\DbContextScope\Migrations\Users\201511070232425_InitialSchema.cs" />
+    <Compile Include="EntityFramework\DbContextScope\Migrations\Users\201511070232425_InitialSchema.Designer.cs">
+      <DependentUpon>201511070232425_InitialSchema.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EntityFramework\DbContextScope\Migrations\Users\UsersConfiguration.cs" />
+    <Compile Include="EntityFramework\DbContextScope\TodoItemsService3.cs" />
+    <Compile Include="EntityFramework\DbContextScope\TodoItemsService2.cs" />
+    <Compile Include="EntityFramework\DbContextScope\UsersContext.cs" />
+    <Compile Include="EntityFramework\DbContextScope\TodoItemsContext.cs" />
+    <Compile Include="EntityFramework\DbContextScope\Migrations\TodoItems\TodoItemsConfiguration.cs" />
+    <Compile Include="EntityFramework\DbContextScope\Operations.cs" />
+    <Compile Include="EntityFramework\DbContextScope\TodoItemsService1.cs" />
+    <Compile Include="EntityFramework\DbContext\DbContextScenarios.cs" />
+    <Compile Include="EntityFramework\DbContext\DbContextDemo.cs" />
+    <Compile Include="EntityFramework\DbContext\Migrations\201511070231329_InitialSchema.cs" />
+    <Compile Include="EntityFramework\DbContext\Migrations\201511070231329_InitialSchema.Designer.cs">
+      <DependentUpon>201511070231329_InitialSchema.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EntityFramework\DbContext\TodoItemsService3.cs" />
+    <Compile Include="EntityFramework\DbContext\TodoItemsService1.cs" />
+    <Compile Include="EntityFramework\DbContext\TodoItemsService2.cs" />
+    <Compile Include="NHibernate\LazySessions\Context.cs" />
+    <Compile Include="NHibernate\LazySessions\LazySessionsDemo.cs" />
+    <Compile Include="NHibernate\LazySessions\LazySessionsScenarios.cs" />
+    <Compile Include="NHibernate\LazySessions\Operations.cs" />
+    <Compile Include="NHibernate\LazySessions\TodoItemsService1.cs" />
+    <Compile Include="NHibernate\LazySessions\TodoItemsService2.cs" />
+    <Compile Include="NHibernate\LazySessions\TodoItemsService3.cs" />
+    <Compile Include="NHibernate\LazySessions\Data.cs" />
+    <Compile Include="NHibernate\LazySession\LazySessionDemo.cs" />
+    <Compile Include="NHibernate\LazySession\TodoItemsService3.cs" />
+    <Compile Include="NHibernate\LazySession\TodoItemsService1.cs" />
+    <Compile Include="NHibernate\LazySession\TodoItemsService2.cs" />
+    <Compile Include="NHibernate\Session\SessionDemo.cs" />
+    <Compile Include="EntityFramework\DbContext\Migrations\DemoConfiguration.cs" />
+    <Compile Include="EntityFramework\DbContext\Operations.cs" />
+    <Compile Include="EntityFramework\DbContext\DemoContext.cs" />
+    <Compile Include="NHibernate\LazySession\LazySessionScenarios.cs" />
+    <Compile Include="NHibernate\Session\TodoItemsService1.cs" />
+    <Compile Include="NHibernate\Session\TodoItemsService2.cs" />
+    <Compile Include="DomainModel\SingleDatabase\SampleDataFactory.cs" />
+    <Compile Include="NHibernate\Session\SessionScenarios.cs" />
+    <Compile Include="NHibernate\LazySession\Operations.cs" />
+    <Compile Include="NHibernate\Session\Operations.cs" />
+    <Compile Include="DomainModel\SingleDatabase\TodoItem.cs" />
+    <Compile Include="DomainModel\SingleDatabase\User.cs" />
+    <Compile Include="NHibernate\Session\TodoItemsService3.cs" />
+    <Compile Include="DomainModel\UserAlertService.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Quarks\AttributeHelper.cs" />
+    <Compile Include="Quarks\EntityFramework\Conventions\StoreModel\RemoveUnderscoreFromDefaultForeignKeyNames.cs" />
+    <Compile Include="Quarks\FluentNHibernate\Conventions\AbbreviationAttribute.cs" />
+    <Compile Include="Quarks\FluentNHibernate\Conventions\EscapeColumnName.cs" />
+    <Compile Include="Quarks\FluentNHibernate\Conventions\Id\Column.cs" />
+    <Compile Include="Quarks\FluentNHibernate\Conventions\Id\GeneratedByAssigned.cs" />
+    <Compile Include="Quarks\FluentNHibernate\Conventions\Property\NotNullable.cs" />
+    <Compile Include="Quarks\FluentNHibernate\Conventions\Property\StringLength.cs" />
+    <Compile Include="Quarks\FluentNHibernate\Conventions\Reference\Column.cs" />
+    <Compile Include="Quarks\FluentNHibernate\Conventions\Reference\NotNullable.cs" />
+    <Compile Include="Quarks\FluentNHibernate\Conventions\UserType\CustomTypeEnum.cs" />
+    <Compile Include="Quarks\IdentityFieldProvider.cs" />
+    <Compile Include="Quarks\IEntity.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Data.Operations\Data.Operations.csproj">
+      <Project>{c742a970-c74c-41b0-9e1c-b290e61b348b}</Project>
+      <Name>Data.Operations</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="EntityFramework\DbContextScope\Migrations\TodoItems\201511070232294_InitialSchema.resx">
+      <DependentUpon>201511070232294_InitialSchema.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EntityFramework\DbContextScope\Migrations\Users\201511070232425_InitialSchema.resx">
+      <DependentUpon>201511070232425_InitialSchema.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EntityFramework\DbContext\Migrations\201511070231329_InitialSchema.resx">
+      <DependentUpon>201511070231329_InitialSchema.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

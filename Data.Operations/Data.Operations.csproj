@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C742A970-C74C-41B0-9E1C-B290E61B348B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Data.Operations</RootNamespace>
+    <AssemblyName>Data.Operations</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AbstractAsyncCachedDataQuery.cs">
+      <DependentUpon>CachedDataQueryBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AbstractCachedDataQuery.cs">
+      <DependentUpon>CachedDataQueryBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AsyncCachedDataQuery.cs">
+      <DependentUpon>IAsyncCachedDataQuery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AsyncDataQuery.cs">
+      <DependentUpon>IAsyncDataQuery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CacheInfo.cs">
+      <DependentUpon>ICacheInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CachedDataQuery.cs">
+      <DependentUpon>ICachedDataQuery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AsyncDataCommand.cs">
+      <DependentUpon>IAsyncDataCommand.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CachedDataQueryBase.cs">
+      <DependentUpon>ICachedDataQueryBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CacheOption.cs" />
+    <Compile Include="ICacheInfo.cs" />
+    <Compile Include="ICachedDataQueryBase.cs" />
+    <Compile Include="Quarks\IDictionaryExtensions\AddOrUpdate.cs" />
+    <Compile Include="Quarks\IDictionaryExtensions\GetValueOrDefault.cs" />
+    <Compile Include="Data.cs">
+      <DependentUpon>IData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataCommand.cs">
+      <DependentUpon>IDataCommand.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataOperation.cs" />
+    <Compile Include="DataQuery.cs">
+      <DependentUpon>IDataQuery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataQueryCache.cs">
+      <DependentUpon>IDataQueryCache.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IAsyncCachedDataQuery.cs" />
+    <Compile Include="IAsyncDataQuery.cs" />
+    <Compile Include="ICachedDataQuery.cs" />
+    <Compile Include="ICacheStore.cs" />
+    <Compile Include="IAsyncDataCommand.cs" />
+    <Compile Include="IDataCommand.cs" />
+    <Compile Include="IDataQuery.cs" />
+    <Compile Include="IDataQueryCache.cs" />
+    <Compile Include="IData.cs" />
+    <Compile Include="MemoryCacheDefaultCacheStore.cs">
+      <DependentUpon>ICacheStore.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Quarks\AssertComparer.cs" />
+    <Compile Include="Quarks\GenericExtensions\IsEqualToDefault.cs" />
+    <Compile Include="Quarks\GenericExtensions\QuasiEquals.cs" />
+    <Compile Include="Quarks\ObjectExtensions\CanBeRepresentedAsString.cs" />
+    <Compile Include="Quarks\ObjectExtensions\Flatten.cs" />
+    <Compile Include="Quarks\ObjectExtensions\ToEnumerable.cs" />
+    <Compile Include="Quarks\TypeExtensions\IsNullable.cs" />
+    <Compile Include="AsyncTransformedCachedDataQuery.cs">
+      <DependentUpon>IAsyncCachedDataQuery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataFactory.cs" />
+    <Compile Include="TransformedCachedDataQuery.cs">
+      <DependentUpon>ICachedDataQuery.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\packages\PowerTasks.Plugins.Clean.2.0.0\scripts\Clean.ps1">
+      <Link>.Tasks\Clean.ps1</Link>
+    </None>
+    <None Include="..\packages\PowerTasks.Plugins.Compile.2.0.1\scripts\Compile.ps1">
+      <Link>.Tasks\Compile.ps1</Link>
+    </None>
+    <None Include="..\packages\PowerTasks.Plugins.Pack.2.0.0\scripts\Pack.ps1">
+      <Link>.Tasks\Pack.ps1</Link>
+    </None>
+    <None Include="..\packages\PowerTasks.Plugins.Push.2.0.0\scripts\Push.ps1">
+      <Link>.Tasks\Push.ps1</Link>
+    </None>
+    <None Include="..\packages\PowerTasks.Plugins.Test.2.0.0\scripts\Test.ps1">
+      <Link>.Tasks\Test.ps1</Link>
+    </None>
+    <None Include="..\packages\PowerTasks.Plugins.Version.2.1.0\scripts\Version.ps1">
+      <Link>.Tasks\Version.ps1</Link>
+    </None>
+    <None Include=".Tasks.ps1" />
+    <None Include="Data.Operations.nuspec" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\packages\PowerTasks.Plugins.Test.2.0.0\scripts\specflow_report_template.html">
+      <Link>.Tasks\specflow_report_template.html</Link>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
