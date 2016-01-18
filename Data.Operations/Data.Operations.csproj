@@ -117,14 +117,14 @@
     <None Include="..\packages\PowerTasks.Plugins.Compile.2.0.1\scripts\Compile.ps1">
       <Link>.Tasks\Compile.ps1</Link>
     </None>
+    <None Include="..\packages\PowerTasks.Plugins.MSpec.1.0.0\scripts\MSpec.ps1">
+      <Link>.Tasks\MSpec.ps1</Link>
+    </None>
     <None Include="..\packages\PowerTasks.Plugins.Pack.2.0.0\scripts\Pack.ps1">
       <Link>.Tasks\Pack.ps1</Link>
     </None>
     <None Include="..\packages\PowerTasks.Plugins.Push.2.0.0\scripts\Push.ps1">
       <Link>.Tasks\Push.ps1</Link>
-    </None>
-    <None Include="..\packages\PowerTasks.Plugins.Test.2.0.0\scripts\Test.ps1">
-      <Link>.Tasks\Test.ps1</Link>
     </None>
     <None Include="..\packages\PowerTasks.Plugins.Version.2.1.0\scripts\Version.ps1">
       <Link>.Tasks\Version.ps1</Link>
@@ -132,11 +132,6 @@
     <None Include=".Tasks.ps1" />
     <None Include="Data.Operations.nuspec" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\packages\PowerTasks.Plugins.Test.2.0.0\scripts\specflow_report_template.html">
-      <Link>.Tasks\specflow_report_template.html</Link>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

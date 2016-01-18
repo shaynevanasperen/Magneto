@@ -5,4 +5,4 @@ param(
 
 Include-PluginScripts
 
-task . Clean, Version, Compile, Test, Pack, Push
+task . Clean, Version, Compile, MSpec, Pack, Push
