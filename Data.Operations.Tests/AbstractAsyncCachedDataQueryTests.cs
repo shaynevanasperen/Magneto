@@ -88,7 +88,7 @@ namespace Data.Operations.Tests
 
 		static void configureCache(ICacheInfo c)
 		{
-			c.AbsoluteDuration = TimeSpan.FromMinutes(1);
+			c.CacheItemPolicy.SlidingExpiration = TimeSpan.FromMinutes(1);
 			cacheInfo = c;
 		}
 
@@ -127,7 +127,7 @@ namespace Data.Operations.Tests
 
 		static void configureCache(ICacheInfo c)
 		{
-			c.AbsoluteDuration = TimeSpan.FromMinutes(1);
+			c.CacheItemPolicy.SlidingExpiration = TimeSpan.FromMinutes(1);
 			cacheInfo = c;
 		}
 
@@ -166,7 +166,7 @@ namespace Data.Operations.Tests
 
 		static void configureCache(ICacheInfo c)
 		{
-			c.AbsoluteDuration = TimeSpan.FromMinutes(1);
+			c.CacheItemPolicy.SlidingExpiration = TimeSpan.FromMinutes(1);
 			cacheInfo = c;
 		}
 

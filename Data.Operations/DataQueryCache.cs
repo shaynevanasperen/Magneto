@@ -25,7 +25,7 @@ namespace Data.Operations
 
 			var result = executeQuery();
 			if (result != null || cacheInfo.CacheNulls)
-				_cacheStore.SetItem(cacheInfo.CacheKey, (object)result ?? NullToken.Instance, cacheInfo.AbsoluteDuration);
+				_cacheStore.SetItem(cacheInfo.CacheKey, (object)result ?? NullToken.Instance, cacheInfo.CacheItemPolicy);
 			return result;
 		}
 
@@ -42,14 +42,14 @@ namespace Data.Operations
 
 			var result = await executeQueryAsync().ConfigureAwait(false);
 			if (result != null || cacheInfo.CacheNulls)
-				await _cacheStore.SetItemAsync(cacheInfo.CacheKey, (object)result ?? NullToken.Instance, cacheInfo.AbsoluteDuration).ConfigureAwait(false);
+				await _cacheStore.SetItemAsync(cacheInfo.CacheKey, (object)result ?? NullToken.Instance, cacheInfo.CacheItemPolicy).ConfigureAwait(false);
 			return result;
 		}
 
 		public virtual void Refresh<T>(T queryResult, ICacheInfo cacheInfo)
 		{
 			if (queryResult != null || cacheInfo.CacheNulls)
-				_cacheStore.SetItem(cacheInfo.CacheKey, (object)queryResult ?? NullToken.Instance, cacheInfo.AbsoluteDuration);
+				_cacheStore.SetItem(cacheInfo.CacheKey, (object)queryResult ?? NullToken.Instance, cacheInfo.CacheItemPolicy);
 			else
 				_cacheStore.RemoveItem(cacheInfo.CacheKey);
 		}
@@ -57,7 +57,7 @@ namespace Data.Operations
 		public virtual Task RefreshAsync<T>(T queryResult, ICacheInfo cacheInfo)
 		{
 			if (queryResult != null || cacheInfo.CacheNulls)
-				return _cacheStore.SetItemAsync(cacheInfo.CacheKey, (object)queryResult ?? NullToken.Instance, cacheInfo.AbsoluteDuration);
+				return _cacheStore.SetItemAsync(cacheInfo.CacheKey, (object)queryResult ?? NullToken.Instance, cacheInfo.CacheItemPolicy);
 			return _cacheStore.RemoveItemAsync(cacheInfo.CacheKey);
 		}
 

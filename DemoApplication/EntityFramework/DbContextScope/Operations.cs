@@ -43,7 +43,7 @@ namespace DemoApplication.EntityFramework.DbContextScope
 		protected override void ConfigureCache(ICacheInfo cacheInfo)
 		{
 			cacheInfo.VaryBy = UserId;
-			cacheInfo.AbsoluteDuration = DateTime.Today.AddDays(1) - DateTime.Now;
+			cacheInfo.CacheItemPolicy.AbsoluteExpiration = new DateTimeOffset(DateTime.Today.AddDays(1));
 		}
 
 		protected override Task<TodoItem[]> QueryAsync(IAmbientDbContextLocator context)
@@ -63,7 +63,7 @@ namespace DemoApplication.EntityFramework.DbContextScope
 		protected override void ConfigureCache(ICacheInfo cacheInfo)
 		{
 			cacheInfo.VaryBy = UserId;
-			cacheInfo.AbsoluteDuration = TimeSpan.FromSeconds(10);
+			cacheInfo.CacheItemPolicy.SlidingExpiration = TimeSpan.FromSeconds(10);
 		}
 
 		protected override Task<TodoItem[]> QueryAsync(IAmbientDbContextLocator context)
@@ -82,7 +82,7 @@ namespace DemoApplication.EntityFramework.DbContextScope
 
 	class CompleteTodoItem : AsyncDataCommand<IAmbientDbContextLocator, bool>
 	{
-		public async override Task<bool> ExecuteAsync(IAmbientDbContextLocator context)
+		public override async Task<bool> ExecuteAsync(IAmbientDbContextLocator context)
 		{
 			return await context.Get<TodoItemsContext>().Database
 				.ExecuteSqlCommandAsync("UPDATE dbo.TodoItem SET DateCompleted = @p0 WHERE Id = @p1 and DateCompleted IS NULL", DateTime.Now, Id)

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Caching;
 
 namespace Data.Operations
 {
@@ -17,17 +18,22 @@ namespace Data.Operations
 		/// <summary>
 		/// The duration for which cached items should remain in the cache.
 		/// </summary>
-		TimeSpan AbsoluteDuration { get; set; }
+		//TimeSpan AbsoluteDuration { get; set; }
 
-		/// <summary>
-		/// An object or collection specifying values to be combined with <see cref="CacheKeyPrefix"/>
-		/// to form the cache key.<br/>
-		/// <c>VaryBy = new { Value1, Reference1 }</c><br/>
-		/// <c>VaryBy = new[] { Value1, Value2 }</c><br/>
-		/// <c>VaryBy = string.Format("{0}_{1}", Value1, Reference1.Id)</c><br/>
-		/// <c>VaryBy = Value1</c>
-		/// </summary>
-		object VaryBy { get; set; }
+        /// <summary>
+        /// The eviction and expiration details for caches items.
+        /// </summary>
+        CacheItemPolicy CacheItemPolicy { get; }
+
+        /// <summary>
+        /// An object or collection specifying values to be combined with <see cref="CacheKeyPrefix"/>
+        /// to form the cache key.<br/>
+        /// <c>VaryBy = new { Value1, Reference1 }</c><br/>
+        /// <c>VaryBy = new[] { Value1, Value2 }</c><br/>
+        /// <c>VaryBy = string.Format("{0}_{1}", Value1, Reference1.Id)</c><br/>
+        /// <c>VaryBy = Value1</c>
+        /// </summary>
+        object VaryBy { get; set; }
 
 		/// <summary>
 		/// Specifies whether or not <c>null</c> items should be cached. Defaults to <c>true</c>.

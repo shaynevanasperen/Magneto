@@ -1,7 +1,6 @@
 <img src="Data.Operations.png" align="right" />
 [![Build status](https://ci.appveyor.com/api/projects/status/804fxi7wu81s9svo?svg=true)](https://ci.appveyor.com/project/shaynevanasperen/nhibernate-sessions)
 [![NuGet Version](http://img.shields.io/nuget/v/Data.Operations.svg?style=flat)](https://www.nuget.org/packages/Data.Operations)
-[![NuGet Downloads](http://img.shields.io/nuget/dt/Data.Operations.svg?style=flat)](https://www.nuget.org/packages/Data.Operations)
 Data.Operations
 ===============
 
@@ -102,14 +101,14 @@ of `ICacheStore`, which is composed of `ISyncCacheStore` and `IAsyncCacheStore`,
 public interface ISyncCacheStore
 {
 	object GetItem(string cacheKey);
-	void SetItem(string cacheKey, object item, TimeSpan absoluteDuration);
+	void SetItem(string cacheKey, object item, CacheItemPolicy cacheItemPolicy);
 	void RemoveItem(string cacheKey);
 }
 
 public interface IAsyncCacheStore
 {
 	Task<object> GetItemAsync(string cacheKey);
-	Task SetItemAsync(string cacheKey, object item, TimeSpan absoluteDuration);
+	Task SetItemAsync(string cacheKey, object item, CacheItemPolicy cacheItemPolicy);
 	Task RemoveItemAsync(string cacheKey);
 }
 ```
@@ -197,7 +196,7 @@ class TodoItemsByPriority : CachedDataQuery<ISession, TodoItem[]>
 	protected override void ConfigureCache(ICacheInfo cacheInfo)
 	{
 		cacheInfo.VaryBy = Priority;
-		cacheInfo.AbsoluteDuration = TimeSpan.FromMinutes(5);
+		cacheInfo.CacheItemPolicy.SlidingExpiration = TimeSpan.FromMinutes(5);
 	}
 
 	protected override TodoItem[] Query(ISession context)
@@ -236,7 +235,7 @@ class TodoItemsByPriority : AsyncCachedDataQuery<DbContext, TodoItem[]>
 	protected override void ConfigureCache(ICacheInfo cacheInfo)
 	{
 		cacheInfo.VaryBy = Priority;
-		cacheInfo.AbsoluteDuration = TimeSpan.FromMinutes(5);
+		cacheInfo.CacheItemPolicy.SlidingExpiration = TimeSpan.FromMinutes(5);
 	}
 
 	protected override Task<TodoItem[]> QueryAsync(DbContext context)
@@ -290,7 +289,7 @@ class TodoItemsByCategoryAndPriority : TransformedCachedDataQuery<ISession, Todo
 	protected override void ConfigureCache(ICacheInfo cacheInfo)
 	{
 		cacheInfo.VaryBy = CategoryId;
-		cacheInfo.AbsoluteDuration = TimeSpan.FromMinutes(5);
+		cacheInfo.CacheItemPolicy.AbsoluteExpiration = DateTimeOffset.Now.Add(TimeSpan.FromHours(1));
 	}
 
 	protected override TodoItem[] Query(ISession context)
@@ -329,7 +328,7 @@ class TodoItemsByCategoryAndPriority : AsyncTransformedCachedDataQuery<DbContext
 	protected override void ConfigureCache(ICacheInfo cacheInfo)
 	{
 		cacheInfo.VaryBy = CategoryId;
-		cacheInfo.AbsoluteDuration = TimeSpan.FromMinutes(5);
+		cacheInfo.CacheItemPolicy.AbsoluteExpiration = DateTimeOffset.Now.Add(TimeSpan.FromHours(1));
 	}
 
 	protected override Task<TodoItem[]> QueryAsync(DbContext context)

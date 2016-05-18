@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.Caching;
+﻿using System.Runtime.Caching;
 using System.Threading.Tasks;
 
 namespace Data.Operations
@@ -16,14 +15,14 @@ namespace Data.Operations
 			return Task.FromResult(GetItem(cacheKey));
 		}
 
-		public virtual void SetItem(string cacheKey, object item, TimeSpan absoluteDuration)
+		public virtual void SetItem(string cacheKey, object item, CacheItemPolicy cacheItemPolicy)
 		{
-			MemoryCache.Default.Set(cacheKey, item, DateTimeOffset.Now.Add(absoluteDuration));
+			MemoryCache.Default.Set(cacheKey, item, cacheItemPolicy);
 		}
 
-		public virtual Task SetItemAsync(string cacheKey, object item, TimeSpan absoluteDuration)
+		public virtual Task SetItemAsync(string cacheKey, object item, CacheItemPolicy cacheItemPolicy)
 		{
-			SetItem(cacheKey, item, absoluteDuration);
+			SetItem(cacheKey, item, cacheItemPolicy);
 			return Task.FromResult(0);
 		}
 

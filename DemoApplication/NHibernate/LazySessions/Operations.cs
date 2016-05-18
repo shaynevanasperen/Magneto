@@ -41,7 +41,7 @@ namespace DemoApplication.NHibernate.LazySessions
 		protected override void ConfigureCache(ICacheInfo cacheInfo)
 		{
 			cacheInfo.VaryBy = UserId;
-			cacheInfo.AbsoluteDuration = DateTime.Today.AddDays(1) - DateTime.Now;
+			cacheInfo.CacheItemPolicy.AbsoluteExpiration = new DateTimeOffset(DateTime.Today.AddDays(1));
 		}
 
 		protected override TodoItem[] Query(ITodoItemsContext context)
@@ -60,7 +60,7 @@ namespace DemoApplication.NHibernate.LazySessions
 		protected override void ConfigureCache(ICacheInfo cacheInfo)
 		{
 			cacheInfo.VaryBy = UserId;
-			cacheInfo.AbsoluteDuration = TimeSpan.FromSeconds(10);
+			cacheInfo.CacheItemPolicy.SlidingExpiration = TimeSpan.FromSeconds(10);
 		}
 
 		protected override TodoItem[] Query(ITodoItemsContext context)

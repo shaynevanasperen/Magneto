@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Caching;
 using Quarks.ObjectExtensions;
 
 namespace Data.Operations
@@ -9,7 +10,7 @@ namespace Data.Operations
 		protected internal CacheInfo(string cacheKeyPrefix)
 		{
 			CacheKeyPrefix = cacheKeyPrefix;
-			AbsoluteDuration = TimeSpan.Zero;
+			CacheItemPolicy = new CacheItemPolicy();
 			CacheNulls = true;
 		}
 
@@ -27,10 +28,7 @@ namespace Data.Operations
 		}
 
 		string _cacheKey;
-		public virtual string CacheKey
-		{
-			get { return _cacheKey ?? (_cacheKey = buildCacheKey()); }
-		}
+		public virtual string CacheKey => _cacheKey ?? (_cacheKey = buildCacheKey());
 
 		string buildCacheKey()
 		{
@@ -44,7 +42,7 @@ namespace Data.Operations
 			return string.Join("_", segments);
 		}
 
-		public TimeSpan AbsoluteDuration { get; set; }
+		public CacheItemPolicy CacheItemPolicy { get; }
 
 		object _varyBy;
 		public virtual object VaryBy
@@ -59,9 +57,8 @@ namespace Data.Operations
 
 		public bool CacheNulls { get; set; }
 
-		public bool Disabled
-		{
-			get { return AbsoluteDuration == TimeSpan.Zero; }
-		}
+		public bool Disabled =>
+			CacheItemPolicy.AbsoluteExpiration == ObjectCache.InfiniteAbsoluteExpiration &&
+			CacheItemPolicy.SlidingExpiration == ObjectCache.NoSlidingExpiration;
 	}
 }
