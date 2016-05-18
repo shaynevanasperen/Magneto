@@ -114,7 +114,7 @@
     <None Include="..\packages\PowerTasks.Plugins.Clean.2.0.0\scripts\Clean.ps1">
       <Link>.Tasks\Clean.ps1</Link>
     </None>
-    <None Include="..\packages\PowerTasks.Plugins.Compile.2.0.1\scripts\Compile.ps1">
+    <None Include="..\packages\PowerTasks.Plugins.Compile.2.1.0\scripts\Compile.ps1">
       <Link>.Tasks\Compile.ps1</Link>
     </None>
     <None Include="..\packages\PowerTasks.Plugins.MSpec.1.0.0\scripts\MSpec.ps1">
