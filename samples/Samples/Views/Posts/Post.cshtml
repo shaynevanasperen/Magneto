@@ -1,0 +1,18 @@
+﻿@model PostViewModel
+
+@{
+	ViewData["Title"] = $"Post {Model.Post.Id}";
+}
+
+<h3>@Model.Post.Title</h3>
+<div>@Model.Post.Body</div>
+<h4>Comments</h4>
+<ul class="list-unstyled">
+	@foreach (var comment in Model.Comments)
+	{
+		<li class="list-group-item">
+			@comment.Body<br />
+			<i class="info small">@comment.Name <a href="mailto:@comment.Email">@comment.Email</a></i>
+		</li>
+	}
+</ul>

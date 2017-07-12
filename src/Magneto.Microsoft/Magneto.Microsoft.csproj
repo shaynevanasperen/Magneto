@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\Magneto.Common.props" />
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard1.1;netstandard1.3</TargetFrameworks>
+		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+		<Description>A library extending Magneto with implementations of ICacheStore backed by implementations from Microsoft.Extensions.Caching.</Description>
+		<PackageTags>query command object queryobject commandobject mediator cqs cqrs operation read write cache caching async mock mocking</PackageTags>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Magneto\Magneto.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+		<PackageReference Include="SourceLink.Create.GitHub" Version="2.1.0" PrivateAssets="All" />
+		<PackageReference Include="SourceLink.Test" Version="2.1.0" PrivateAssets="All" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<DotNetCliToolReference Include="dotnet-sourcelink-git" Version="2.1.0" />
+		<DotNetCliToolReference Include="dotnet-sourcelink" Version="2.1.0" />
+	</ItemGroup>
+
+</Project>
