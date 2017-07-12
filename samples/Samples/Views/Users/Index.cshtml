@@ -1,0 +1,35 @@
+﻿@model IEnumerable<User>
+
+@{
+	ViewData["Title"] = "Users";
+}
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Username</th>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Phone</th>
+			<th>Address</th>
+			<th>Company</th>
+			<th>Website</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var user in Model)
+		{
+			<tr>
+				<td>@Html.ActionLink(user.Id.ToString(), "Index", new { user.Id })</td>
+				<td>@user.Username</td>
+				<td>@user.Name</td>
+				<td>@user.Email</td>
+				<td>@user.Phone</td>
+				<td>@user.Address</td>
+				<td>@user.Company</td>
+				<td>@user.Website</td>
+			</tr>
+		}
+	</tbody>
+</table>
