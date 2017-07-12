@@ -4,6 +4,9 @@
 [![Join the chat at https://gitter.im/magneto-project](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/magneto-project)
 ![License](https://img.shields.io/github/license/shaynevanasperen/magneto.svg)
 
+[![NuGet](https://img.shields.io/nuget/v/Magneto.svg)](https://www.nuget.org/packages/Magneto)
+[![NuGet](https://img.shields.io/nuget/dt/Magneto.svg)](https://www.nuget.org/packages/Magneto)
+
 ## Magneto
 
 A library for implementing the [Command Pattern](https://en.wikipedia.org/wiki/Command_pattern), providing of a set
