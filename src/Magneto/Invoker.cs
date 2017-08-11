@@ -6,6 +6,10 @@ using Magneto.Core;
 
 namespace Magneto
 {
+	/// <summary>
+	/// If using an IoC container, it is highly recommended that this be registered as a scoped service
+	/// so that the injected <see cref="IServiceProvider"/> is scoped appropriately.
+	/// </summary>
 	public class Invoker : IInvoker
 	{
 		readonly ConcurrentDictionary<Type, object> _nullQueryCaches = new ConcurrentDictionary<Type, object>();
@@ -122,6 +126,10 @@ namespace Magneto
 		}
 	}
 
+	/// <summary>
+	/// If using an IoC container, it is highly recommended that this be registered as a scoped service
+	/// so that the injected <see cref="IServiceProvider"/> is scoped appropriately.
+	/// </summary>
 	public class Invoker<TContext> : IInvoker<TContext> where TContext : class
 	{
 		public Invoker(IInvoker invoker, TContext context)

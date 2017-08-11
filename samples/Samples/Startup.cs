@@ -53,15 +53,15 @@ namespace Samples
 			services.AddSingleton<IQueryCache<DistributedCacheEntryOptions>, QueryCache<DistributedCacheEntryOptions>>();
 
 			services.AddSingleton<IDecorator, ApplicationInsightsDecorator>();
-			services.AddSingleton<IInvoker, Invoker>();
+			services.AddScoped<IInvoker, Invoker>();
 
-			services.AddSingleton<IInvoker<JsonPlaceHolderHttpClient>, Invoker<JsonPlaceHolderHttpClient>>();
+			services.AddScoped<IInvoker<JsonPlaceHolderHttpClient>, Invoker<JsonPlaceHolderHttpClient>>();
 			services.AddSingleton(new JsonPlaceHolderHttpClient());
 
-			services.AddSingleton<IInvoker<IFileProvider>, Invoker<IFileProvider>>();
+			services.AddScoped<IInvoker<IFileProvider>, Invoker<IFileProvider>>();
 			services.AddSingleton(Environment.WebRootFileProvider);
 
-			services.AddSingleton<IDispatcher, Dispatcher>();
+			services.AddScoped<IDispatcher, Dispatcher>();
 
 			services.AddMvc();
 		}
