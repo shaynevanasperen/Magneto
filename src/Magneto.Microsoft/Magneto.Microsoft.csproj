@@ -8,6 +8,8 @@
 		<PackageTags>query command object queryobject commandobject mediator cqs cqrs operation read write cache caching async mock mocking</PackageTags>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<DebugType>embedded</DebugType>
+		<DocumentationFile>$(MSBuildProjectName).xml</DocumentationFile>
+		<NoWarn>1591</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

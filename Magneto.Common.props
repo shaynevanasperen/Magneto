@@ -1,6 +1,6 @@
 ﻿<Project>
 	<Import Project="Magneto.Version.props" />
-	
+
 	<PropertyGroup>
 		<Authors>Shayne van Asperen</Authors>
 		<PackageLicenseUrl>https://github.com/shaynevanasperen/Magneto/blob/master/LICENSE</PackageLicenseUrl>
@@ -11,9 +11,9 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<VersionSuffix Condition="'$(VersionSuffix)'!='' AND '$(BuildNumber)' != ''">$(VersionSuffix)-$(BuildNumber)</VersionSuffix>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
 		<None Remove="*.ncrunchproject" />
 	</ItemGroup>
-	
+
 </Project>
