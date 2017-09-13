@@ -2,22 +2,28 @@
 	<Import Project="..\..\Magneto.Common.props" />
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard1.1;netstandard1.3</TargetFrameworks>
-		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+		<TargetFrameworks>netstandard1.1;netstandard1.3;netstandard2.0</TargetFrameworks>
 		<Description>A library extending Magneto with implementations of ICacheStore backed by implementations from Microsoft.Extensions.Caching.</Description>
 		<PackageTags>query command object queryobject commandobject mediator cqs cqrs operation read write cache caching async mock mocking</PackageTags>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<DebugType>embedded</DebugType>
 		<DocumentationFile>$(MSBuildProjectName).xml</DocumentationFile>
-		<NoWarn>1591</NoWarn>
+		<NoWarn>$(NoWarn);1591</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Magneto\Magneto.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard1.3'" >
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.1" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'" >
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
 		<PackageReference Include="SourceLink.Create.GitHub" Version="2.1.0" PrivateAssets="All" />
 		<PackageReference Include="SourceLink.Test" Version="2.1.0" PrivateAssets="All" />

@@ -3,21 +3,21 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard1.1;netstandard1.3;net45;net46</TargetFrameworks>
-		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+		<DisableImplicitFrameworkReferences Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net46'">true</DisableImplicitFrameworkReferences>
 		<Description>A library for implementing the Command Pattern, providing of a set of base classes and an invoker class. Useful for abstracting data access and API calls as either queries (for read operations) or commands (for write operations).</Description>
 		<PackageTags>query command object queryobject commandobject mediator cqs cqrs operation read write cache caching async mock mocking</PackageTags>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<DebugType>embedded</DebugType>
 		<DocumentationFile>$(MSBuildProjectName).xml</DocumentationFile>
-		<NoWarn>1591</NoWarn>
+		<NoWarn>$(NoWarn);1591</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard1.3'">
-		<PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
 		<PackageReference Include="System.ComponentModel" Version="4.3.0" />
-		<PackageReference Include="System.Linq" Version="4.3.0" />
-		<PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
-		<PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net46'">
+		<Reference Include="System.Core" />
 	</ItemGroup>
 
 	<ItemGroup>
