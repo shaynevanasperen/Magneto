@@ -55,12 +55,8 @@ namespace Samples
 			services.AddSingleton<IDecorator, ApplicationInsightsDecorator>();
 			services.AddScoped<IInvoker, Invoker>();
 
-			services.AddScoped<IInvoker<JsonPlaceHolderHttpClient>, Invoker<JsonPlaceHolderHttpClient>>();
 			services.AddSingleton(new JsonPlaceHolderHttpClient());
-
-			services.AddScoped<IInvoker<IFileProvider>, Invoker<IFileProvider>>();
 			services.AddSingleton(Environment.WebRootFileProvider);
-
 			services.AddScoped<IDispatcher, Dispatcher>();
 
 			services.AddMvc();

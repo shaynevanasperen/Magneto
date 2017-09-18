@@ -37,45 +37,6 @@ namespace Magneto
 		Task<TResult> CommandAsync<TContext, TResult>(IAsyncCommand<TContext, TResult> command, TContext context);
 	}
 
-	public interface IInvoker<out TContext> : ISyncInvoker<TContext>, IAsyncInvoker<TContext>, IQueryInvoker<TContext>, ICommandInvoker<TContext>, ICacheManager where TContext : class { }
-
-	public interface IQueryInvoker<out TContext> : ISyncQueryInvoker<TContext>, IAsyncQueryInvoker<TContext> where TContext : class { }
-
-	public interface ICommandInvoker<out TContext> : ISyncCommandInvoker<TContext>, IAsyncCommandInvoker<TContext> where TContext : class { }
-
-	public interface ISyncInvoker<out TContext> : ISyncQueryInvoker<TContext>, ISyncCommandInvoker<TContext>, ISyncCacheManager where TContext : class { }
-
-	public interface IAsyncInvoker<out TContext> : IAsyncQueryInvoker<TContext>, IAsyncCommandInvoker<TContext>, IAsyncCacheManager where TContext : class { }
-
-	public interface ISyncQueryInvoker<out TContext> : IContextInvoker<TContext> where TContext : class
-	{
-		TResult Query<TResult>(ISyncQuery<TContext, TResult> query);
-		TResult Query<TResult, TCacheEntryOptions>(ISyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption = CacheOption.Default);
-	}
-
-	public interface IAsyncQueryInvoker<out TContext> : IContextInvoker<TContext> where TContext : class
-	{
-		Task<TResult> QueryAsync<TResult>(IAsyncQuery<TContext, TResult> query);
-		Task<TResult> QueryAsync<TResult, TCacheEntryOptions>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption = CacheOption.Default);
-	}
-
-	public interface ISyncCommandInvoker<out TContext> : IContextInvoker<TContext> where TContext : class
-	{
-		void Command(ISyncCommand<TContext> command);
-		TResult Command<TResult>(ISyncCommand<TContext, TResult> command);
-	}
-
-	public interface IAsyncCommandInvoker<out TContext> : IContextInvoker<TContext> where TContext : class
-	{
-		Task CommandAsync(IAsyncCommand<TContext> command);
-		Task<TResult> CommandAsync<TResult>(IAsyncCommand<TContext, TResult> command);
-	}
-
-	public interface IContextInvoker<out TContext> : IDisposable where TContext : class
-	{
-		TContext Context { get; }
-	}
-
 	public interface ICacheManager : ISyncCacheManager, IAsyncCacheManager { }
 
 	public interface ISyncCacheManager

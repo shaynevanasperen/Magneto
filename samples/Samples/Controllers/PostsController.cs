@@ -12,22 +12,27 @@ namespace Samples.Controllers
 	[Route("[controller]")]
 	public class PostsController : Controller
 	{
-		readonly IInvoker<JsonPlaceHolderHttpClient> _invoker;
+		readonly IInvoker _invoker;
+		readonly JsonPlaceHolderHttpClient _httpClient;
 
-		public PostsController(IInvoker<JsonPlaceHolderHttpClient> invoker) => _invoker = invoker;
+		public PostsController(IInvoker invoker, JsonPlaceHolderHttpClient httpClient)
+		{
+			_invoker = invoker;
+			_httpClient = httpClient;
+		}
 
 		[HttpGet("")]
 		public async Task<IActionResult> Index()
 		{
-			var posts = await _invoker.QueryAsync(new AllPosts());
+			var posts = await _invoker.QueryAsync(new AllPosts(), _httpClient);
 			return View(posts);
 		}
 
 		[HttpGet("{id:int}")]
 		public async Task<IActionResult> Index(int id)
 		{
-			var post = await _invoker.QueryAsync(new PostById { Id = id });
-			var postComments = await _invoker.QueryAsync(new CommentsByPostId { PostId = id });
+			var post = await _invoker.QueryAsync(new PostById { Id = id }, _httpClient);
+			var postComments = await _invoker.QueryAsync(new CommentsByPostId { PostId = id }, _httpClient);
 			return View("Post", new PostViewModel { Post = post, Comments = postComments });
 		}
 	}

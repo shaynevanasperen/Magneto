@@ -10,7 +10,7 @@
 ## Magneto
 
 A library for implementing the [Command Pattern](https://en.wikipedia.org/wiki/Command_pattern), providing of a set
-of base classes and an _invoker_ class. Useful for abstracting data access and API calls as either _queries_
+of base classes and an _invoker_/_dispatcher_ class. Useful for abstracting data access and API calls as either _queries_
 (for read operations) or _commands_ (for write operations).
 
 Define a query object:
@@ -31,16 +31,19 @@ public class PostById : AsyncQuery<HttpClient, Post>
 Invoke it:
 
 ```cs
-var post = await _invoker.QueryAsync(new PostById { Id = 1 });
+// Allow the Dispatcher to fetch the appropriate context from the ServiceProvider
+var post = await _dispatcher.QueryAsync(new PostById { Id = 1 });
+// Or pass the context yourself by using the Invoker
+var post = await _invoker.QueryAsync(new PostById { Id = 1 }, _httpClient);
 ```
 
 Mock the result in a unit test:
 
 ```cs
 // Moq
-invokerMock.Setup(x => x.QueryAsync(new PostById { Id = 1 })).ReturnsAsync(new Post());
+dispatcherMock.Setup(x => x.QueryAsync(new PostById { Id = 1 })).ReturnsAsync(new Post());
 // NSubstitute
-invokerMock.QueryAsync(new PostById { Id = 1 }).Returns(new Post());
+dispatcherMock.QueryAsync(new PostById { Id = 1 }).Returns(new Post());
 ```
 
 Leverage built-in caching by deriving from a base class:
@@ -115,3 +118,5 @@ public class ApplicationInsightsDecorator : IDecorator
         }
     }
 ```
+
+See the bundled sample application for further examples of usage.

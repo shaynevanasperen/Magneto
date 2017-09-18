@@ -19,7 +19,8 @@ namespace Samples.Tests.Controllers.PostsControllerTests
 			new Post()
 		};
 
-		void GivenThereAreSomeKnownPosts() => The<IInvoker<JsonPlaceHolderHttpClient>>().QueryAsync(new AllPosts()).Returns(_posts);
+		void Setup() => SetThe(new JsonPlaceHolderHttpClient());
+		void GivenThereAreSomeKnownPosts() => The<IInvoker>().QueryAsync(new AllPosts(), The<JsonPlaceHolderHttpClient>()).Returns(_posts);
 		async Task WhenGettingIndex() => _result = await SUT.Index();
 		void ThenTheIndexViewIsDisplayed() => _result.Should().BeOfType<ViewResult>().Which.ViewName.Should().BeNull();
 		void AndThenViewModelIsTheKnownPosts() => _result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<Post[]>().Which.Should().BeSameAs(_posts);
@@ -36,8 +37,9 @@ namespace Samples.Tests.Controllers.PostsControllerTests
 			new Comment()
 		};
 
-		void GivenThereIsAKnownPost() => The<IInvoker<JsonPlaceHolderHttpClient>>().QueryAsync(new PostById { Id = _post.Id }).Returns(_post);
-		void AndGivenThereAreSomeCommentsForTheKnownPost() => The<IInvoker<JsonPlaceHolderHttpClient>>().QueryAsync(new CommentsByPostId { PostId = _post.Id }).Returns(_comments);
+		void Setup() => SetThe(new JsonPlaceHolderHttpClient());
+		void GivenThereIsAKnownPost() => The<IInvoker>().QueryAsync(new PostById { Id = _post.Id }, The<JsonPlaceHolderHttpClient>()).Returns(_post);
+		void AndGivenThereAreSomeCommentsForTheKnownPost() => The<IInvoker>().QueryAsync(new CommentsByPostId { PostId = _post.Id }, The<JsonPlaceHolderHttpClient>()).Returns(_comments);
 		async Task WhenGettingIndexWithKnownPostId() => _result = await SUT.Index(_post.Id);
 		void ThenThePostViewIsDisplayed() => _result.Should().BeOfType<ViewResult>().Which.ViewName.Should().Be("Post");
 		void AndThenViewModelIsTheKnownPostAndItsComments() => _result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<PostViewModel>().Which.ShouldBeEquivalentTo(new PostViewModel
