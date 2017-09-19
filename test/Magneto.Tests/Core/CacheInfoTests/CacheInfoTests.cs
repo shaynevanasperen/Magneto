@@ -98,6 +98,17 @@ namespace Magneto.Tests.Core.CacheInfoTests
 			void ThenTheResultIsTheKeyPrefixAndTheFlattenedVaryByPropertyValuesOrderedByNameJoinedByUnderscores() => Result.Should().Be(TestKeyPrefix.Value + "_string_1__Absolute_one_two_three_x_y_z_i_ii_iii_£_$_#_first_second");
 		}
 
+		public class VaryByAsAnArray : GettingKey
+		{
+			void GivenAVaryAsAnEnumerable() => SUT.VaryBy = new[]
+			{
+				1,
+				2,
+				3
+			};
+			void ThenTheResultIsTheKeyPrefixAndTheVaryByValuesJoinedByUnderscores() => Result.Should().Be(TestKeyPrefix.Value + "_1_2_3");
+		}
+
 		public class VaryByAsAnEnumerable : GettingKey
 		{
 			void GivenAVaryAsAnEnumerable() => SUT.VaryBy = new[]

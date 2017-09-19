@@ -22,8 +22,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Code.Extensions.Generic.QuasiEquals" Version="1.0.0" PrivateAssets="All" />
-		<PackageReference Include="Code.Extensions.Object.Flatten" Version="1.0.0" PrivateAssets="All" />
-		<PackageReference Include="Code.Extensions.Object.ToEnumerable" Version="1.0.0" PrivateAssets="All" />
+		<PackageReference Include="Code.Extensions.Object.Flatten" Version="1.0.1" PrivateAssets="All" />
+		<PackageReference Include="Code.Extensions.Object.ToEnumerable" Version="1.0.1" PrivateAssets="All" />
 		<PackageReference Include="SourceLink.Create.GitHub" Version="2.1.0" PrivateAssets="All" />
 		<PackageReference Include="SourceLink.Test" Version="2.1.0" PrivateAssets="All" />
 	</ItemGroup>
