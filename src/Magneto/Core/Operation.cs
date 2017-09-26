@@ -17,9 +17,7 @@ namespace Magneto.Core
 			if (ReferenceEquals(this, obj))
 				return true;
 
-			var other = obj as Operation;
-
-			return other != null && Equals(other);
+			return obj is Operation other && Equals(other);
 		}
 
 		public virtual bool Equals(Operation other)
