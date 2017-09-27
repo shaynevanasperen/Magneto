@@ -4,8 +4,12 @@ using Magneto.Configuration;
 
 namespace Magneto.Core
 {
-	public class NullDecorator : IDecorator
+	class NullDecorator : IDecorator
 	{
+		internal static IDecorator Instance { get; } = new NullDecorator();
+
+		private NullDecorator() { }
+
 		public T Decorate<T>(object operation, Func<T> invoke) => invoke();
 
 		public Task<T> Decorate<T>(object operation, Func<Task<T>> invoke) => invoke();

@@ -17,7 +17,7 @@ namespace Magneto
 		public Invoker(IServiceProvider serviceProvider = null, IDecorator decorator = null)
 		{
 			ServiceProvider = serviceProvider;
-			Decorator = decorator ?? new NullDecorator();
+			Decorator = decorator ?? NullDecorator.Instance;
 		}
 
 		protected IServiceProvider ServiceProvider { get; }
