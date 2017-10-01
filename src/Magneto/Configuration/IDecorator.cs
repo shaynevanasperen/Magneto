@@ -7,13 +7,13 @@ namespace Magneto.Configuration
 
 	public interface ISyncDecorator
 	{
-		T Decorate<T>(object operation, Func<T> invoke);
-		void Decorate(object operation, Action invoke);
+		TResult Decorate<TContext, TResult>(object operation, TContext context, Func<TContext, TResult> invoke);
+		void Decorate<TContext>(object operation, TContext context, Action<TContext> invoke);
 	}
 
 	public interface IAsyncDecorator
 	{
-		Task<T> Decorate<T>(object operation, Func<Task<T>> invoke);
-		Task Decorate(object operation, Func<Task> invoke);
+		Task<TResult> Decorate<TContext, TResult>(object operation, TContext context, Func<TContext, Task<TResult>> invoke);
+		Task Decorate<TContext>(object operation, TContext context, Func<TContext, Task> invoke);
 	}
 }

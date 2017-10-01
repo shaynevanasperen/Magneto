@@ -15,7 +15,7 @@ namespace Magneto.Core
 			if (queryCache == null) throw new ArgumentNullException(nameof(queryCache));
 
 			State.Inject(context);
-			TCachedResult query() => decorator.Decorate(this, () => Query(context));
+			TCachedResult query() => decorator.Decorate(this, context, Query);
 
 			if (cacheOption == CacheOption.Default)
 				return State.CachedResult = queryCache.Get(query, State.CacheInfo, State.GetCacheEntryOptions);
@@ -51,7 +51,7 @@ namespace Magneto.Core
 			if (queryCache == null) throw new ArgumentNullException(nameof(queryCache));
 
 			State.Inject(context);
-			Task<TCachedResult> queryAsync() => decorator.Decorate(this, () => QueryAsync(context));
+			Task<TCachedResult> queryAsync() => decorator.Decorate(this, context, QueryAsync);
 
 			if (cacheOption == CacheOption.Default)
 				return State.CachedResult = await queryCache.GetAsync(queryAsync, State.CacheInfo, State.GetCacheEntryOptions).ConfigureAwait(false);

@@ -12,12 +12,12 @@ namespace Samples.Infrastructure
 
 		public ApplicationInsightsDecorator(TelemetryClient telemetryClient) => _telemetryClient = telemetryClient;
 
-		public T Decorate<T>(object operation, Func<T> invoke)
+		public TResult Decorate<TContext, TResult>(object operation, TContext context, Func<TContext, TResult> invoke)
 		{
 			try
 			{
 				var stopwatch = Stopwatch.StartNew();
-				var result = invoke();
+				var result = invoke(context);
 				var elapsed = stopwatch.Elapsed.TotalMilliseconds;
 				_telemetryClient.TrackMetric(operation.GetType().FullName, elapsed);
 				return result;
@@ -29,12 +29,12 @@ namespace Samples.Infrastructure
 			}
 		}
 
-		public async Task<T> Decorate<T>(object operation, Func<Task<T>> invoke)
+		public async Task<TResult> Decorate<TContext, TResult>(object operation, TContext context, Func<TContext, Task<TResult>> invoke)
 		{
 			try
 			{
 				var stopwatch = Stopwatch.StartNew();
-				var result = await invoke();
+				var result = await invoke(context);
 				var elapsed = stopwatch.Elapsed.TotalMilliseconds;
 				_telemetryClient.TrackMetric(operation.GetType().FullName, elapsed);
 				return result;
@@ -46,12 +46,12 @@ namespace Samples.Infrastructure
 			}
 		}
 
-		public void Decorate(object operation, Action invoke)
+		public void Decorate<TContext>(object operation, TContext context, Action<TContext> invoke)
 		{
 			try
 			{
 				var stopwatch = Stopwatch.StartNew();
-				invoke();
+				invoke(context);
 				var elapsed = stopwatch.Elapsed.TotalMilliseconds;
 				_telemetryClient.TrackMetric(operation.GetType().FullName, elapsed);
 			}
@@ -62,12 +62,12 @@ namespace Samples.Infrastructure
 			}
 		}
 
-		public async Task Decorate(object operation, Func<Task> invoke)
+		public async Task Decorate<TContext>(object operation, TContext context, Func<TContext, Task> invoke)
 		{
 			try
 			{
 				var stopwatch = Stopwatch.StartNew();
-				await invoke();
+				await invoke(context);
 				var elapsed = stopwatch.Elapsed.TotalMilliseconds;
 				_telemetryClient.TrackMetric(operation.GetType().FullName, elapsed);
 			}

@@ -18,7 +18,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 		protected virtual void Setup()
 		{
 			SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
-			The<IDecorator>().Decorate(Arg.Any<object>(), Arg.Any<Func<Task<QueryResult>>>()).Returns(x => x.ArgAt<Func<Task<QueryResult>>>(1).Invoke());
+			The<IDecorator>().Decorate(Arg.Any<object>(), Arg.Any<QueryContext>(), Arg.Any<Func<QueryContext, Task<QueryResult>>>()).Returns(x => x.ArgAt<Func<QueryContext, Task<QueryResult>>>(2).Invoke(QueryContext));
 			The<IAsyncCachedQueryStub>().QueryAsync(QueryContext).Returns(QueryResult);
 		}
 
@@ -43,7 +43,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 						GetCacheEntryOptions = x.ArgAt<Func<CacheEntryOptions>>(2);
 						return x.ArgAt<Func<Task<QueryResult>>>(0).Invoke();
 					});
-				protected void AndThenTheDecoratorIsInvoked() => The<IDecorator>().Received().Decorate(SUT, Arg.Any<Func<Task<QueryResult>>>());
+				protected void AndThenTheDecoratorIsInvoked() => The<IDecorator>().Received().Decorate(SUT, QueryContext, Arg.Any<Func<QueryContext, Task<QueryResult>>>());
 				protected void AndThenTheQueryIsExecuted() => The<IAsyncCachedQueryStub>().Received().QueryAsync(QueryContext);
 				protected void AndThenTheResultIsTheQueryResult() => Result.Should().BeSameAs(QueryResult);
 
@@ -65,7 +65,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 				readonly QueryResult _cachedResult = new QueryResult();
 
 				void AndGivenResultIsInTheQueryCache() => The<IAsyncQueryCache<CacheEntryOptions>>().GetAsync(Arg.Any<Func<Task<QueryResult>>>(), Arg.Any<ICacheInfo>(), Arg.Any<Func<CacheEntryOptions>>()).Returns(x => _cachedResult);
-				void AndThenTheDecoratorIsNotInvoked() => The<IDecorator>().DidNotReceive().Decorate(Arg.Any<object>(), Arg.Any<Func<Task<QueryResult>>>());
+				void AndThenTheDecoratorIsNotInvoked() => The<IDecorator>().DidNotReceive().Decorate(Arg.Any<object>(), Arg.Any<QueryContext>(), Arg.Any<Func<QueryContext, Task<QueryResult>>>());
 				void AndThenTheQueryIsNotExecuted() => The<IAsyncCachedQueryStub>().DidNotReceive().QueryAsync(QueryContext);
 				void AndThenTheCacheEntryOptionsAreNotRequested() => The<IAsyncCachedQueryStub>().DidNotReceive().GetCacheEntryOptions(Arg.Any<QueryContext>());
 				void AndThenTheResultIsTheCachedResult() => Result.Should().BeSameAs(_cachedResult);
@@ -86,7 +86,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 
 			protected void GivenCacheOptionIsRefresh() => CacheOption = CacheOption.Refresh;
 			protected void AndThenTheQueryCacheIsNotQueried() => The<IAsyncQueryCache<CacheEntryOptions>>().DidNotReceive().GetAsync(Arg.Any<Func<Task<QueryResult>>>(), Arg.Any<ICacheInfo>(), Arg.Any<Func<CacheEntryOptions>>());
-			protected void AndThenTheDecoratorIsInvoked() => The<IDecorator>().Received().Decorate(SUT, Arg.Any<Func<Task<QueryResult>>>());
+			protected void AndThenTheDecoratorIsInvoked() => The<IDecorator>().Received().Decorate(SUT, QueryContext, Arg.Any<Func<QueryContext, Task<QueryResult>>>());
 			protected void AndThenTheQueryIsExecuted() => The<IAsyncCachedQueryStub>().Received().QueryAsync(QueryContext);
 			protected void AndThenTheResultIsTheQueryResult() => Result.Should().BeSameAs(QueryResult);
 			protected void AndThenTheResultIsSetInTheQueryCache() => The<IAsyncQueryCache<CacheEntryOptions>>().Received().SetAsync(QueryResult, SUT.State.CacheInfo, Arg.Any<Func<CacheEntryOptions>>());

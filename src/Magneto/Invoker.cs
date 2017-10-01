@@ -17,17 +17,15 @@ namespace Magneto
 		public Invoker(IServiceProvider serviceProvider = null, IDecorator decorator = null)
 		{
 			ServiceProvider = serviceProvider;
-			Decorator = decorator ?? new NullDecorator();
+			Decorator = decorator ?? NullDecorator.Instance;
 		}
 
 		protected IServiceProvider ServiceProvider { get; }
 
 		protected IDecorator Decorator { get; }
 
-		protected virtual IQueryCache<TCacheEntryOptions> GetQueryCache<TCacheEntryOptions>()
-		{
-			return (IQueryCache<TCacheEntryOptions>)(ServiceProvider?.GetService(typeof(IQueryCache<TCacheEntryOptions>)) ?? _nullQueryCaches.GetOrAdd(typeof(TCacheEntryOptions), x => new NullQueryCache<TCacheEntryOptions>()));
-		}
+		protected virtual IQueryCache<TCacheEntryOptions> GetQueryCache<TCacheEntryOptions>() =>
+			(IQueryCache<TCacheEntryOptions>)(ServiceProvider?.GetService(typeof(IQueryCache<TCacheEntryOptions>)) ?? _nullQueryCaches.GetOrAdd(typeof(TCacheEntryOptions), x => new NullQueryCache<TCacheEntryOptions>()));
 
 		protected virtual ISyncQueryCache<TCacheEntryOptions> GetSyncQueryCache<TCacheEntryOptions>() => GetQueryCache<TCacheEntryOptions>();
 
@@ -38,7 +36,7 @@ namespace Magneto
 			if (query == null) throw new ArgumentNullException(nameof(query));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(query, () => query.Execute(context));
+			return Decorator.Decorate(query, context, x => query.Execute(x));
 		}
 
 		public virtual Task<TResult> QueryAsync<TContext, TResult>(IAsyncQuery<TContext, TResult> query, TContext context)
@@ -46,7 +44,7 @@ namespace Magneto
 			if (query == null) throw new ArgumentNullException(nameof(query));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(query, () => query.ExecuteAsync(context));
+			return Decorator.Decorate(query, context, query.ExecuteAsync);
 		}
 
 		public virtual TResult Query<TContext, TCacheEntryOptions, TResult>(ISyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, TContext context, CacheOption cacheOption = CacheOption.Default)
@@ -98,7 +96,7 @@ namespace Magneto
 			if (command == null) throw new ArgumentNullException(nameof(command));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			Decorator.Decorate(command, () => command.Execute(context));
+			Decorator.Decorate(command, context, x => command.Execute(x));
 		}
 
 		public virtual Task CommandAsync<TContext>(IAsyncCommand<TContext> command, TContext context)
@@ -106,7 +104,7 @@ namespace Magneto
 			if (command == null) throw new ArgumentNullException(nameof(command));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(command, () => command.ExecuteAsync(context));
+			return Decorator.Decorate(command, context, command.ExecuteAsync);
 		}
 
 		public virtual TResult Command<TContext, TResult>(ISyncCommand<TContext, TResult> command, TContext context)
@@ -114,7 +112,7 @@ namespace Magneto
 			if (command == null) throw new ArgumentNullException(nameof(command));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(command, () => command.Execute(context));
+			return Decorator.Decorate(command, context, x => command.Execute(x));
 		}
 
 		public virtual Task<TResult> CommandAsync<TContext, TResult>(IAsyncCommand<TContext, TResult> command, TContext context)
@@ -122,7 +120,7 @@ namespace Magneto
 			if (command == null) throw new ArgumentNullException(nameof(command));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(command, () => command.ExecuteAsync(context));
+			return Decorator.Decorate(command, context, command.ExecuteAsync);
 		}
 	}
 }

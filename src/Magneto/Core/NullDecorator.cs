@@ -4,17 +4,21 @@ using Magneto.Configuration;
 
 namespace Magneto.Core
 {
-	public class NullDecorator : IDecorator
+	class NullDecorator : IDecorator
 	{
-		public T Decorate<T>(object operation, Func<T> invoke) => invoke();
+		internal static IDecorator Instance { get; } = new NullDecorator();
 
-		public Task<T> Decorate<T>(object operation, Func<Task<T>> invoke) => invoke();
+		NullDecorator() { }
 
-		public void Decorate(object operation, Action invoke)
+		public TResult Decorate<TContext, TResult>(object operation, TContext context, Func<TContext, TResult> invoke) => invoke(context);
+
+		public Task<TResult> Decorate<TContext, TResult>(object operation, TContext context, Func<TContext, Task<TResult>> invoke) => invoke(context);
+
+		public void Decorate<TContext>(object operation, TContext context, Action<TContext> invoke)
 		{
-			invoke();
+			invoke(context);
 		}
 
-		public Task Decorate(object operation, Func<Task> invoke) => invoke();
+		public Task Decorate<TContext>(object operation, TContext context, Func<TContext, Task> invoke) => invoke(context);
 	}
 }

@@ -101,12 +101,12 @@ public class ApplicationInsightsDecorator : IDecorator
     public ApplicationInsightsDecorator(TelemetryClient telemetryClient) =>
         _telemetryClient = telemetryClient;
 
-    public T Decorate<T>(object operation, Func<T> invoke)
+    public TResult Decorate<TContext, TResult>(object operation, TContext context, Func<TContext, TResult> invoke)
     {
         try
         {
             var stopwatch = Stopwatch.StartNew();
-            var result = invoke();
+            var result = invoke(context);
             var elapsed = stopwatch.Elapsed.TotalMilliseconds;
             _telemetryClient.TrackMetric(operation.GetType().FullName, elapsed);
             return result;
