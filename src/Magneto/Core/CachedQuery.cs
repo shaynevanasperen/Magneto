@@ -89,8 +89,19 @@ namespace Magneto.Core
 
 		internal readonly Store State;
 
+		/// <summary>
+		/// Configures details for constructing a cache key and whether or not <c>null</c> values should be cached.
+		/// <para>Implementors can choose not to override this method if the cache key doesn't need to vary by anything.</para>
+		/// </summary>
+		/// <param name="cacheConfig">The configuration object.</param>
 		protected virtual void ConfigureCache(ICacheConfig cacheConfig) { }
 
+		/// <summary>
+		/// Returns options pertaining to the cache entry (such as expiration policy).
+		/// <para>Implementors must override this method in order to specify the behaviour of cache entries.</para>
+		/// </summary>
+		/// <param name="context">The context with which the query will execute.</param>
+		/// <returns>The options pertaining to the cache entry.</returns>
 		protected abstract TCacheEntryOptions GetCacheEntryOptions(TContext context);
 
 		internal class Store

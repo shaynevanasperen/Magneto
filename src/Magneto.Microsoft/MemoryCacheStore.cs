@@ -12,6 +12,7 @@ namespace Magneto.Microsoft
 
 		public MemoryCacheStore(IMemoryCache memoryCache) => _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
 
+		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Get{T}"/>
 		public CacheEntry<T> Get<T>(string key)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
@@ -19,6 +20,7 @@ namespace Magneto.Microsoft
 			return _memoryCache.Get<CacheEntry<T>>(key);
 		}
 
+		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Set{T}"/>
 		public void Set<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions)
 		{
 			if (item == null) throw new ArgumentNullException(nameof(item));
@@ -28,6 +30,7 @@ namespace Magneto.Microsoft
 			_memoryCache.Set(key, item, cacheEntryOptions);
 		}
 
+		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Remove"/>
 		public void Remove(string key)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
@@ -35,6 +38,7 @@ namespace Magneto.Microsoft
 			_memoryCache.Remove(key);
 		}
 
+		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.GetAsync{T}"/>
 		public Task<CacheEntry<T>> GetAsync<T>(string key)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
@@ -42,6 +46,7 @@ namespace Magneto.Microsoft
 			return Task.FromResult(Get<T>(key));
 		}
 
+		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.SetAsync{T}"/>
 		public Task SetAsync<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions)
 		{
 			if (item == null) throw new ArgumentNullException(nameof(item));
@@ -56,6 +61,7 @@ namespace Magneto.Microsoft
 #endif
 		}
 
+		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.RemoveAsync"/>
 		public Task RemoveAsync(string key)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));

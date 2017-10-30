@@ -61,7 +61,7 @@ namespace Samples.Controllers
 
 	public class CommentsByPostId : AsyncCachedQuery<JsonPlaceHolderHttpClient, MemoryCacheEntryOptions, Comment[]>
 	{
-		protected override void ConfigureCache(ICacheConfig cacheConfig) => cacheConfig.VaryBy = PostId;
+		protected override void ConfigureCache(ICacheConfig cacheConfig) => cacheConfig.VaryBy(PostId);
 
 		protected override MemoryCacheEntryOptions GetCacheEntryOptions(JsonPlaceHolderHttpClient context) => new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 

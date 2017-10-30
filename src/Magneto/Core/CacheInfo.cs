@@ -14,6 +14,7 @@ namespace Magneto.Core
 			_createKey = createKey ?? buildKey;
 		}
 
+		/// <inheritdoc cref="ICacheConfig.CacheNulls"/>
 		public virtual bool CacheNulls { get; set; } = true;
 
 		/// <inheritdoc />
