@@ -1,5 +1,8 @@
 namespace Magneto.Core
 {
+	/// <summary>
+	/// Information pertaining to a cacheable value.
+	/// </summary>
 	public interface ICacheInfo
 	{
 		/// <summary>

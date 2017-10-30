@@ -10,6 +10,7 @@ namespace Magneto.Configuration
 
 		public QueryCache(ICacheStore<TCacheEntryOptions> cacheStore) => _cacheStore = cacheStore ?? throw new ArgumentNullException(nameof(cacheStore));
 
+		/// <inheritdoc cref="ISyncQueryCache{TCacheEntryOptions}.Get{T}"/>
 		public virtual T Get<T>(Func<T> executeQuery, ICacheInfo cacheInfo, Func<TCacheEntryOptions> getCacheEntryOptions)
 		{
 			if (executeQuery == null) throw new ArgumentNullException(nameof(executeQuery));
@@ -29,6 +30,7 @@ namespace Magneto.Configuration
 			return result;
 		}
 
+		/// <inheritdoc cref="IAsyncQueryCache{TCacheEntryOptions}.GetAsync{T}"/>
 		public virtual async Task<T> GetAsync<T>(Func<Task<T>> executeQueryAsync, ICacheInfo cacheInfo, Func<TCacheEntryOptions> getCacheEntryOptions)
 		{
 			if (executeQueryAsync == null) throw new ArgumentNullException(nameof(executeQueryAsync));
@@ -48,6 +50,7 @@ namespace Magneto.Configuration
 			return result;
 		}
 
+		/// <inheritdoc cref="ISyncQueryCache{TCacheEntryOptions}.Set{T}"/>
 		public virtual void Set<T>(T queryResult, ICacheInfo cacheInfo, Func<TCacheEntryOptions> getCacheEntryOptions)
 		{
 			if (cacheInfo == null) throw new ArgumentNullException(nameof(cacheInfo));
@@ -58,6 +61,7 @@ namespace Magneto.Configuration
 			_cacheStore.Set(cacheInfo.Key, new CacheEntry<T> { Value = queryResult }, getCacheEntryOptions());
 		}
 
+		/// <inheritdoc cref="IAsyncQueryCache{TCacheEntryOptions}.SetAsync{T}"/>
 		public virtual async Task SetAsync<T>(T queryResult, ICacheInfo cacheInfo, Func<TCacheEntryOptions> getCacheEntryOptions)
 		{
 			if (cacheInfo == null) throw new ArgumentNullException(nameof(cacheInfo));
@@ -68,6 +72,7 @@ namespace Magneto.Configuration
 			await _cacheStore.SetAsync(cacheInfo.Key, new CacheEntry<T> { Value = queryResult }, getCacheEntryOptions()).ConfigureAwait(false);
 		}
 
+		/// <inheritdoc cref="ISyncQueryCache{TCacheEntryOptions}.Evict"/>
 		public virtual void Evict(string key)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
@@ -75,6 +80,7 @@ namespace Magneto.Configuration
 			_cacheStore.Remove(key);
 		}
 
+		/// <inheritdoc cref="IAsyncQueryCache{TCacheEntryOptions}.EvictAsync"/>
 		public virtual Task EvictAsync(string key)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
