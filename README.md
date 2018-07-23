@@ -119,4 +119,4 @@ public class ApplicationInsightsDecorator : IDecorator
     }
 ```
 
-See the bundled sample application for further examples of usage.
+See the [bundled sample application](https://github.com/shaynevanasperen/Magneto/tree/master/samples) for further examples of usage.
