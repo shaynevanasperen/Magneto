@@ -23,7 +23,7 @@ namespace Magneto.Microsoft
 		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Set{T}"/>
 		public void Set<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions)
 		{
-			if (item == null) throw new ArgumentNullException(nameof(item));
+			if (key == null) throw new ArgumentNullException(nameof(key));
 			if (item == null) throw new ArgumentNullException(nameof(item));
 			if (cacheEntryOptions == null) throw new ArgumentNullException(nameof(cacheEntryOptions));
 
@@ -49,7 +49,7 @@ namespace Magneto.Microsoft
 		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.SetAsync{T}"/>
 		public Task SetAsync<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions)
 		{
-			if (item == null) throw new ArgumentNullException(nameof(item));
+			if (key == null) throw new ArgumentNullException(nameof(key));
 			if (item == null) throw new ArgumentNullException(nameof(item));
 			if (cacheEntryOptions == null) throw new ArgumentNullException(nameof(cacheEntryOptions));
 
