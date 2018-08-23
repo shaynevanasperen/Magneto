@@ -1,5 +1,4 @@
 ﻿<Project>
-	<Import Project="Magneto.Version.props" />
 
 	<PropertyGroup>
 		<Authors>Shayne van Asperen</Authors>
@@ -9,7 +8,6 @@
 		<RepositoryUrl>https://github.com/shaynevanasperen/Magneto.git</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<VersionSuffix Condition="'$(VersionSuffix)'!='' AND '$(BuildNumber)' != ''">$(VersionSuffix)-$(BuildNumber)</VersionSuffix>
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 
