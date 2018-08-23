@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\..\Magneto.Common.props" />
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
 		<Description>A library for implementing the Command Pattern, providing of a set of base classes and an invoker class. Useful for abstracting data access and API calls as either queries (for read operations) or commands (for write operations).</Description>
 		<PackageTags>query command object queryobject commandobject mediator cqs cqrs operation read write cache caching async mock mocking</PackageTags>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<VersionPrefix>1.0.0</VersionPrefix>
+		<VersionSuffix>rc-1</VersionSuffix>
 		<DebugType>embedded</DebugType>
 		<DocumentationFile>$(MSBuildProjectName).xml</DocumentationFile>
 		<NoWarn>$(NoWarn);1591</NoWarn>
