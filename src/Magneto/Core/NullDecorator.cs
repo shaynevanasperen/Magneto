@@ -10,15 +10,12 @@ namespace Magneto.Core
 
 		NullDecorator() { }
 
-		public TResult Decorate<TContext, TResult>(object operation, TContext context, Func<TContext, TResult> invoke) => invoke(context);
+		public TResult Decorate<TResult>(string operationName, Func<TResult> invoke) => invoke();
 
-		public Task<TResult> Decorate<TContext, TResult>(object operation, TContext context, Func<TContext, Task<TResult>> invoke) => invoke(context);
+		public Task<TResult> Decorate<TResult>(string operationName, Func<Task<TResult>> invoke) => invoke();
 
-		public void Decorate<TContext>(object operation, TContext context, Action<TContext> invoke)
-		{
-			invoke(context);
-		}
+		public void Decorate(string operationName, Action invoke) => invoke();
 
-		public Task Decorate<TContext>(object operation, TContext context, Func<TContext, Task> invoke) => invoke(context);
+		public Task Decorate(string operationName, Func<Task> invoke) => invoke();
 	}
 }

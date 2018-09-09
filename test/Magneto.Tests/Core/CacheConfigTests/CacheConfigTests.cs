@@ -5,19 +5,19 @@ using Magneto.Core;
 using NSubstitute;
 using TestStack.BDDfy;
 
-namespace Magneto.Tests.Core.CacheInfoTests
+namespace Magneto.Tests.Core.CacheConfigTests
 {
 	public interface IKeyCreator
 	{
 		string CreateKey(string keyPrefix, object varyBy);
 	}
 
-	public abstract class SettingKeyPrefix : ScenarioFor<CacheInfo>
+	public abstract class SettingKeyPrefix : ScenarioFor<CacheConfig>
 	{
 		public override void Setup()
 		{
 			The<IKeyCreator>().CreateKey(Arg.Any<string>(), Arg.Any<object>()).Returns(x => x.ArgAt<string>(0));
-			SUT = new CacheInfo(TestKeyPrefix.Value, The<IKeyCreator>().CreateKey);
+			SUT = new CacheConfig(TestKeyPrefix.Value, The<IKeyCreator>().CreateKey);
 			SUT.Key.Should().Be(TestKeyPrefix.Value);
 		}
 
@@ -50,12 +50,12 @@ namespace Magneto.Tests.Core.CacheInfoTests
 		}
 	}
 
-	public class SettingVaryBy : ScenarioFor<CacheInfo>
+	public class SettingVaryBy : ScenarioFor<CacheConfig>
 	{
 		public override void Setup()
 		{
 			The<IKeyCreator>().CreateKey(Arg.Any<string>(), Arg.Any<object>()).Returns(x => x.ArgAt<object>(1));
-			SUT = new CacheInfo(TestKeyPrefix.Value, The<IKeyCreator>().CreateKey) { VaryBy = "VaryBy" };
+			SUT = new CacheConfig(TestKeyPrefix.Value, The<IKeyCreator>().CreateKey) { VaryBy = "VaryBy" };
 			SUT.Key.Should().Be("VaryBy");
 		}
 
@@ -63,11 +63,11 @@ namespace Magneto.Tests.Core.CacheInfoTests
 		void ThenTheKeyContainsTheNewVaryBy() => SUT.Key.Should().Be("NewVaryBy");
 	}
 
-	public abstract class GettingKey : ScenarioFor<CacheInfo>
+	public abstract class GettingKey : ScenarioFor<CacheConfig>
 	{
 		protected object Result;
 
-		public override void Setup() => SUT = new CacheInfo(TestKeyPrefix.Value);
+		public override void Setup() => SUT = new CacheConfig(TestKeyPrefix.Value);
 
 		protected void WhenGettingKey() => Result = SUT.Key;
 

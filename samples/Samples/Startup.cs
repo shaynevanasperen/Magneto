@@ -46,16 +46,19 @@ namespace Samples
 		{
 			services.AddApplicationInsightsTelemetry(Configuration);
 
+			// Here we add the Microsoft memory cache and our associated cache store.
 			services.AddMemoryCache();
 			services.AddSingleton<ICacheStore<MemoryCacheEntryOptions>, MemoryCacheStore>();
-			services.AddSingleton<IQueryCache<MemoryCacheEntryOptions>, QueryCache<MemoryCacheEntryOptions>>();
 
+			// Here we add the Microsoft distributed cache and our associated cache store. Normally we'd only have one type of cache
+			// in an application, but this is a sample application so we've got both here as examples.
 			services.AddDistributedMemoryCache();
 			services.AddSingleton<ICacheStore<DistributedCacheEntryOptions>, DistributedCacheStore>();
-			services.AddSingleton<IQueryCache<DistributedCacheEntryOptions>, QueryCache<DistributedCacheEntryOptions>>();
 
+			// Here we add a decorator object which performs exception logging and timing telemetry for all our Magneto operations.
 			services.AddSingleton<IDecorator, ApplicationInsightsDecorator>();
 
+			// Here we add the two context objects with which our queries and commands are executed.
 			services.AddSingleton(Environment.WebRootFileProvider);
 			services
 				.AddTransient<EnsureSuccessHandler>()
@@ -67,11 +70,12 @@ namespace Samples
 					TimeSpan.FromSeconds(5),
 					TimeSpan.FromSeconds(10)
 				}));
+			
+			// Here we add Magneto.IMagneto as the main entry point for consumers, because it can do everything. We could also add any of
+			// the interfaces which Magneto.IMagneto is comprised of, to enable exposing limited functionality to some consumers.
+			// Internally, Magneto.Magneto relies on Magneto.IMediary to do it's work, so we could also add that or any of the interfaces
+			// it's comprised of in order to take control of passing the context when executing queries or commands.
 			services.AddScoped<IMagneto, Magneto.Magneto>();
-			// Here we've added Magneto.IMagneto as the main entry point for consumers, because it can do everything.
-			// We could also add any of the interfaces that Magneto.IMagneto is comprised of, to enable exposing limited functionality to some consumers.
-			// Internally, Magneto.Magneto relies on Magneto.IMediary to do it's work, so we could also add that or any of the interfaces it's comprised of
-			// in order to take control of passing the context when executing queries or commands.
 			
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}

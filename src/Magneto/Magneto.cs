@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Magneto.Configuration;
+using Magneto.Core;
 
 namespace Magneto
 {
@@ -13,15 +14,14 @@ namespace Magneto
 		public Magneto(IServiceProvider serviceProvider)
 		{
 			ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-			Mediary = (IMediary)serviceProvider.GetService(typeof(IMediary)) ?? new Mediary(ServiceProvider, (IDecorator)ServiceProvider.GetService(typeof(IDecorator)));
+			Mediary = ServiceProvider.GetService<IMediary>() ?? new Mediary(ServiceProvider, ServiceProvider.GetService<IDecorator>());
 		}
 
 		protected IServiceProvider ServiceProvider { get; }
 
 		protected IMediary Mediary { get; }
 
-		protected virtual TContext GetContext<TContext>() =>
-			(TContext)ServiceProvider.GetService(typeof(TContext));
+		protected virtual TContext GetContext<TContext>() => ServiceProvider.GetService<TContext>();
 
 		/// <inheritdoc cref="ISyncQueryMagneto.Query{TContext,TResult}"/>
 		public virtual TResult Query<TContext, TResult>(ISyncQuery<TContext, TResult> query) =>

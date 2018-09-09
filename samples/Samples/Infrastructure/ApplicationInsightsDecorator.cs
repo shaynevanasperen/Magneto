@@ -12,14 +12,14 @@ namespace Samples.Infrastructure
 
 		public ApplicationInsightsDecorator(TelemetryClient telemetryClient) => _telemetryClient = telemetryClient;
 
-		public TResult Decorate<TContext, TResult>(object operation, TContext context, Func<TContext, TResult> invoke)
+		public TResult Decorate<TResult>(string operationName, Func<TResult> invoke)
 		{
 			try
 			{
 				var stopwatch = Stopwatch.StartNew();
-				var result = invoke(context);
+				var result = invoke();
 				var elapsed = stopwatch.Elapsed.TotalMilliseconds;
-				_telemetryClient.TrackMetric(operation.GetType().FullName, elapsed);
+				_telemetryClient.TrackMetric(operationName, elapsed);
 				return result;
 			}
 			catch (Exception e)
@@ -29,14 +29,14 @@ namespace Samples.Infrastructure
 			}
 		}
 
-		public async Task<TResult> Decorate<TContext, TResult>(object operation, TContext context, Func<TContext, Task<TResult>> invoke)
+		public async Task<TResult> Decorate<TResult>(string operationName, Func<Task<TResult>> invoke)
 		{
 			try
 			{
 				var stopwatch = Stopwatch.StartNew();
-				var result = await invoke(context);
+				var result = await invoke();
 				var elapsed = stopwatch.Elapsed.TotalMilliseconds;
-				_telemetryClient.TrackMetric(operation.GetType().FullName, elapsed);
+				_telemetryClient.TrackMetric(operationName, elapsed);
 				return result;
 			}
 			catch (Exception e)
@@ -46,14 +46,14 @@ namespace Samples.Infrastructure
 			}
 		}
 
-		public void Decorate<TContext>(object operation, TContext context, Action<TContext> invoke)
+		public void Decorate(string operationName, Action invoke)
 		{
 			try
 			{
 				var stopwatch = Stopwatch.StartNew();
-				invoke(context);
+				invoke();
 				var elapsed = stopwatch.Elapsed.TotalMilliseconds;
-				_telemetryClient.TrackMetric(operation.GetType().FullName, elapsed);
+				_telemetryClient.TrackMetric(operationName, elapsed);
 			}
 			catch (Exception e)
 			{
@@ -62,14 +62,14 @@ namespace Samples.Infrastructure
 			}
 		}
 
-		public async Task Decorate<TContext>(object operation, TContext context, Func<TContext, Task> invoke)
+		public async Task Decorate(string operationName, Func<Task> invoke)
 		{
 			try
 			{
 				var stopwatch = Stopwatch.StartNew();
-				await invoke(context);
+				await invoke();
 				var elapsed = stopwatch.Elapsed.TotalMilliseconds;
-				_telemetryClient.TrackMetric(operation.GetType().FullName, elapsed);
+				_telemetryClient.TrackMetric(operationName, elapsed);
 			}
 			catch (Exception e)
 			{

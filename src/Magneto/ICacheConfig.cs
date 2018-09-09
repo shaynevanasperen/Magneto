@@ -6,11 +6,6 @@ namespace Magneto
 	public interface ICacheConfig
 	{
 		/// <summary>
-		/// Specifies whether or not <c>null</c> items should be cached. Defaults to <c>true</c>.
-		/// </summary>
-		bool CacheNulls { set; }
-
-		/// <summary>
 		/// A value to be combined with <see cref="VaryBy"/> to form the cache key.
 		/// Defaults to the fully qualified type name of the query class.
 		/// </summary>
@@ -31,19 +26,10 @@ namespace Magneto
 	public static class CacheConfigExtensions
 	{
 		/// <summary>
-		/// Specifies whether or not <c>null</c> items should be cached. Defaults to <c>true</c>.
-		/// </summary>
-		public static ICacheConfig CacheNulls(this ICacheConfig cacheConfig, bool value = true)
-		{
-			cacheConfig.CacheNulls = value;
-			return cacheConfig;
-		}
-
-		/// <summary>
 		/// A value to be combined with <see cref="ICacheConfig.VaryBy"/> to form the cache key.
 		/// Defaults to the fully qualified type name of the query class.
 		/// </summary>
-		public static ICacheConfig KeyPrefix(this ICacheConfig cacheConfig, string value)
+		public static ICacheConfig UseKeyPrefix(this ICacheConfig cacheConfig, string value)
 		{
 			cacheConfig.KeyPrefix = value;
 			return cacheConfig;
