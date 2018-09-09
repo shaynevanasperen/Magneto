@@ -55,7 +55,6 @@ namespace Samples
 			services.AddSingleton<IQueryCache<DistributedCacheEntryOptions>, QueryCache<DistributedCacheEntryOptions>>();
 
 			services.AddSingleton<IDecorator, ApplicationInsightsDecorator>();
-			services.AddScoped<IInvoker, Invoker>();
 
 			services.AddSingleton(Environment.WebRootFileProvider);
 			services
@@ -68,7 +67,11 @@ namespace Samples
 					TimeSpan.FromSeconds(5),
 					TimeSpan.FromSeconds(10)
 				}));
-			services.AddScoped<IDispatcher, Dispatcher>();
+			services.AddScoped<IMagneto, Magneto.Magneto>();
+			// Here we've added Magneto.IMagneto as the main entry point for consumers, because it can do everything.
+			// We could also add any of the interfaces that Magneto.IMagneto is comprised of, to enable exposing limited functionality to some consumers.
+			// Internally, Magneto.Magneto relies on Magneto.IMediary to do it's work, so we could also add that or any of the interfaces it's comprised of
+			// in order to take control of passing the context when executing queries or commands.
 			
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}

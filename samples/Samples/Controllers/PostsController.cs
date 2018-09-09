@@ -12,27 +12,25 @@ namespace Samples.Controllers
 	[Route("[controller]")]
 	public class PostsController : Controller
 	{
-		readonly IInvoker _invoker;
-		readonly JsonPlaceHolderHttpClient _httpClient;
+		readonly IMagneto _magneto;
 
-		public PostsController(IInvoker invoker, JsonPlaceHolderHttpClient httpClient)
+		public PostsController(IMagneto magneto)
 		{
-			_invoker = invoker;
-			_httpClient = httpClient;
+			_magneto = magneto;
 		}
 
 		[HttpGet("")]
 		public async Task<IActionResult> Index()
 		{
-			var posts = await _invoker.QueryAsync(new AllPosts(), _httpClient);
+			var posts = await _magneto.QueryAsync(new AllPosts());
 			return View(posts);
 		}
 
 		[HttpGet("{id:int}")]
 		public async Task<IActionResult> Index(int id)
 		{
-			var post = await _invoker.QueryAsync(new PostById { Id = id }, _httpClient);
-			var postComments = await _invoker.QueryAsync(new CommentsByPostId { PostId = id }, _httpClient);
+			var post = await _magneto.QueryAsync(new PostById { Id = id });
+			var postComments = await _magneto.QueryAsync(new CommentsByPostId { PostId = id });
 			return View("Post", new PostViewModel { Post = post, Comments = postComments });
 		}
 	}

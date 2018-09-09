@@ -2,17 +2,17 @@
 
 namespace Magneto
 {
-	public interface IDispatcher : ISyncDispatcher, IAsyncDispatcher, IQueryDispatcher, ICommandDispatcher, ICacheManager { }
+	public interface IMagneto : ISyncMagneto, IAsyncMagneto, IQueryMagneto, ICommandMagneto, ICacheManager { }
 
-	public interface IQueryDispatcher : ISyncQueryDispatcher, IAsyncQueryDispatcher { }
+	public interface IQueryMagneto : ISyncQueryMagneto, IAsyncQueryMagneto { }
 
-	public interface ICommandDispatcher : ISyncCommandDispatcher, IAsyncCommandDispatcher { }
+	public interface ICommandMagneto : ISyncCommandMagneto, IAsyncCommandMagneto { }
 
-	public interface ISyncDispatcher : ISyncQueryDispatcher, ISyncCommandDispatcher, ISyncCacheManager { }
+	public interface ISyncMagneto : ISyncQueryMagneto, ISyncCommandMagneto, ISyncCacheManager { }
 
-	public interface IAsyncDispatcher : IAsyncQueryDispatcher, IAsyncCommandDispatcher, IAsyncCacheManager { }
+	public interface IAsyncMagneto : IAsyncQueryMagneto, IAsyncCommandMagneto, IAsyncCacheManager { }
 
-	public interface ISyncQueryDispatcher
+	public interface ISyncQueryMagneto
 	{
 		/// <summary>
 		/// Executes the given <paramref name="query"/> using an instance of <typeparamref name="TContext"/> obtained from the current scope.
@@ -35,7 +35,7 @@ namespace Magneto
 		TResult Query<TContext, TCacheEntryOptions, TResult>(ISyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption = CacheOption.Default);
 	}
 
-	public interface IAsyncQueryDispatcher
+	public interface IAsyncQueryMagneto
 	{
 		/// <summary>
 		/// Executes the given <paramref name="query"/> using an instance of <typeparamref name="TContext"/> obtained from the current scope.
@@ -58,7 +58,7 @@ namespace Magneto
 		Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption = CacheOption.Default);
 	}
 
-	public interface ISyncCommandDispatcher
+	public interface ISyncCommandMagneto
 	{
 		/// <summary>
 		/// Executes the given <paramref name="command"/> using an instance of <typeparamref name="TContext"/> obtained from the current scope.
@@ -77,7 +77,7 @@ namespace Magneto
 		TResult Command<TContext, TResult>(ISyncCommand<TContext, TResult> command);
 	}
 
-	public interface IAsyncCommandDispatcher
+	public interface IAsyncCommandMagneto
 	{
 		/// <summary>
 		/// Executes the given <paramref name="command"/> using an instance of <typeparamref name="TContext"/> obtained from the current scope.
