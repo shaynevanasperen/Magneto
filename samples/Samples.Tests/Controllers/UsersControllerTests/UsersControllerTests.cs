@@ -19,7 +19,7 @@ namespace Samples.Tests.Controllers.UsersControllerTests
 			new User()
 		};
 
-		void GivenThereAreSomeKnownUsers() => The<IDispatcher>().QueryAsync(new AllUsers()).Returns(_users);
+		void GivenThereAreSomeKnownUsers() => The<IMagneto>().QueryAsync(new AllUsers()).Returns(_users);
 		async Task WhenGettingIndex() => _result = await SUT.Index();
 		void ThenTheIndexViewIsDisplayed() => _result.Should().BeOfType<ViewResult>().Which.ViewName.Should().BeNull();
 		void AndThenViewModelIsTheKnownUsers() => _result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<User[]>().Which.Should().BeSameAs(_users);
@@ -36,8 +36,8 @@ namespace Samples.Tests.Controllers.UsersControllerTests
 			new Album()
 		};
 
-		void GivenThereIsAKnownUser() => The<IDispatcher>().QueryAsync(new UserById { Id = _user.Id }).Returns(_user);
-		void AndGivenThereAreSomeAlbumsForTheKnownUser() => The<IDispatcher>().Query(new AlbumsByUserId { UserId = _user.Id }).Returns(_albums);
+		void GivenThereIsAKnownUser() => The<IMagneto>().QueryAsync(new UserById { Id = _user.Id }).Returns(_user);
+		void AndGivenThereAreSomeAlbumsForTheKnownUser() => The<IMagneto>().Query(new AlbumsByUserId { UserId = _user.Id }).Returns(_albums);
 		async Task WhenGettingIndexWithKnownUserId() => _result = await SUT.Index(_user.Id);
 		void ThenTheUserViewIsDisplayed() => _result.Should().BeOfType<ViewResult>().Which.ViewName.Should().Be("User");
 		void AndThenViewModelIsTheKnownUserAndItsAlbums() => _result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<UserViewModel>().Which.Should().BeEquivalentTo(new UserViewModel
@@ -52,7 +52,7 @@ namespace Samples.Tests.Controllers.UsersControllerTests
 		IActionResult _result;
 
 		void WhenPostingAlbum() => _result = SUT.Album(1, "Title");
-		void ThenTheAlbumIsSaved() => The<IDispatcher>().Received().Command(new SaveAlbum { Album = new Album { UserId = 1, Title = "Title" } });
+		void ThenTheAlbumIsSaved() => The<IMagneto>().Received().Command(new SaveAlbum { Album = new Album { UserId = 1, Title = "Title" } });
 		void AndThenTheReponseIsRedirectedToTheUser() => _result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("Index");
 	}
 }

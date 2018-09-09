@@ -1,73 +1,74 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Magneto.Configuration;
 
 namespace Magneto
 {
 	/// <summary>
-	/// If using an IoC container, it is highly recommended that this be registered as a scoped service
+	/// If using an IoC container, it's highly recommended that this be registered as a scoped service
 	/// so that the injected <see cref="IServiceProvider"/> is scoped appropriately.
 	/// </summary>
-	public class Dispatcher : IDispatcher
+	public class Magneto : IMagneto
 	{
-		public Dispatcher(IServiceProvider serviceProvider, IInvoker invoker)
+		public Magneto(IServiceProvider serviceProvider)
 		{
-			ServiceProvider = serviceProvider;
-			Invoker = invoker;
+			ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+			Mediary = (IMediary)serviceProvider.GetService(typeof(IMediary)) ?? new Mediary(ServiceProvider, (IDecorator)ServiceProvider.GetService(typeof(IDecorator)));
 		}
 
 		protected IServiceProvider ServiceProvider { get; }
 
-		protected IInvoker Invoker { get; }
+		protected IMediary Mediary { get; }
 
 		protected virtual TContext GetContext<TContext>() =>
 			(TContext)ServiceProvider.GetService(typeof(TContext));
 
-		/// <inheritdoc cref="ISyncQueryDispatcher.Query{TContext,TResult}"/>
+		/// <inheritdoc cref="ISyncQueryMagneto.Query{TContext,TResult}"/>
 		public virtual TResult Query<TContext, TResult>(ISyncQuery<TContext, TResult> query) =>
-			Invoker.Query(query, GetContext<TContext>());
+			Mediary.Query(query, GetContext<TContext>());
 
-		/// <inheritdoc cref="IAsyncQueryDispatcher.QueryAsync{TContext,TResult}"/>
+		/// <inheritdoc cref="IAsyncQueryMagneto.QueryAsync{TContext,TResult}"/>
 		public virtual Task<TResult> QueryAsync<TContext, TResult>(IAsyncQuery<TContext, TResult> query) =>
-			Invoker.QueryAsync(query, GetContext<TContext>());
+			Mediary.QueryAsync(query, GetContext<TContext>());
 
-		/// <inheritdoc cref="ISyncQueryDispatcher.Query{TContext,TCacheEntryOptions,TResult}"/>
+		/// <inheritdoc cref="ISyncQueryMagneto.Query{TContext,TCacheEntryOptions,TResult}"/>
 		public virtual TResult Query<TContext, TCacheEntryOptions, TResult>(ISyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption = CacheOption.Default) =>
-			Invoker.Query(query, GetContext<TContext>(), cacheOption);
+			Mediary.Query(query, GetContext<TContext>(), cacheOption);
 
-		/// <inheritdoc cref="IAsyncQueryDispatcher.QueryAsync{TContext,TCacheEntryOptions,TResult}"/>
+		/// <inheritdoc cref="IAsyncQueryMagneto.QueryAsync{TContext,TCacheEntryOptions,TResult}"/>
 		public virtual Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption = CacheOption.Default) =>
-			Invoker.QueryAsync(query, GetContext<TContext>(), cacheOption);
+			Mediary.QueryAsync(query, GetContext<TContext>(), cacheOption);
 
 		/// <inheritdoc cref="ISyncCacheManager.EvictCachedResult{TCacheEntryOptions}"/>
 		public virtual void EvictCachedResult<TCacheEntryOptions>(ISyncCachedQuery<TCacheEntryOptions> query) =>
-			Invoker.EvictCachedResult(query);
+			Mediary.EvictCachedResult(query);
 
 		/// <inheritdoc cref="IAsyncCacheManager.EvictCachedResultAsync{TCacheEntryOptions}"/>
 		public virtual Task EvictCachedResultAsync<TCacheEntryOptions>(IAsyncCachedQuery<TCacheEntryOptions> query) =>
-			Invoker.EvictCachedResultAsync(query);
+			Mediary.EvictCachedResultAsync(query);
 
 		/// <inheritdoc cref="ISyncCacheManager.UpdateCachedResult{TCacheEntryOptions}"/>
 		public virtual void UpdateCachedResult<TCacheEntryOptions>(ISyncCachedQuery<TCacheEntryOptions> executedQuery) =>
-			Invoker.UpdateCachedResult(executedQuery);
+			Mediary.UpdateCachedResult(executedQuery);
 
 		/// <inheritdoc cref="IAsyncCacheManager.UpdateCachedResultAsync{TCacheEntryOptions}"/>
 		public virtual Task UpdateCachedResultAsync<TCacheEntryOptions>(IAsyncCachedQuery<TCacheEntryOptions> executedQuery) =>
-			Invoker.UpdateCachedResultAsync(executedQuery);
+			Mediary.UpdateCachedResultAsync(executedQuery);
 
-		/// <inheritdoc cref="ISyncCommandDispatcher.Command{TContext}"/>
+		/// <inheritdoc cref="ISyncCommandMagneto.Command{TContext}"/>
 		public virtual void Command<TContext>(ISyncCommand<TContext> command) =>
-			Invoker.Command(command, GetContext<TContext>());
+			Mediary.Command(command, GetContext<TContext>());
 
-		/// <inheritdoc cref="IAsyncCommandDispatcher.CommandAsync{TContext}"/>
+		/// <inheritdoc cref="IAsyncCommandMagneto.CommandAsync{TContext}"/>
 		public virtual Task CommandAsync<TContext>(IAsyncCommand<TContext> command) =>
-			Invoker.CommandAsync(command, GetContext<TContext>());
+			Mediary.CommandAsync(command, GetContext<TContext>());
 
-		/// <inheritdoc cref="ISyncCommandDispatcher.Command{TContext,TResult}"/>
+		/// <inheritdoc cref="ISyncCommandMagneto.Command{TContext,TResult}"/>
 		public virtual TResult Command<TContext, TResult>(ISyncCommand<TContext, TResult> command) =>
-			Invoker.Command(command, GetContext<TContext>());
+			Mediary.Command(command, GetContext<TContext>());
 
-		/// <inheritdoc cref="IAsyncCommandDispatcher.CommandAsync{TContext,TResult}"/>
+		/// <inheritdoc cref="IAsyncCommandMagneto.CommandAsync{TContext,TResult}"/>
 		public virtual Task<TResult> CommandAsync<TContext, TResult>(IAsyncCommand<TContext, TResult> command) =>
-			Invoker.CommandAsync(command, GetContext<TContext>());
+			Mediary.CommandAsync(command, GetContext<TContext>());
 	}
 }

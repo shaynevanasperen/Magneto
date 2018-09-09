@@ -2,17 +2,17 @@
 
 namespace Magneto
 {
-	public interface IInvoker : ISyncInvoker, IAsyncInvoker, IQueryInvoker, ICommandInvoker, ICacheManager { }
+	public interface IMediary : ISyncMediary, IAsyncMediary, IQueryMediary, ICommandMediary, ICacheManager { }
 
-	public interface IQueryInvoker : ISyncQueryInvoker, IAsyncQueryInvoker { }
+	public interface IQueryMediary : ISyncQueryMediary, IAsyncQueryMediary { }
 
-	public interface ICommandInvoker : ISyncCommandInvoker, IAsyncCommandInvoker { }
+	public interface ICommandMediary : ISyncCommandMediary, IAsyncCommandMediary { }
 
-	public interface ISyncInvoker : ISyncQueryInvoker, ISyncCommandInvoker, ISyncCacheManager { }
+	public interface ISyncMediary : ISyncQueryMediary, ISyncCommandMediary, ISyncCacheManager { }
 
-	public interface IAsyncInvoker : IAsyncQueryInvoker, IAsyncCommandInvoker, IAsyncCacheManager { }
+	public interface IAsyncMediary : IAsyncQueryMediary, IAsyncCommandMediary, IAsyncCacheManager { }
 
-	public interface ISyncQueryInvoker
+	public interface ISyncQueryMediary
 	{
 		/// <summary>
 		/// Executes the given <paramref name="query"/> using the supplied <paramref name="context"/>.
@@ -37,7 +37,7 @@ namespace Magneto
 		TResult Query<TContext, TCacheEntryOptions, TResult>(ISyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, TContext context, CacheOption cacheOption = CacheOption.Default);
 	}
 
-	public interface IAsyncQueryInvoker
+	public interface IAsyncQueryMediary
 	{
 		/// <summary>
 		/// Executes the given <paramref name="query"/> using the supplied <paramref name="context"/>.
@@ -62,7 +62,7 @@ namespace Magneto
 		Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, TContext context, CacheOption cacheOption = CacheOption.Default);
 	}
 
-	public interface ISyncCommandInvoker
+	public interface ISyncCommandMediary
 	{
 		/// <summary>
 		/// Executes the given <paramref name="command"/> using the supplied <paramref name="context"/>.
@@ -83,7 +83,7 @@ namespace Magneto
 		TResult Command<TContext, TResult>(ISyncCommand<TContext, TResult> command, TContext context);
 	}
 
-	public interface IAsyncCommandInvoker
+	public interface IAsyncCommandMediary
 	{
 		/// <summary>
 		/// Executes the given <paramref name="command"/> using the supplied <paramref name="context"/>.

@@ -18,29 +18,29 @@ namespace Samples.Controllers
 	[Route("[controller]")]
 	public class UsersController : Controller
 	{
-		readonly IDispatcher _dispatcher;
+		readonly IMagneto _magneto;
 
-		public UsersController(IDispatcher dispatcher) => _dispatcher = dispatcher;
+		public UsersController(IMagneto magneto) => _magneto = magneto;
 
 		[HttpGet("")]
 		public async Task<IActionResult> Index()
 		{
-			var users = await _dispatcher.QueryAsync(new AllUsers());
+			var users = await _magneto.QueryAsync(new AllUsers());
 			return View(users);
 		}
 
 		[HttpGet("{id:int}")]
 		public async Task<IActionResult> Index(int id)
 		{
-			var user = await _dispatcher.QueryAsync(new UserById { Id = id });
-			var userAlbums = _dispatcher.Query(new AlbumsByUserId { UserId = id });
+			var user = await _magneto.QueryAsync(new UserById { Id = id });
+			var userAlbums = _magneto.Query(new AlbumsByUserId { UserId = id });
 			return View("User", new UserViewModel { User = user, Albums = userAlbums });
 		}
 
 		[HttpPost("{id:int}")]
 		public IActionResult Album(int id, string title)
 		{
-			_dispatcher.Command(new SaveAlbum { Album = new Album { Title = title, UserId = id } });
+			_magneto.Command(new SaveAlbum { Album = new Album { Title = title, UserId = id } });
 			return RedirectToAction(nameof(Index), new { id });
 		}
 	}
