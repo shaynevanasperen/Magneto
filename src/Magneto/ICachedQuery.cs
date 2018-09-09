@@ -5,23 +5,23 @@ namespace Magneto
 {
 	public interface ISyncCachedQuery<in TContext, out TCacheEntryOptions, out TResult> : ISyncCachedQuery<TCacheEntryOptions>
 	{
-		TResult Execute(TContext context, ISyncDecorator decorator, ISyncQueryCache<TCacheEntryOptions> queryCache, CacheOption cacheOption = CacheOption.Default);
+		TResult Execute(TContext context, ISyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default);
 	}
 
 	public interface IAsyncCachedQuery<in TContext, out TCacheEntryOptions, TResult> : IAsyncCachedQuery<TCacheEntryOptions>
 	{
-		Task<TResult> ExecuteAsync(TContext context, IAsyncDecorator decorator, IAsyncQueryCache<TCacheEntryOptions> queryCache, CacheOption cacheOption = CacheOption.Default);
+		Task<TResult> ExecuteAsync(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default);
 	}
 
 	public interface ISyncCachedQuery<out TCacheEntryOptions>
 	{
-		void EvictCachedResult(ISyncQueryCache<TCacheEntryOptions> queryCache);
-		void UpdateCachedResult(ISyncQueryCache<TCacheEntryOptions> queryCache);
+		void EvictCachedResult(ISyncCacheStore<TCacheEntryOptions> cacheStore);
+		void UpdateCachedResult(ISyncCacheStore<TCacheEntryOptions> cacheStore);
 	}
 
 	public interface IAsyncCachedQuery<out TCacheEntryOptions>
 	{
-		Task EvictCachedResultAsync(IAsyncQueryCache<TCacheEntryOptions> queryCache);
-		Task UpdateCachedResultAsync(IAsyncQueryCache<TCacheEntryOptions> queryCache);
+		Task EvictCachedResultAsync(IAsyncCacheStore<TCacheEntryOptions> cacheStore);
+		Task UpdateCachedResultAsync(IAsyncCacheStore<TCacheEntryOptions> cacheStore);
 	}
 }

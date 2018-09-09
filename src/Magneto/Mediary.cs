@@ -12,24 +12,26 @@ namespace Magneto
 	/// </summary>
 	public class Mediary : IMediary
 	{
-		readonly ConcurrentDictionary<Type, object> _nullQueryCaches = new ConcurrentDictionary<Type, object>();
+		static readonly ConcurrentDictionary<Type, object> NullCacheStores = new ConcurrentDictionary<Type, object>();
 
 		public Mediary(IServiceProvider serviceProvider = null, IDecorator decorator = null)
 		{
 			ServiceProvider = serviceProvider;
-			Decorator = decorator ?? (IDecorator)serviceProvider?.GetService(typeof(IDecorator)) ?? NullDecorator.Instance;
+			Decorator = decorator ?? serviceProvider?.GetService<IDecorator>() ?? NullDecorator.Instance;
 		}
 
 		protected IServiceProvider ServiceProvider { get; }
 
 		protected IDecorator Decorator { get; }
 
-		protected virtual IQueryCache<TCacheEntryOptions> GetQueryCache<TCacheEntryOptions>() =>
-			(IQueryCache<TCacheEntryOptions>)(ServiceProvider?.GetService(typeof(IQueryCache<TCacheEntryOptions>)) ?? _nullQueryCaches.GetOrAdd(typeof(TCacheEntryOptions), x => new NullQueryCache<TCacheEntryOptions>()));
+		protected virtual ICacheStore<TCacheEntryOptions> GetCacheStore<TCacheEntryOptions>() =>
+			ServiceProvider?.GetService<ICacheStore<TCacheEntryOptions>>() ?? NullCacheStores.GetOrAdd<ICacheStore<TCacheEntryOptions>>(() => new NullCacheStore<TCacheEntryOptions>());
 
-		protected virtual ISyncQueryCache<TCacheEntryOptions> GetSyncQueryCache<TCacheEntryOptions>() => GetQueryCache<TCacheEntryOptions>();
+		protected virtual ISyncCacheStore<TCacheEntryOptions> GetSyncCacheStore<TCacheEntryOptions>() => GetCacheStore<TCacheEntryOptions>();
 
-		protected virtual IAsyncQueryCache<TCacheEntryOptions> GetAsyncQueryCache<TCacheEntryOptions>() => GetQueryCache<TCacheEntryOptions>();
+		protected virtual IAsyncCacheStore<TCacheEntryOptions> GetAsyncCacheStore<TCacheEntryOptions>() => GetCacheStore<TCacheEntryOptions>();
+
+		protected virtual string GetOperationName(object instance, string methodName) => $"{instance.GetType().FullName}.{methodName}";
 
 		/// <inheritdoc cref="ISyncQueryMediary.Query{TContext,TResult}"/>
 		public virtual TResult Query<TContext, TResult>(ISyncQuery<TContext, TResult> query, TContext context)
@@ -37,7 +39,7 @@ namespace Magneto
 			if (query == null) throw new ArgumentNullException(nameof(query));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(query, context, x => query.Execute(x));
+			return Decorator.Decorate(GetOperationName(query, nameof(query.Execute)), () => query.Execute(context));
 		}
 
 		/// <inheritdoc cref="IAsyncQueryMediary.QueryAsync{TContext,TResult}"/>
@@ -46,7 +48,7 @@ namespace Magneto
 			if (query == null) throw new ArgumentNullException(nameof(query));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(query, context, query.ExecuteAsync);
+			return Decorator.Decorate(GetOperationName(query, nameof(query.ExecuteAsync)), () => query.ExecuteAsync(context));
 		}
 
 		/// <inheritdoc cref="ISyncQueryMediary.Query{TContext,TCacheEntryOptions,TResult}"/>
@@ -55,7 +57,7 @@ namespace Magneto
 			if (query == null) throw new ArgumentNullException(nameof(query));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return query.Execute(context, Decorator, GetSyncQueryCache<TCacheEntryOptions>(), cacheOption);
+			return Decorator.Decorate(GetOperationName(query, nameof(query.Execute)), () => query.Execute(context, GetSyncCacheStore<TCacheEntryOptions>(), cacheOption));
 		}
 
 		/// <inheritdoc cref="IAsyncQueryMediary.QueryAsync{TContext,TCacheEntryOptions,TResult}"/>
@@ -64,7 +66,7 @@ namespace Magneto
 			if (query == null) throw new ArgumentNullException(nameof(query));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return query.ExecuteAsync(context, Decorator, GetAsyncQueryCache<TCacheEntryOptions>(), cacheOption);
+			return Decorator.Decorate(GetOperationName(query, nameof(query.ExecuteAsync)), () => query.ExecuteAsync(context, GetAsyncCacheStore<TCacheEntryOptions>(), cacheOption));
 		}
 
 		/// <inheritdoc cref="ISyncCacheManager.EvictCachedResult{TCacheEntryOptions}"/>
@@ -72,7 +74,7 @@ namespace Magneto
 		{
 			if (query == null) throw new ArgumentNullException(nameof(query));
 
-			query.EvictCachedResult(GetSyncQueryCache<TCacheEntryOptions>());
+			Decorator.Decorate(GetOperationName(query, nameof(query.EvictCachedResult)), () => query.EvictCachedResult(GetSyncCacheStore<TCacheEntryOptions>()));
 		}
 
 		/// <inheritdoc cref="IAsyncCacheManager.EvictCachedResultAsync{TCacheEntryOptions}"/>
@@ -80,7 +82,7 @@ namespace Magneto
 		{
 			if (query == null) throw new ArgumentNullException(nameof(query));
 
-			return query.EvictCachedResultAsync(GetAsyncQueryCache<TCacheEntryOptions>());
+			return Decorator.Decorate(GetOperationName(query, nameof(query.EvictCachedResultAsync)), () => query.EvictCachedResultAsync(GetAsyncCacheStore<TCacheEntryOptions>()));
 		}
 
 		/// <inheritdoc cref="ISyncCacheManager.UpdateCachedResult{TCacheEntryOptions}"/>
@@ -88,7 +90,7 @@ namespace Magneto
 		{
 			if (executedQuery == null) throw new ArgumentNullException(nameof(executedQuery));
 
-			executedQuery.UpdateCachedResult(GetSyncQueryCache<TCacheEntryOptions>());
+			Decorator.Decorate(GetOperationName(executedQuery, nameof(executedQuery.UpdateCachedResult)), () => executedQuery.UpdateCachedResult(GetSyncCacheStore<TCacheEntryOptions>()));
 		}
 
 		/// <inheritdoc cref="IAsyncCacheManager.UpdateCachedResultAsync{TCacheEntryOptions}"/>
@@ -96,7 +98,7 @@ namespace Magneto
 		{
 			if (executedQuery == null) throw new ArgumentNullException(nameof(executedQuery));
 
-			return executedQuery.UpdateCachedResultAsync(GetAsyncQueryCache<TCacheEntryOptions>());
+			return Decorator.Decorate(GetOperationName(executedQuery, nameof(executedQuery.UpdateCachedResultAsync)), () => executedQuery.UpdateCachedResultAsync(GetAsyncCacheStore<TCacheEntryOptions>()));
 		}
 
 		/// <inheritdoc cref="ISyncCommandMediary.Command{TContext}"/>
@@ -105,7 +107,7 @@ namespace Magneto
 			if (command == null) throw new ArgumentNullException(nameof(command));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			Decorator.Decorate(command, context, x => command.Execute(x));
+			Decorator.Decorate(GetOperationName(command, nameof(command.Execute)), () => command.Execute(context));
 		}
 
 		/// <inheritdoc cref="IAsyncCommandMediary.CommandAsync{TContext}"/>
@@ -114,7 +116,7 @@ namespace Magneto
 			if (command == null) throw new ArgumentNullException(nameof(command));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(command, context, command.ExecuteAsync);
+			return Decorator.Decorate(GetOperationName(command, nameof(command.ExecuteAsync)), () => command.ExecuteAsync(context));
 		}
 
 		/// <inheritdoc cref="ISyncCommandMediary.Command{TContext,TResult}"/>
@@ -123,7 +125,7 @@ namespace Magneto
 			if (command == null) throw new ArgumentNullException(nameof(command));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(command, context, x => command.Execute(x));
+			return Decorator.Decorate(GetOperationName(command, nameof(command.Execute)), () => command.Execute(context));
 		}
 
 		/// <inheritdoc cref="IAsyncCommandMediary.CommandAsync{TContext,TResult}"/>
@@ -132,7 +134,7 @@ namespace Magneto
 			if (command == null) throw new ArgumentNullException(nameof(command));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(command, context, command.ExecuteAsync);
+			return Decorator.Decorate(GetOperationName(command, nameof(command.ExecuteAsync)), () => command.ExecuteAsync(context));
 		}
 	}
 }

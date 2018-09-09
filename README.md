@@ -108,14 +108,14 @@ public class ApplicationInsightsDecorator : IDecorator
 
     public ApplicationInsightsDecorator(TelemetryClient telemetryClient) => _telemetryClient = telemetryClient;
 
-    public TResult Decorate<TContext, TResult>(object operation, TContext context, Func<TContext, TResult> invoke)
+    public TResult Decorate<TResult>(string operationName, Func<TResult> invoke)
     {
         try
         {
             var stopwatch = Stopwatch.StartNew();
-            var result = invoke(context);
+            var result = invoke();
             var elapsed = stopwatch.Elapsed.TotalMilliseconds;
-            _telemetryClient.TrackMetric(operation.GetType().FullName, elapsed);
+            _telemetryClient.TrackMetric(operationName, elapsed);
             return result;
         }
         catch (Exception e)
