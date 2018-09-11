@@ -14,22 +14,14 @@ namespace Magneto.Core
 
 		public Task SetAsync<T>(T queryResult, ICacheInfo cacheInfo, Func<TCacheEntryOptions> getCacheEntryOptions)
 		{
-#if NETSTANDARD1_3 || NET46
 			return Task.CompletedTask;
-#else
-			return Task.FromResult(0);
-#endif
 		}
 
 		public void Evict(string cacheKey) { }
 
 		public Task EvictAsync(string cacheKey)
 		{
-#if NETSTANDARD1_3 || NET46
 			return Task.CompletedTask;
-#else
-			return Task.FromResult(0);
-#endif
 		}
 	}
 }

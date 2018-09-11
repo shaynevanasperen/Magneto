@@ -1,15 +1,17 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Magneto;
 using Magneto.Configuration;
 using Magneto.Microsoft;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using Polly;
 using Samples.Domain;
 using Samples.Infrastructure;
 
@@ -55,11 +57,20 @@ namespace Samples
 			services.AddSingleton<IDecorator, ApplicationInsightsDecorator>();
 			services.AddScoped<IInvoker, Invoker>();
 
-			services.AddSingleton(new JsonPlaceHolderHttpClient());
 			services.AddSingleton(Environment.WebRootFileProvider);
+			services
+				.AddTransient<EnsureSuccessHandler>()
+				.AddHttpClient<JsonPlaceHolderHttpClient>()
+				.AddHttpMessageHandler<EnsureSuccessHandler>()
+				.AddTransientHttpErrorPolicy(x => x.WaitAndRetryAsync(new[]
+				{
+					TimeSpan.FromSeconds(1),
+					TimeSpan.FromSeconds(5),
+					TimeSpan.FromSeconds(10)
+				}));
 			services.AddScoped<IDispatcher, Dispatcher>();
-
-			services.AddMvc();
+			
+			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -70,14 +81,16 @@ namespace Samples
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
-				app.UseBrowserLink();
 			}
 			else
 			{
 				app.UseExceptionHandler("/Error");
+				app.UseHsts();
 			}
 
+			app.UseHttpsRedirection();
 			app.UseStaticFiles();
+			app.UseCookiePolicy();
 
 			app.UseMvc();
 		}

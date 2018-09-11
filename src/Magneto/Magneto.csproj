@@ -2,8 +2,7 @@
 	<Import Project="..\..\Magneto.Common.props" />
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard1.1;netstandard1.3;net45;net46</TargetFrameworks>
-		<DisableImplicitFrameworkReferences Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net46'">true</DisableImplicitFrameworkReferences>
+		<TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
 		<Description>A library for implementing the Command Pattern, providing of a set of base classes and an invoker class. Useful for abstracting data access and API calls as either queries (for read operations) or commands (for write operations).</Description>
 		<PackageTags>query command object queryobject commandobject mediator cqs cqrs operation read write cache caching async mock mocking</PackageTags>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -12,25 +11,10 @@
 		<NoWarn>$(NoWarn);1591</NoWarn>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard1.3'">
-		<PackageReference Include="System.ComponentModel" Version="4.3.0" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net46'">
-		<Reference Include="System.Core" />
-	</ItemGroup>
-
 	<ItemGroup>
 		<PackageReference Include="Code.Extensions.Generic.QuasiEquals" Version="1.0.0" PrivateAssets="All" />
-		<PackageReference Include="Code.Extensions.Object.Flatten" Version="1.0.1" PrivateAssets="All" />
-		<PackageReference Include="Code.Extensions.Object.ToEnumerable" Version="1.0.1" PrivateAssets="All" />
-		<PackageReference Include="SourceLink.Create.GitHub" Version="2.1.0" PrivateAssets="All" />
-		<PackageReference Include="SourceLink.Test" Version="2.1.0" PrivateAssets="All" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<DotNetCliToolReference Include="dotnet-sourcelink-git" Version="2.1.0" />
-		<DotNetCliToolReference Include="dotnet-sourcelink" Version="2.1.0" />
+		<PackageReference Include="Code.Extensions.Object.Flatten" Version="1.0.3" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63102-01" PrivateAssets="All" />
 	</ItemGroup>
 
 </Project>

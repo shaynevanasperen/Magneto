@@ -13,7 +13,7 @@ namespace Magneto.Tests.Configuration.QueryCacheTests
 		protected QueryResult QueryResult = new QueryResult();
 		protected QueryResult Result;
 
-		protected void Setup()
+		public override void Setup()
 		{
 			The<ICacheInfo>().Key.Returns("Key");
 			The<IQuery>().GetCacheEntryOptions().Returns(CacheEntryOptions);
@@ -195,7 +195,7 @@ namespace Magneto.Tests.Configuration.QueryCacheTests
 		protected CacheEntryOptions CacheEntryOptions = new CacheEntryOptions();
 		protected QueryResult QueryResult;
 
-		protected void Setup()
+		public override void Setup()
 		{
 			The<ICacheInfo>().Key.Returns("Key");
 			The<IQuery>().GetCacheEntryOptions().Returns(CacheEntryOptions);

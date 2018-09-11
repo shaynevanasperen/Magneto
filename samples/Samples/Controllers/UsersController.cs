@@ -84,7 +84,7 @@ namespace Samples.Controllers
 		protected override MemoryCacheEntryOptions GetCacheEntryOptions(IFileProvider context) =>
 			new MemoryCacheEntryOptions()
 				.AddExpirationToken(context.Watch(Filename))
-				.RegisterPostEvictionCallback((echoKey, value, reason, substate) =>
+				.RegisterPostEvictionCallback((echoKey, value, reason, state) =>
 				{
 					Console.WriteLine($"{echoKey} : {value} was evicted due to {reason}");
 				});

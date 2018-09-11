@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Samples.Models;
 
 namespace Samples.Controllers
 {
@@ -8,6 +10,7 @@ namespace Samples.Controllers
 		public IActionResult Index() => View();
 
 		[Route("Error")]
-		public IActionResult Error() => View();
+		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+		public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 	}
 }
