@@ -15,7 +15,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 		protected CacheOption CacheOption;
 		protected object Result;
 
-		protected virtual void Setup()
+		public override void Setup()
 		{
 			SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
 			The<IDecorator>().Decorate(Arg.Any<object>(), Arg.Any<QueryContext>(), Arg.Any<Func<QueryContext, Task<QueryResult>>>()).Returns(x => x.ArgAt<Func<QueryContext, Task<QueryResult>>>(2).Invoke(QueryContext));
@@ -76,7 +76,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 		{
 			protected Func<CacheEntryOptions> GetCacheEntryOptions;
 
-			protected override void Setup()
+			public override void Setup()
 			{
 				base.Setup();
 				The<IAsyncQueryCache<CacheEntryOptions>>()
@@ -107,7 +107,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 
 	public class EvictingCachedResult : ScenarioFor<AsyncCachedQuery<QueryContext, CacheEntryOptions, QueryResult>>
 	{
-		void Setup() => SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
+		public override void Setup() => SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
 		
 		void WhenEvictingCachedResult() => SUT.EvictCachedResultAsync(The<IAsyncQueryCache<object>>());
 		void ThenItDelegatesToTheQueryCache() => The<IAsyncQueryCache<object>>().Received().EvictAsync(SUT.State.CacheInfo.Key);
@@ -115,7 +115,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 
 	public abstract class UpdatingCachedResult : ScenarioFor<AsyncCachedQuery<QueryContext, CacheEntryOptions, QueryResult>>
 	{
-		protected void Setup() => SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
+		public override void Setup() => SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
 
 		public class QueryWasNotExecuted : UpdatingCachedResult
 		{
@@ -124,7 +124,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 			void GivenTheQueryWasNotExecuted() { }
 			void WhenUpdatingCachedResult() => _invocation = SUT.Invoking(x => x.UpdateCachedResultAsync(The<IAsyncQueryCache<CacheEntryOptions>>()));
 			void ThenTheCacheEntryOptionsAreNotRequested() => The<IAsyncCachedQueryStub>().DidNotReceive().GetCacheEntryOptions(Arg.Any<QueryContext>());
-			void AndThenItThrowsAnExceptionStatingThatTheCachedResultIsNotAvailable() => _invocation.ShouldThrow<InvalidOperationException>().Which.Message.Should().Be("Cached result is not available");
+			void AndThenItThrowsAnExceptionStatingThatTheCachedResultIsNotAvailable() => _invocation.Should().Throw<InvalidOperationException>().Which.Message.Should().Be("Cached result is not available");
 		}
 
 		public abstract class QueryWasExecuted : UpdatingCachedResult

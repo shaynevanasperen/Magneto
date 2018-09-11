@@ -14,7 +14,7 @@ namespace Magneto.Tests.Core.CacheInfoTests
 
 	public abstract class SettingKeyPrefix : ScenarioFor<CacheInfo>
 	{
-		protected void Setup()
+		public override void Setup()
 		{
 			The<IKeyCreator>().CreateKey(Arg.Any<string>(), Arg.Any<object>()).Returns(x => x.ArgAt<string>(0));
 			SUT = new CacheInfo(TestKeyPrefix.Value, The<IKeyCreator>().CreateKey);
@@ -29,17 +29,17 @@ namespace Magneto.Tests.Core.CacheInfoTests
 
 			public class Null : InvalidValue
 			{
-				void WhenSettingKeyPrefixToNull() => Exception = SUT.Invoking(x => x.KeyPrefix = null).ShouldThrow<Exception>().Subject.Single();
+				void WhenSettingKeyPrefixToNull() => Exception = SUT.Invoking(x => x.KeyPrefix = null).Should().Throw<Exception>().Subject.Single();
 			}
 
 			public class Empty : InvalidValue
 			{
-				void WhenSettingKeyPrefixToEmpty() => Exception = SUT.Invoking(x => x.KeyPrefix = "").ShouldThrow<Exception>().Subject.Single();
+				void WhenSettingKeyPrefixToEmpty() => Exception = SUT.Invoking(x => x.KeyPrefix = "").Should().Throw<Exception>().Subject.Single();
 			}
 
 			public class Whitespace : InvalidValue
 			{
-				void WhenSettingKeyPrefixToWhitespace() => Exception = SUT.Invoking(x => x.KeyPrefix = " ").ShouldThrow<Exception>().Subject.Single();
+				void WhenSettingKeyPrefixToWhitespace() => Exception = SUT.Invoking(x => x.KeyPrefix = " ").Should().Throw<Exception>().Subject.Single();
 			}
 		}
 		
@@ -52,7 +52,7 @@ namespace Magneto.Tests.Core.CacheInfoTests
 
 	public class SettingVaryBy : ScenarioFor<CacheInfo>
 	{
-		void Setup()
+		public override void Setup()
 		{
 			The<IKeyCreator>().CreateKey(Arg.Any<string>(), Arg.Any<object>()).Returns(x => x.ArgAt<object>(1));
 			SUT = new CacheInfo(TestKeyPrefix.Value, The<IKeyCreator>().CreateKey) { VaryBy = "VaryBy" };
@@ -67,7 +67,7 @@ namespace Magneto.Tests.Core.CacheInfoTests
 	{
 		protected object Result;
 
-		protected void Setup() => SUT = new CacheInfo(TestKeyPrefix.Value);
+		public override void Setup() => SUT = new CacheInfo(TestKeyPrefix.Value);
 
 		protected void WhenGettingKey() => Result = SUT.Key;
 
@@ -135,18 +135,19 @@ namespace Magneto.Tests.Core.CacheInfoTests
 			public VaryByAsAPrimitive() => Examples = new ExampleTable("VaryBy")
 			{
 				true,
-				byte.MaxValue,
+				byte.MinValue,
 				sbyte.MinValue,
-				char.MaxValue,
-				decimal.MinValue,
-				double.MinValue,
-				float.MinValue,
+				short.MinValue,
+				ushort.MinValue,
 				int.MinValue,
 				uint.MinValue,
 				long.MinValue,
-				ulong.MaxValue,
-				short.MinValue,
-				ushort.MaxValue
+				ulong.MinValue,
+				new IntPtr(int.MaxValue),
+				new UIntPtr(uint.MaxValue),
+				char.MinValue,
+				double.MinValue,
+				float.MinValue
 			};
 
 			void GivenAVaryByAsAPrimitive(object varyBy) => SUT.VaryBy = varyBy;
@@ -163,6 +164,12 @@ namespace Magneto.Tests.Core.CacheInfoTests
 		{
 			void GivenAVaryByAsADateTime() => SUT.VaryBy = DateTime.Today;
 			void ThenTheResultIsTheKeyPrefixPlusTheVaryByStringRepresentationJoinedByAnUnderscore() => Result.Should().Be(TestKeyPrefix.Value + "_" + DateTime.Today);
+		}
+
+		public class VaryByAsADecimal : GettingKey
+		{
+			void GivenAVaryByAsADecimal() => SUT.VaryBy = decimal.MinValue;
+			void ThenTheResultIsTheKeyPrefixPlusTheVaryByJoinedByAnUnderscore() => Result.Should().Be(TestKeyPrefix.Value + "_" + decimal.MinValue);
 		}
 
 		public class VaryByAsAnObjectWithoutPublicProperties : GettingKey

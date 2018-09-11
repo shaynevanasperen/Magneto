@@ -54,11 +54,7 @@ namespace Magneto.Microsoft
 			if (cacheEntryOptions == null) throw new ArgumentNullException(nameof(cacheEntryOptions));
 
 			Set(key, item, cacheEntryOptions);
-#if NETSTANDARD1_3
 			return Task.CompletedTask;
-#else
-			return Task.FromResult(0);
-#endif
 		}
 
 		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.RemoveAsync"/>
@@ -67,11 +63,7 @@ namespace Magneto.Microsoft
 			if (key == null) throw new ArgumentNullException(nameof(key));
 
 			Remove(key);
-#if NETSTANDARD1_3
 			return Task.CompletedTask;
-#else
-			return Task.FromResult(0);
-#endif
 		}
 	}
 }

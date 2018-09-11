@@ -47,7 +47,7 @@ namespace Magneto.Core
 		public override int GetHashCode()
 		{
 			var segments = new List<object> { GetType().FullName };
-			segments.AddRange(this.ToEnumerable());
+			segments.AddRange(this.Flatten());
 			return string.Join("|", segments).GetHashCode();
 		}
 	}

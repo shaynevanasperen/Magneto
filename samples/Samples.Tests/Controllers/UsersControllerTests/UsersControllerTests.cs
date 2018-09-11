@@ -40,7 +40,7 @@ namespace Samples.Tests.Controllers.UsersControllerTests
 		void AndGivenThereAreSomeAlbumsForTheKnownUser() => The<IDispatcher>().Query(new AlbumsByUserId { UserId = _user.Id }).Returns(_albums);
 		async Task WhenGettingIndexWithKnownUserId() => _result = await SUT.Index(_user.Id);
 		void ThenTheUserViewIsDisplayed() => _result.Should().BeOfType<ViewResult>().Which.ViewName.Should().Be("User");
-		void AndThenViewModelIsTheKnownUserAndItsAlbums() => _result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<UserViewModel>().Which.ShouldBeEquivalentTo(new UserViewModel
+		void AndThenViewModelIsTheKnownUserAndItsAlbums() => _result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<UserViewModel>().Which.Should().BeEquivalentTo(new UserViewModel
 		{
 			User = _user,
 			Albums = _albums
