@@ -53,6 +53,6 @@ namespace Samples.Tests.Controllers.UsersControllerTests
 
 		void WhenPostingAlbum() => _result = SUT.Album(1, "Title");
 		void ThenTheAlbumIsSaved() => The<IMagneto>().Received().Command(new SaveAlbum { Album = new Album { UserId = 1, Title = "Title" } });
-		void AndThenTheReponseIsRedirectedToTheUser() => _result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("Index");
+		void AndThenTheResponseIsRedirectedToTheUser() => _result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("Index");
 	}
 }
