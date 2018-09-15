@@ -16,7 +16,7 @@ namespace Magneto.Core
 			if (context == null) throw new ArgumentNullException(nameof(context));
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));
 
-			State.Inject(context);
+			State.Context = context;
 
 			if (cacheOption == CacheOption.Default)
 			{
@@ -25,9 +25,9 @@ namespace Magneto.Core
 					return State.CachedResult = cacheEntry.Value;
 			}
 
-			State.CachedResult = Query(context);
-			cacheStore.Set(State.CacheKey, State.CachedResult.ToCacheEntry(), State.GetCacheEntryOptions());
-			return State.CachedResult;
+			var cachedResult = Query(State.Context);
+			cacheStore.Set(State.CacheKey, cachedResult.ToCacheEntry(), State.CacheEntryOptions);
+			return State.CachedResult = cachedResult;
 		}
 
 		/// <inheritdoc cref="ISyncCachedQuery{TCacheEntryOptions}.EvictCachedResult"/>
@@ -43,7 +43,7 @@ namespace Magneto.Core
 		{
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));
 
-			cacheStore.Set(State.CacheKey, State.CachedResult.ToCacheEntry(), State.GetCacheEntryOptions());
+			cacheStore.Set(State.CacheKey, State.CachedResult.ToCacheEntry(), State.CacheEntryOptions);
 		}
 	}
 
@@ -59,7 +59,7 @@ namespace Magneto.Core
 			if (context == null) throw new ArgumentNullException(nameof(context));
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));
 
-			State.Inject(context);
+			State.Context = context;
 
 			if (cacheOption == CacheOption.Default)
 			{
@@ -68,9 +68,9 @@ namespace Magneto.Core
 					return State.CachedResult = cacheEntry.Value;
 			}
 
-			State.CachedResult = await QueryAsync(context).ConfigureAwait(false);
-			await cacheStore.SetAsync(State.CacheKey, State.CachedResult.ToCacheEntry(), State.GetCacheEntryOptions()).ConfigureAwait(false);
-			return State.CachedResult;
+			var cachedResult = await QueryAsync(State.Context).ConfigureAwait(false);
+			await cacheStore.SetAsync(State.CacheKey, cachedResult.ToCacheEntry(), State.CacheEntryOptions).ConfigureAwait(false);
+			return State.CachedResult = cachedResult;
 		}
 
 		/// <inheritdoc cref="IAsyncCachedQuery{TCacheEntryOptions}.EvictCachedResultAsync"/>
@@ -86,7 +86,7 @@ namespace Magneto.Core
 		{
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));
 
-			return cacheStore.SetAsync(State.CacheKey, State.CachedResult.ToCacheEntry(), State.GetCacheEntryOptions());
+			return cacheStore.SetAsync(State.CacheKey, State.CachedResult.ToCacheEntry(), State.CacheEntryOptions);
 		}
 	}
 
@@ -126,24 +126,19 @@ namespace Magneto.Core
 
 		internal class Store
 		{
-			readonly CachedQuery<TContext, TCacheEntryOptions, TCachedResult> _query;
-
 			public Store(CachedQuery<TContext, TCacheEntryOptions, TCachedResult> query, Func<string> makeCacheKey)
 			{
-				_query = query;
 				_cacheKey = new Lazy<string>(makeCacheKey);
+				_cacheEntryOptions = new Lazy<TCacheEntryOptions>(() => query.GetCacheEntryOptions(Context));
 			}
 
-			internal void Inject(TContext context)
-			{
-				_cacheEntryOptions = new Lazy<TCacheEntryOptions>(() => _query.GetCacheEntryOptions(context));
-			}
-
-			Lazy<TCacheEntryOptions> _cacheEntryOptions;
-			internal TCacheEntryOptions GetCacheEntryOptions() => _cacheEntryOptions.Value;
+			internal TContext Context;
 
 			readonly Lazy<string> _cacheKey;
 			internal string CacheKey => _cacheKey.Value;
+
+			readonly Lazy<TCacheEntryOptions> _cacheEntryOptions;
+			internal TCacheEntryOptions CacheEntryOptions => _cacheEntryOptions.Value;
 
 			bool _hasCachedResult;
 			TCachedResult _cachedResult;
