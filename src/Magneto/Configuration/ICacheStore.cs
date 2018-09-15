@@ -3,10 +3,14 @@ using Magneto.Core;
 
 namespace Magneto.Configuration
 {
+	/// <summary>
+	/// A store for managing cache entries.
+	/// </summary>
+	/// <typeparam name="TCacheEntryOptions">The type of cache entry options relating to cache entries.</typeparam>
 	public interface ICacheStore<in TCacheEntryOptions> : ISyncCacheStore<TCacheEntryOptions>, IAsyncCacheStore<TCacheEntryOptions> { }
 
 	/// <summary>
-	/// A store for managing cache entries synchronously
+	/// A store for managing cache entries synchronously.
 	/// </summary>
 	/// <typeparam name="TCacheEntryOptions">The type of cache entry options relating to cache entries.</typeparam>
 	public interface ISyncCacheStore<in TCacheEntryOptions>
@@ -36,7 +40,7 @@ namespace Magneto.Configuration
 	}
 
 	/// <summary>
-	/// A store for managing cache entries asynchronously
+	/// A store for managing cache entries asynchronously.
 	/// </summary>
 	/// <typeparam name="TCacheEntryOptions">The type of cache entry options relating to cache entries.</typeparam>
 	public interface IAsyncCacheStore<in TCacheEntryOptions>

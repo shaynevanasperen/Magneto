@@ -2,8 +2,14 @@
 
 namespace Magneto
 {
+	/// <summary>
+	/// A mediary for managing cached results of queries.
+	/// </summary>
 	public interface ICacheManager : ISyncCacheManager, IAsyncCacheManager { }
 
+	/// <summary>
+	/// A mediary for managing cached results of queries synchronously.
+	/// </summary>
 	public interface ISyncCacheManager
 	{
 		/// <summary>
@@ -14,8 +20,8 @@ namespace Magneto
 		void EvictCachedResult<TCacheEntryOptions>(ISyncCachedQuery<TCacheEntryOptions> query);
 
 		/// <summary>
-		/// Updates the previously cached result of <paramref name="executedQuery"/> in the cache. This is typically used only when working with a distributed cache.
-		/// Not required when using an in-memory cache because any mutations to the cached result would be reflected in the cache.
+		/// <para>Updates the previously cached result of <paramref name="executedQuery"/> in the cache. This is typically used only when working with a distributed cache.</para>
+		/// <para>Not required when using an in-memory cache because any mutations to the cached result would be reflected in the cache.</para>
 		/// <remarks>Should only be used with instances of query objects which have already been executed.</remarks>
 		/// </summary>
 		/// <typeparam name="TCacheEntryOptions">The type of cache entry options configured by the <paramref name="executedQuery"/>.</typeparam>
@@ -23,6 +29,9 @@ namespace Magneto
 		void UpdateCachedResult<TCacheEntryOptions>(ISyncCachedQuery<TCacheEntryOptions> executedQuery);
 	}
 
+	/// <summary>
+	/// A mediary for managing cached results of queries asynchronously.
+	/// </summary>
 	public interface IAsyncCacheManager
 	{
 		/// <summary>
@@ -34,9 +43,9 @@ namespace Magneto
 		Task EvictCachedResultAsync<TCacheEntryOptions>(IAsyncCachedQuery<TCacheEntryOptions> query);
 
 		/// <summary>
-		/// Updates the previously cached result of <paramref name="executedQuery"/> in the cache. This is typically used only when working with a distributed cache.
-		/// Not required when using an in-memory cache because any mutations to the cached result would be reflected in the cache.
-		/// <remarks>Should only be used with instances of query objects which have already been executed.</remarks> 
+		/// <para>Updates the previously cached result of <paramref name="executedQuery"/> in the cache. This is typically used only when working with a distributed cache.</para>
+		/// <para>Not required when using an in-memory cache because any mutations to the cached result would be reflected in the cache.</para>
+		/// <remarks>Should only be used with instances of query objects which have already been executed.</remarks>
 		/// </summary>
 		/// <typeparam name="TCacheEntryOptions">The type of cache entry options configured by the <paramref name="executedQuery"/>.</typeparam>
 		/// <param name="executedQuery">The previously executed query object for which the cached result should be updated.</param>
