@@ -21,10 +21,10 @@ Define a query object:
 public class PostById : AsyncQuery<HttpClient, Post>
 {
     // The context here is an HttpClient, but it could be an IDbConnection or anything you want
-    public override async Task<Post> ExecuteAsync(HttpClient context)
+    public override async Task<Post> ExecuteAsync(HttpClient context, CancellationToken cancellationToken = default)
     {
-        var response = await context.GetAsync($"https://jsonplaceholder.typicode.com/posts/{Id}");
-        return await response.Content.ReadAsAsync<Post>();
+        var response = await context.GetAsync($"https://jsonplaceholder.typicode.com/posts/{Id}", cancellationToken);
+        return await response.Content.ReadAsAsync<Post>(cancellationToken);
     }
     
     // We could also add a constructor and make this a readonly property
@@ -63,10 +63,10 @@ public class CommentsByPostId : AsyncCachedQuery<HttpClient, MemoryCacheEntryOpt
     protected override MemoryCacheEntryOptions GetCacheEntryOptions(HttpClient context) =>
         new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 
-    protected override async Task<Comment[]> QueryAsync(HttpClient context)
+    protected override async Task<Comment[]> QueryAsync(HttpClient context, CancellationToken cancellationToken = default)
     {
-        var response = await context.GetAsync($"https://jsonplaceholder.typicode.com/posts/{PostId}/comments");
-        return await response.Content.ReadAsAsync<Comment[]>();
+        var response = await context.GetAsync($"https://jsonplaceholder.typicode.com/posts/{PostId}/comments", cancellationToken);
+        return await response.Content.ReadAsAsync<Comment[]>(cancellationToken);
     }
     
     public int PostId { get; set; }
@@ -81,13 +81,13 @@ public class UserById : AsyncTransformedCachedQuery<HttpClient, DistributedCache
     protected override DistributedCacheEntryOptions GetCacheEntryOptions(HttpClient context) =>
         new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
     
-    protected override async Task<User[]> QueryAsync(HttpClient context)
+    protected override async Task<User[]> QueryAsync(HttpClient context, CancellationToken cancellationToken = default)
     {
-        var response = await context.GetAsync("https://jsonplaceholder.typicode.com/users");
-        return await response.Content.ReadAsAsync<User[]>();
+        var response = await context.GetAsync("https://jsonplaceholder.typicode.com/users", cancellationToken);
+        return await response.Content.ReadAsAsync<User[]>(cancellationToken);
     }
     
-    protected override Task<User> TransformCachedResultAsync(User[] cachedResult) =>
+    protected override Task<User> TransformCachedResultAsync(User[] cachedResult, CancellationToken cancellationToken = default) =>
         Task.FromResult(cachedResult.Single(x => x.Id == Id));
     
     public int Id { get; set; }

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Magneto;
 using Microsoft.AspNetCore.Mvc;
@@ -51,10 +52,10 @@ namespace Samples.Controllers
 
 		protected override DistributedCacheEntryOptions GetCacheEntryOptions(JsonPlaceHolderHttpClient context) => User.AllUsersCacheEntryOptions(context);
 
-		protected override async Task<User[]> QueryAsync(JsonPlaceHolderHttpClient context)
+		protected override async Task<User[]> QueryAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default)
 		{
-			var response = await context.GetAsync("/users");
-			return await response.Content.ReadAsAsync<User[]>();
+			var response = await context.GetAsync("/users", cancellationToken);
+			return await response.Content.ReadAsAsync<User[]>(cancellationToken);
 		}
 
 		public int Id { get; set; }
@@ -66,13 +67,13 @@ namespace Samples.Controllers
 
 		protected override DistributedCacheEntryOptions GetCacheEntryOptions(JsonPlaceHolderHttpClient context) => User.AllUsersCacheEntryOptions(context);
 
-		protected override async Task<User[]> QueryAsync(JsonPlaceHolderHttpClient context)
+		protected override async Task<User[]> QueryAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default)
 		{
-			var response = await context.GetAsync("/users");
-			return await response.Content.ReadAsAsync<User[]>();
+			var response = await context.GetAsync("/users", cancellationToken);
+			return await response.Content.ReadAsAsync<User[]>(cancellationToken);
 		}
 
-		protected override Task<User> TransformCachedResultAsync(User[] cachedResult) => Task.FromResult(cachedResult.Single(x => x.Id == Id));
+		protected override Task<User> TransformCachedResultAsync(User[] cachedResult, CancellationToken cancellationToken = default) => Task.FromResult(cachedResult.Single(x => x.Id == Id));
 
 		public int Id { get; set; }
 	}

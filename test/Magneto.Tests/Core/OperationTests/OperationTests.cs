@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Magneto.Core;
@@ -298,7 +299,7 @@ namespace Magneto.Tests.Core.OperationTests
 
 	public class AsyncQueryWithoutProperties : AsyncQuery<object, object>
 	{
-		public override Task<object> ExecuteAsync(object context) => throw new NotImplementedException();
+		public override Task<object> ExecuteAsync(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 	}
 
 	public class SyncCachedQueryWithoutProperties : SyncCachedQuery<object, object, object>
@@ -310,7 +311,7 @@ namespace Magneto.Tests.Core.OperationTests
 	public class AsyncCachedQueryWithoutProperties : AsyncCachedQuery<object, object, object>
 	{
 		protected override object GetCacheEntryOptions(object context) => throw new NotImplementedException();
-		protected override Task<object> QueryAsync(object context) => throw new NotImplementedException();
+		protected override Task<object> QueryAsync(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 	}
 
 	public class SyncTransformedCachedQueryWithoutProperties : SyncTransformedCachedQuery<object, object, object, object>
@@ -323,8 +324,8 @@ namespace Magneto.Tests.Core.OperationTests
 	public class AsyncTransformedCachedQueryWithoutProperties : AsyncTransformedCachedQuery<object, object, object, object>
 	{
 		protected override object GetCacheEntryOptions(object context) => throw new NotImplementedException();
-		protected override Task<object> QueryAsync(object context) => throw new NotImplementedException();
-		protected override Task<object> TransformCachedResultAsync(object cachedResult) => throw new NotImplementedException();
+		protected override Task<object> QueryAsync(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		protected override Task<object> TransformCachedResultAsync(object cachedResult, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 	}
 
 	public class SyncCommandWithoutProperties : SyncCommand<object>
@@ -337,7 +338,7 @@ namespace Magneto.Tests.Core.OperationTests
 
 	public class AsyncCommandWithoutProperties : AsyncCommand<object>
 	{
-		public override Task ExecuteAsync(object context) => throw new NotImplementedException();
+		public override Task ExecuteAsync(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 	}
 
 	public class SyncReturningCommandWithoutProperties : SyncCommand<object, object>
@@ -347,7 +348,7 @@ namespace Magneto.Tests.Core.OperationTests
 
 	public class AsyncReturningCommandWithoutProperties : AsyncCommand<object, object>
 	{
-		public override Task<object> ExecuteAsync(object context) => throw new NotImplementedException();
+		public override Task<object> ExecuteAsync(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 	}
 
 	public class OperationWithProperties1 : Operation

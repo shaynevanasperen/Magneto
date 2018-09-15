@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Magneto
 {
@@ -50,7 +51,7 @@ namespace Magneto
 		/// <typeparam name="TResult">The type of the <paramref name="query"/> result.</typeparam>
 		/// <param name="query">The query object which will be executed.</param>
 		/// <param name="context">The context with which to execute the query.</param>
-		/// <param name="cacheOption">An option designating whether or not the cache should be read when executing the query.</param>
+		/// <param name="cacheOption">Optional. An option designating whether or not the cache should be read when executing the query.</param>
 		/// <returns>The result of the query execution (which could be a value returned from the cache).</returns>
 		TResult Query<TContext, TCacheEntryOptions, TResult>(ISyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, TContext context, CacheOption cacheOption = CacheOption.Default);
 	}
@@ -67,8 +68,9 @@ namespace Magneto
 		/// <typeparam name="TResult">The type of the <paramref name="query"/> result.</typeparam>
 		/// <param name="query">The query object which will be executed.</param>
 		/// <param name="context">The context with which to execute the query.</param>
+		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of the query execution.</returns>
-		Task<TResult> QueryAsync<TContext, TResult>(IAsyncQuery<TContext, TResult> query, TContext context);
+		Task<TResult> QueryAsync<TContext, TResult>(IAsyncQuery<TContext, TResult> query, TContext context, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Executes the given <paramref name="query"/> using the supplied <paramref name="context"/> and <paramref name="cacheOption"/>.
@@ -78,9 +80,10 @@ namespace Magneto
 		/// <typeparam name="TResult">The type of the <paramref name="query"/> result.</typeparam>
 		/// <param name="query">The query object which will be executed.</param>
 		/// <param name="context">The context with which to execute the query.</param>
-		/// <param name="cacheOption">An option designating whether or not the cache should be read when executing the query.</param>
+		/// <param name="cacheOption">Optional. An option designating whether or not the cache should be read when executing the query.</param>
+		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of the query execution (which could be a value returned from the cache).</returns>
-		Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, TContext context, CacheOption cacheOption = CacheOption.Default);
+		Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, TContext context, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>
@@ -118,8 +121,9 @@ namespace Magneto
 		/// <typeparam name="TContext">The type of <paramref name="context"/> with which to execute the <paramref name="command"/>.</typeparam>
 		/// <param name="command">The command object which will be executed.</param>
 		/// <param name="context">The context with which to execute the command.</param>
+		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>A task representing the execution of the command.</returns>
-		Task CommandAsync<TContext>(IAsyncCommand<TContext> command, TContext context);
+		Task CommandAsync<TContext>(IAsyncCommand<TContext> command, TContext context, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Executes the given <paramref name="command"/> using the supplied <paramref name="context"/>.
@@ -128,7 +132,8 @@ namespace Magneto
 		/// <typeparam name="TResult">The type of the <paramref name="command"/> result.</typeparam>
 		/// <param name="command">The command object which will be executed.</param>
 		/// <param name="context">The context with which to execute the command.</param>
+		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of the command execution.</returns>
-		Task<TResult> CommandAsync<TContext, TResult>(IAsyncCommand<TContext, TResult> command, TContext context);
+		Task<TResult> CommandAsync<TContext, TResult>(IAsyncCommand<TContext, TResult> command, TContext context, CancellationToken cancellationToken = default);
 	}
 }

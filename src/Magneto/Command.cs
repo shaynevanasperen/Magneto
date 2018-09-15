@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Magneto.Core;
 
 namespace Magneto
@@ -34,7 +35,7 @@ namespace Magneto
 	public abstract class AsyncCommand<TContext> : Operation, IAsyncCommand<TContext>
 	{
 		/// <inheritdoc cref="IAsyncCommand{TContext}.ExecuteAsync"/>
-		public abstract Task ExecuteAsync(TContext context);
+		public abstract Task ExecuteAsync(TContext context, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>
@@ -46,6 +47,6 @@ namespace Magneto
 	public abstract class AsyncCommand<TContext, TResult> : Operation, IAsyncCommand<TContext, TResult>
 	{
 		/// <inheritdoc cref="IAsyncCommand{TContext,TResult}.ExecuteAsync"/>
-		public abstract Task<TResult> ExecuteAsync(TContext context);
+		public abstract Task<TResult> ExecuteAsync(TContext context, CancellationToken cancellationToken = default);
 	}
 }
