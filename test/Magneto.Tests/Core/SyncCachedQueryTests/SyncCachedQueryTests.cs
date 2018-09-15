@@ -18,12 +18,14 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 		public override void Setup()
 		{
 			SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
+			The<ISyncCachedQueryStub>().When(x => x.ConfigureCache(Arg.Any<ICacheConfig>())).Do(x => x.ArgAt<ICacheConfig>(0).VaryBy = nameof(ICacheConfig.VaryBy));
 			The<ISyncCachedQueryStub>().GetCacheEntryOptions(QueryContext).Returns(CacheEntryOptions);
 			The<ISyncCachedQueryStub>().Query(QueryContext).Returns(QueryResult);
 		}
 
 		protected void WhenExecutingTheQuery() => Result = SUT.Execute(QueryContext, The<ISyncCacheStore<CacheEntryOptions>>(), CacheOption);
 		protected void ThenTheCacheKeyContainsTheFullClassName() => SUT.State.CacheKey.Contains(SUT.GetType().FullName).Should().BeTrue();
+		protected void AndTheCacheKeyContainsTheVaryByValue() => SUT.State.CacheKey.Contains(nameof(ICacheConfig.VaryBy)).Should().BeTrue();
 		protected void AndThenNothingIsRemovedFromTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().DidNotReceive().Remove(Arg.Any<string>());
 		protected void AndThenTheCachedResultIsSet() => SUT.State.CachedResult.Should().BeSameAs(Result);
 
@@ -74,7 +76,14 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 
 	public abstract class UpdatingCachedResult : ScenarioFor<SyncCachedQuery<QueryContext, CacheEntryOptions, QueryResult>>
 	{
-		public override void Setup() => SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
+		protected readonly QueryContext QueryContext = new QueryContext();
+		protected readonly CacheEntryOptions CacheEntryOptions = new CacheEntryOptions();
+
+		public override void Setup()
+		{
+			SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
+			The<ISyncCachedQueryStub>().GetCacheEntryOptions(QueryContext).Returns(CacheEntryOptions);
+		}
 
 		public class QueryWasNotExecuted : UpdatingCachedResult
 		{
@@ -82,27 +91,24 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 			
 			void GivenTheQueryWasNotExecuted() { }
 			void WhenUpdatingCachedResult() => _invocation = SUT.Invoking(x => x.UpdateCachedResult(The<ISyncCacheStore<CacheEntryOptions>>()));
-			void ThenTheCacheEntryOptionsAreNotRequested() => The<ISyncCachedQueryStub>().DidNotReceive().GetCacheEntryOptions(Arg.Any<QueryContext>());
-			void AndThenItThrowsAnExceptionStatingThatTheCachedResultIsNotAvailable() => _invocation.Should().Throw<InvalidOperationException>().Which.Message.Should().Be("Cached result is not available");
+			void ThenItThrowsAnExceptionStatingThatTheCachedResultIsNotAvailable() => _invocation.Should().Throw<InvalidOperationException>().Which.Message.Should().Be("Cached result is not available");
+			void AndThenTheCacheEntryOptionsAreNotRequested() => The<ISyncCachedQueryStub>().DidNotReceive().GetCacheEntryOptions(Arg.Any<QueryContext>());
 		}
 
 		public class QueryWasExecuted : UpdatingCachedResult
 		{
-			readonly QueryContext _queryContext = new QueryContext();
-			readonly CacheEntryOptions _cacheEntryOptions = new CacheEntryOptions();
 			readonly QueryResult _queryResult = new QueryResult();
 
 			public override void Setup()
 			{
 				base.Setup();
-				The<ISyncCachedQueryStub>().GetCacheEntryOptions(_queryContext).Returns(_cacheEntryOptions);
-				The<ISyncCachedQueryStub>().Query(_queryContext).Returns(_queryResult);
+				The<ISyncCachedQueryStub>().Query(QueryContext).Returns(_queryResult);
 			}
 
-			void GivenTheQueryWasExecuted() => SUT.Execute(_queryContext, The<ISyncCacheStore<CacheEntryOptions>>());
+			void GivenTheQueryWasExecuted() => SUT.Execute(QueryContext, The<ISyncCacheStore<CacheEntryOptions>>());
 			void WhenUpdatingCachedResult() => SUT.UpdateCachedResult(The<ISyncCacheStore<CacheEntryOptions>>());
-			void ThenTheCacheEntryOptionsAreNotRequestedAgain() => The<ISyncCachedQueryStub>().Received(1).GetCacheEntryOptions(_queryContext);
-			void AndThenItDelegatesToTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(2).Set(SUT.State.CacheKey, Arg.Is<CacheEntry<QueryResult>>(x => x.Value == _queryResult), _cacheEntryOptions);
+			void ThenTheCacheEntryOptionsAreNotRequestedAgain() => The<ISyncCachedQueryStub>().Received(1).GetCacheEntryOptions(QueryContext);
+			void AndThenItDelegatesToTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(2).Set(SUT.State.CacheKey, Arg.Is<CacheEntry<QueryResult>>(x => x.Value == _queryResult), CacheEntryOptions);
 		}
 	}
 
