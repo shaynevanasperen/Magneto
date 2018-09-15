@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Magneto.Configuration;
 
@@ -51,10 +52,10 @@ namespace Magneto.Core
 	public abstract class AsyncCachedQuery<TContext, TCacheEntryOptions, TCachedResult> : CachedQuery<TContext, TCacheEntryOptions, TCachedResult>, IAsyncCachedQuery<TCacheEntryOptions>
 	{
 		/// <inheritdoc cref="IAsyncQuery{TContext,TResult}.ExecuteAsync"/>
-		protected abstract Task<TCachedResult> QueryAsync(TContext context);
+		protected abstract Task<TCachedResult> QueryAsync(TContext context, CancellationToken cancellationToken = default);
 
 		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.ExecuteAsync"/>
-		protected virtual async Task<TCachedResult> GetCachedResultAsync(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default)
+		protected virtual async Task<TCachedResult> GetCachedResultAsync(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default)
 		{
 			if (context == null) throw new ArgumentNullException(nameof(context));
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));
@@ -63,30 +64,30 @@ namespace Magneto.Core
 
 			if (cacheOption == CacheOption.Default)
 			{
-				var cacheEntry = await cacheStore.GetAsync<TCachedResult>(State.CacheKey).ConfigureAwait(false);
+				var cacheEntry = await cacheStore.GetAsync<TCachedResult>(State.CacheKey, cancellationToken).ConfigureAwait(false);
 				if (cacheEntry != null)
 					return State.CachedResult = cacheEntry.Value;
 			}
 
-			var cachedResult = await QueryAsync(State.Context).ConfigureAwait(false);
-			await cacheStore.SetAsync(State.CacheKey, cachedResult.ToCacheEntry(), State.CacheEntryOptions).ConfigureAwait(false);
+			var cachedResult = await QueryAsync(State.Context, cancellationToken).ConfigureAwait(false);
+			await cacheStore.SetAsync(State.CacheKey, cachedResult.ToCacheEntry(), State.CacheEntryOptions, cancellationToken).ConfigureAwait(false);
 			return State.CachedResult = cachedResult;
 		}
 
 		/// <inheritdoc cref="IAsyncCachedQuery{TCacheEntryOptions}.EvictCachedResultAsync"/>
-		public virtual Task EvictCachedResultAsync(IAsyncCacheStore<TCacheEntryOptions> cacheStore)
+		public virtual Task EvictCachedResultAsync(IAsyncCacheStore<TCacheEntryOptions> cacheStore, CancellationToken cancellationToken = default)
 		{
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));
 
-			return cacheStore.RemoveAsync(State.CacheKey);
+			return cacheStore.RemoveAsync(State.CacheKey, cancellationToken);
 		}
 
 		/// <inheritdoc cref="IAsyncCachedQuery{TCacheEntryOptions}.UpdateCachedResultAsync"/>
-		public virtual Task UpdateCachedResultAsync(IAsyncCacheStore<TCacheEntryOptions> cacheStore)
+		public virtual Task UpdateCachedResultAsync(IAsyncCacheStore<TCacheEntryOptions> cacheStore, CancellationToken cancellationToken = default)
 		{
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));
 
-			return cacheStore.SetAsync(State.CacheKey, State.CachedResult.ToCacheEntry(), State.CacheEntryOptions);
+			return cacheStore.SetAsync(State.CacheKey, State.CachedResult.ToCacheEntry(), State.CacheEntryOptions, cancellationToken);
 		}
 	}
 

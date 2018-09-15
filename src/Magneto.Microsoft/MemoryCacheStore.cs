@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Magneto.Configuration;
 using Magneto.Core;
@@ -39,7 +40,7 @@ namespace Magneto.Microsoft
 		}
 
 		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.GetAsync{T}"/>
-		public Task<CacheEntry<T>> GetAsync<T>(string key)
+		public Task<CacheEntry<T>> GetAsync<T>(string key, CancellationToken cancellationToken = default)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 
@@ -47,7 +48,7 @@ namespace Magneto.Microsoft
 		}
 
 		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.SetAsync{T}"/>
-		public Task SetAsync<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions)
+		public Task SetAsync<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions, CancellationToken cancellationToken = default)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 			if (item == null) throw new ArgumentNullException(nameof(item));
@@ -58,7 +59,7 @@ namespace Magneto.Microsoft
 		}
 
 		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.RemoveAsync"/>
-		public Task RemoveAsync(string key)
+		public Task RemoveAsync(string key, CancellationToken cancellationToken = default)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 

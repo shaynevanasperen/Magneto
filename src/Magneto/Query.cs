@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Magneto.Core;
 
 namespace Magneto
@@ -24,6 +25,6 @@ namespace Magneto
 	public abstract class AsyncQuery<TContext, TResult> : Operation, IAsyncQuery<TContext, TResult>
 	{
 		/// <inheritdoc cref="IAsyncQuery{TContext,TResult}.ExecuteAsync"/>
-		public abstract Task<TResult> ExecuteAsync(TContext context);
+		public abstract Task<TResult> ExecuteAsync(TContext context, CancellationToken cancellationToken = default);
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Magneto
 {
@@ -64,8 +65,9 @@ namespace Magneto
 		/// <typeparam name="TContext">The type of context with which to execute the <paramref name="query"/>.</typeparam>
 		/// <typeparam name="TResult">The type of the <paramref name="query"/> result.</typeparam>
 		/// <param name="query">The query object which will be executed.</param>
+		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of the query execution.</returns>
-		Task<TResult> QueryAsync<TContext, TResult>(IAsyncQuery<TContext, TResult> query);
+		Task<TResult> QueryAsync<TContext, TResult>(IAsyncQuery<TContext, TResult> query, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Executes the given <paramref name="query"/> using an instance of <typeparamref name="TContext"/> obtained from the current scope.
@@ -75,8 +77,9 @@ namespace Magneto
 		/// <typeparam name="TResult">The type of the <paramref name="query"/> result.</typeparam>
 		/// <param name="query">The query object which will be executed.</param>
 		/// <param name="cacheOption">An option designating whether or not the cache should be read when executing the query.</param>
+		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of the query execution (which could be a value returned from the cache).</returns>
-		Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption = CacheOption.Default);
+		Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>
@@ -111,8 +114,9 @@ namespace Magneto
 		/// </summary>
 		/// <typeparam name="TContext">The type of context with which to execute the <paramref name="command"/>.</typeparam>
 		/// <param name="command">The command object which will be executed.</param>
+		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>A task representing the execution of the command.</returns>
-		Task CommandAsync<TContext>(IAsyncCommand<TContext> command);
+		Task CommandAsync<TContext>(IAsyncCommand<TContext> command, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Executes the given <paramref name="command"/> using an instance of <typeparamref name="TContext"/> obtained from the current scope.
@@ -120,7 +124,8 @@ namespace Magneto
 		/// <typeparam name="TContext">The type of context with which to execute the <paramref name="command"/>.</typeparam>
 		/// <typeparam name="TResult">The type of the <paramref name="command"/> result.</typeparam>
 		/// <param name="command">The command object which will be executed.</param>
+		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of the command execution.</returns>
-		Task<TResult> CommandAsync<TContext, TResult>(IAsyncCommand<TContext, TResult> command);
+		Task<TResult> CommandAsync<TContext, TResult>(IAsyncCommand<TContext, TResult> command, CancellationToken cancellationToken = default);
 	}
 }

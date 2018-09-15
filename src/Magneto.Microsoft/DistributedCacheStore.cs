@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Magneto.Configuration;
 using Magneto.Core;
@@ -53,11 +54,11 @@ namespace Magneto.Microsoft
 		}
 
 		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.GetAsync{T}"/>
-		public async Task<CacheEntry<T>> GetAsync<T>(string key)
+		public async Task<CacheEntry<T>> GetAsync<T>(string key, CancellationToken cancellationToken = default)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 
-			var json = await _distributedCache.GetStringAsync(key).ConfigureAwait(false);
+			var json = await _distributedCache.GetStringAsync(key, cancellationToken).ConfigureAwait(false);
 			if (json == null)
 				return null;
 
@@ -67,28 +68,28 @@ namespace Magneto.Microsoft
 			}
 			catch (JsonSerializationException)
 			{
-				await RemoveAsync(key).ConfigureAwait(false);
+				await RemoveAsync(key, cancellationToken).ConfigureAwait(false);
 				throw;
 			}
 		}
 
 		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.SetAsync{T}"/>
-		public Task SetAsync<T>(string key, CacheEntry<T> item, DistributedCacheEntryOptions cacheEntryOptions)
+		public Task SetAsync<T>(string key, CacheEntry<T> item, DistributedCacheEntryOptions cacheEntryOptions, CancellationToken cancellationToken = default)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 			if (item == null) throw new ArgumentNullException(nameof(item));
 			if (cacheEntryOptions == null) throw new ArgumentNullException(nameof(cacheEntryOptions));
 
 			var json = JsonConvert.SerializeObject(item);
-			return _distributedCache.SetStringAsync(key, json, cacheEntryOptions);
+			return _distributedCache.SetStringAsync(key, json, cacheEntryOptions, cancellationToken);
 		}
 
 		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.RemoveAsync"/>
-		public Task RemoveAsync(string key)
+		public Task RemoveAsync(string key, CancellationToken cancellationToken = default)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 
-			return _distributedCache.RemoveAsync(key);
+			return _distributedCache.RemoveAsync(key, cancellationToken);
 		}
 	}
 }

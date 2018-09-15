@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Magneto.Configuration;
 
 namespace Magneto
@@ -66,8 +67,8 @@ namespace Magneto
 		Core.AsyncCachedQuery<TContext, TCacheEntryOptions, TResult>, IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult>
 	{
 		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.ExecuteAsync"/>
-		public virtual Task<TResult> ExecuteAsync(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default) =>
-			GetCachedResultAsync(context, cacheStore, cacheOption);
+		public virtual Task<TResult> ExecuteAsync(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default) =>
+			GetCachedResultAsync(context, cacheStore, cacheOption, cancellationToken);
 	}
 
 	/// <summary>
@@ -89,14 +90,15 @@ namespace Magneto
 		/// Transforms an intermediate result to a final result.
 		/// </summary>
 		/// <param name="cachedResult">The intermediate result to be transformed.</param>
+		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of transforming the intermediate result.</returns>
-		protected abstract Task<TTransformedResult> TransformCachedResultAsync(TCachedResult cachedResult);
+		protected abstract Task<TTransformedResult> TransformCachedResultAsync(TCachedResult cachedResult, CancellationToken cancellationToken = default);
 
 		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.ExecuteAsync"/>
-		public virtual async Task<TTransformedResult> ExecuteAsync(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default)
+		public virtual async Task<TTransformedResult> ExecuteAsync(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default)
 		{
-			var cachedResult = await GetCachedResultAsync(context, cacheStore, cacheOption).ConfigureAwait(false);
-			return await TransformCachedResultAsync(cachedResult).ConfigureAwait(false);
+			var cachedResult = await GetCachedResultAsync(context, cacheStore, cacheOption, cancellationToken).ConfigureAwait(false);
+			return await TransformCachedResultAsync(cachedResult, cancellationToken).ConfigureAwait(false);
 		}
 	}
 }

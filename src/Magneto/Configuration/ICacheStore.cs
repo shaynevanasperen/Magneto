@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Magneto.Core;
 
@@ -50,8 +51,9 @@ namespace Magneto.Configuration
 		/// </summary>
 		/// <typeparam name="T">The type of the cached item.</typeparam>
 		/// <param name="key">The key for the cached item.</param>
+		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>A <see cref="CacheEntry{T}"/> if it exits in the cache, otherwise <c>null</c>.</returns>
-		Task<CacheEntry<T>> GetAsync<T>(string key);
+		Task<CacheEntry<T>> GetAsync<T>(string key, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Adds or updates an entry in the cache with the specified <paramref name="key"/> and <paramref name="cacheEntryOptions"/>.
@@ -60,14 +62,16 @@ namespace Magneto.Configuration
 		/// <param name="key">The key for the cached item.</param>
 		/// <param name="item">The value to be added/updated.</param>
 		/// <param name="cacheEntryOptions">Options pertaining to the cache entry (such as expiration policy).</param>
+		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>A task representing the add/update operation.</returns>
-		Task SetAsync<T>(string key, CacheEntry<T> item, TCacheEntryOptions cacheEntryOptions);
+		Task SetAsync<T>(string key, CacheEntry<T> item, TCacheEntryOptions cacheEntryOptions, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Removes an entry with the specified <paramref name="key"/> from the cache.
 		/// </summary>
 		/// <param name="key">The key for the cached item.</param>
+		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>A task representing the remove operation.</returns>
-		Task RemoveAsync(string key);
+		Task RemoveAsync(string key, CancellationToken cancellationToken = default);
 	}
 }
