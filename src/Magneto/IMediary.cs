@@ -2,16 +2,34 @@
 
 namespace Magneto
 {
+	/// <summary>
+	/// A mediary for invoking queries and commands, and managing cached results of queries.
+	/// </summary>
 	public interface IMediary : ISyncMediary, IAsyncMediary, IQueryMediary, ICommandMediary, ICacheManager { }
 
+	/// <summary>
+	/// A mediary for invoking queries.
+	/// </summary>
 	public interface IQueryMediary : ISyncQueryMediary, IAsyncQueryMediary { }
 
+	/// <summary>
+	/// A mediary for invoking commands.
+	/// </summary>
 	public interface ICommandMediary : ISyncCommandMediary, IAsyncCommandMediary { }
 
+	/// <summary>
+	/// A mediary for invoking queries and commands, and managing cached results of queries, synchronously.
+	/// </summary>
 	public interface ISyncMediary : ISyncQueryMediary, ISyncCommandMediary, ISyncCacheManager { }
 
+	/// <summary>
+	/// A mediary for invoking queries and commands, and managing cached results of queries, asynchronously.
+	/// </summary>
 	public interface IAsyncMediary : IAsyncQueryMediary, IAsyncCommandMediary, IAsyncCacheManager { }
 
+	/// <summary>
+	/// A mediary for invoking queries synchronously.
+	/// </summary>
 	public interface ISyncQueryMediary
 	{
 		/// <summary>
@@ -37,6 +55,9 @@ namespace Magneto
 		TResult Query<TContext, TCacheEntryOptions, TResult>(ISyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, TContext context, CacheOption cacheOption = CacheOption.Default);
 	}
 
+	/// <summary>
+	/// A mediary for invoking queries asynchronously.
+	/// </summary>
 	public interface IAsyncQueryMediary
 	{
 		/// <summary>
@@ -62,6 +83,9 @@ namespace Magneto
 		Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, TContext context, CacheOption cacheOption = CacheOption.Default);
 	}
 
+	/// <summary>
+	/// A mediary for invoking commands synchronously.
+	/// </summary>
 	public interface ISyncCommandMediary
 	{
 		/// <summary>
@@ -83,6 +107,9 @@ namespace Magneto
 		TResult Command<TContext, TResult>(ISyncCommand<TContext, TResult> command, TContext context);
 	}
 
+	/// <summary>
+	/// A mediary for invoking commands asynchronously.
+	/// </summary>
 	public interface IAsyncCommandMediary
 	{
 		/// <summary>

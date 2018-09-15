@@ -10,10 +10,10 @@
 ## Magneto
 
 A library for implementing the [Command Pattern](https://en.wikipedia.org/wiki/Command_pattern), providing of a set
-of base classes for operations and an _invoker_/_dispatcher_ class for executing them. Useful for abstracting data access
-and API calls as either _queries_ (for read operations) or _commands_ (for write operations). `Query` and `Command` classes
-declare the type of context they require for execution, and the type of the result, and optionally the type of cache options
-they require for caching the result. Parameters are modelled as properties on the `Query` and `Command` classes.
+of base classes for operations and a _mediator_/_invoker_/_dispatcher_ class for invoking them. Useful for abstracting data
+access and API calls as either _queries_ (for read operations) or _commands_ (for write operations). `Query` and `Command`
+classes declare the type of context they require for execution, and the type of the result, and optionally the type of cache
+options they require for caching the result. Parameters are modelled as properties on the `Query` and `Command` classes.
 
 Define a query object:
 
@@ -41,7 +41,8 @@ var post = await _magneto.QueryAsync(new PostById { Id = 1 });
 var post = await _mediary.QueryAsync(new PostById { Id = 1 }, _httpClient);
 ```
 
-Mock the result in a unit test:
+When using the provided base classes for queries and commands, they behave like _value objects_ which allows easier mocking
+in unit tests (just make sure to model all the parameters as public properties):
 
 ```cs
 // Moq
@@ -91,6 +92,32 @@ public class UserById : AsyncTransformedCachedQuery<HttpClient, DistributedCache
     
     public int Id { get; set; }
 }
+```
+
+Easily skip reading from the cache if required, by passing the optional argument `CacheOption.Refresh` (the fresh result
+will be written to the cache):
+
+```cs
+var postComments = await _magneto.QueryAsync(new CommentsByPostId { PostId = id }, CacheOption.Refresh);
+```
+
+Easily evict a previously cached result for a query:
+
+```cs
+var commentsByPostById = new CommentsByPostId { PostId = 1 };
+var comments = await _magneto.QueryAsync(commentsByPostById);
+...
+await _magneto.EvictCachedResultAsync(commentsByPostById);
+```
+
+When using a distributed cache store, changes to a previously cached result for a query can be updated:
+
+```cs
+var commentsByPostById = new CommentsByPostId { PostId = 1 };
+var comments = await _magneto.QueryAsync(commentsByPostById);
+...
+comments[0].Votes++;
+await _magneto.UpdateCachedResultAsync(commentsByPostById);
 ```
 
 Register a decorator to apply cross-cutting concerns:

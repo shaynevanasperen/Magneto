@@ -14,6 +14,11 @@ namespace Magneto
 	{
 		static readonly ConcurrentDictionary<Type, object> NullCacheStores = new ConcurrentDictionary<Type, object>();
 
+		/// <summary>
+		/// Creates a new instance of <see cref="Mediary"/>.
+		/// </summary>
+		/// <param name="serviceProvider">Used for obtaining instances of cache store objects with which cached queries are invoked.</param>
+		/// <param name="decorator">Used for decorating invocations in order to apply cross-cutting concerns.</param>
 		public Mediary(IServiceProvider serviceProvider = null, IDecorator decorator = null)
 		{
 			ServiceProvider = serviceProvider;

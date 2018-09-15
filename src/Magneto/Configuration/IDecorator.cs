@@ -3,8 +3,14 @@ using System.Threading.Tasks;
 
 namespace Magneto.Configuration
 {
+	/// <summary>
+	/// Decorates the given operations with predefined behaviour (such as logging, tracing, or error handling).
+	/// </summary>
 	public interface IDecorator : ISyncDecorator, IAsyncDecorator { }
 
+	/// <summary>
+	/// Decorates the given synchronous operations with predefined behaviour (such as logging, tracing, or error handling).
+	/// </summary>
 	public interface ISyncDecorator
 	{
 		/// <summary>
@@ -24,6 +30,9 @@ namespace Magneto.Configuration
 		void Decorate(string operationName, Action invoke);
 	}
 
+	/// <summary>
+	/// Decorates the given asynchronous operations with predefined behaviour (such as logging, tracing, or error handling).
+	/// </summary>
 	public interface IAsyncDecorator
 	{
 		/// <summary>

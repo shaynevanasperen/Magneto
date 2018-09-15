@@ -2,16 +2,34 @@
 
 namespace Magneto
 {
+	/// <summary>
+	/// A mediary for invoking queries and commands, and managing cached results of queries.
+	/// </summary>
 	public interface IMagneto : ISyncMagneto, IAsyncMagneto, IQueryMagneto, ICommandMagneto, ICacheManager { }
 
+	/// <summary>
+	/// A mediary for invoking queries.
+	/// </summary>
 	public interface IQueryMagneto : ISyncQueryMagneto, IAsyncQueryMagneto { }
 
+	/// <summary>
+	/// A mediary for invoking commands.
+	/// </summary>
 	public interface ICommandMagneto : ISyncCommandMagneto, IAsyncCommandMagneto { }
 
+	/// <summary>
+	/// A mediary for invoking queries and commands, and managing cached results of queries, synchronously.
+	/// </summary>
 	public interface ISyncMagneto : ISyncQueryMagneto, ISyncCommandMagneto, ISyncCacheManager { }
 
+	/// <summary>
+	/// A mediary for invoking queries and commands, and managing cached results of queries, asynchronously.
+	/// </summary>
 	public interface IAsyncMagneto : IAsyncQueryMagneto, IAsyncCommandMagneto, IAsyncCacheManager { }
 
+	/// <summary>
+	/// A mediary for invoking queries synchronously.
+	/// </summary>
 	public interface ISyncQueryMagneto
 	{
 		/// <summary>
@@ -35,6 +53,9 @@ namespace Magneto
 		TResult Query<TContext, TCacheEntryOptions, TResult>(ISyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption = CacheOption.Default);
 	}
 
+	/// <summary>
+	/// A mediary for invoking queries asynchronously.
+	/// </summary>
 	public interface IAsyncQueryMagneto
 	{
 		/// <summary>
@@ -58,6 +79,9 @@ namespace Magneto
 		Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption = CacheOption.Default);
 	}
 
+	/// <summary>
+	/// A mediary for invoking commands synchronously.
+	/// </summary>
 	public interface ISyncCommandMagneto
 	{
 		/// <summary>
@@ -77,6 +101,9 @@ namespace Magneto
 		TResult Command<TContext, TResult>(ISyncCommand<TContext, TResult> command);
 	}
 
+	/// <summary>
+	/// A mediary for invoking commands asynchronously.
+	/// </summary>
 	public interface IAsyncCommandMagneto
 	{
 		/// <summary>

@@ -1,5 +1,8 @@
 ﻿namespace Magneto
 {
+	/// <summary>
+	/// An option designating whether or not the cache should be read when executing a query.
+	/// </summary>
 	public enum CacheOption
 	{
 		/// <summary>

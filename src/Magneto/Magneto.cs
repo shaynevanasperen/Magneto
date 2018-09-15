@@ -11,6 +11,10 @@ namespace Magneto
 	/// </summary>
 	public class Magneto : IMagneto
 	{
+		/// <summary>
+		/// Creates a new instance of <see cref="Magneto"/>.
+		/// </summary>
+		/// <param name="serviceProvider">Used for obtaining instances of the context objects with which queries and commands are invoked.</param>
 		public Magneto(IServiceProvider serviceProvider)
 		{
 			ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
