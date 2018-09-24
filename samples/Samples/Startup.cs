@@ -61,9 +61,8 @@ namespace Samples
 			// Here we add the two context objects with which our queries and commands are executed.
 			services.AddSingleton(Environment.WebRootFileProvider);
 			services
-				.AddTransient<EnsureSuccessHandler>()
 				.AddHttpClient<JsonPlaceHolderHttpClient>()
-				.AddHttpMessageHandler<EnsureSuccessHandler>()
+				.AddHttpMessageHandler(() => new EnsureSuccessHandler())
 				.AddTransientHttpErrorPolicy(x => x.WaitAndRetryAsync(new[]
 				{
 					TimeSpan.FromSeconds(1),

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Magneto;
@@ -38,22 +37,12 @@ namespace Samples.Controllers
 
 	public class AllPosts : AsyncQuery<JsonPlaceHolderHttpClient, Post[]>
 	{
-		public override async Task<Post[]> ExecuteAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default)
-		{
-			var response = await context.GetAsync("/posts", cancellationToken);
-			return await response.Content.ReadAsAsync<Post[]>(cancellationToken);
-		}
-
-		public int Id { get; set; }
+		public override Task<Post[]> ExecuteAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) => context.GetAsync<Post[]>("/posts", cancellationToken);
 	}
 
 	public class PostById : AsyncQuery<JsonPlaceHolderHttpClient, Post>
 	{
-		public override async Task<Post> ExecuteAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default)
-		{
-			var response = await context.GetAsync($"/posts/{Id}", cancellationToken);
-			return await response.Content.ReadAsAsync<Post>(cancellationToken);
-		}
+		public override Task<Post> ExecuteAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) => context.GetAsync<Post>($"/posts/{Id}", cancellationToken);
 
 		public int Id { get; set; }
 	}
@@ -64,11 +53,7 @@ namespace Samples.Controllers
 
 		protected override MemoryCacheEntryOptions GetCacheEntryOptions(JsonPlaceHolderHttpClient context) => new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 
-		protected override async Task<Comment[]> QueryAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default)
-		{
-			var response = await context.GetAsync($"/posts/{PostId}/comments", cancellationToken);
-			return await response.Content.ReadAsAsync<Comment[]>(cancellationToken);
-		}
+		protected override Task<Comment[]> QueryAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) => context.GetAsync<Comment[]>($"/posts/{PostId}/comments", cancellationToken);
 
 		public int PostId { get; set; }
 	}
