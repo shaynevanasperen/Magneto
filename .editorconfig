@@ -1,9 +1,13 @@
+# editorconfig.org
 root = true
 
 [*]
 end_of_line = crlf
 indent_style = tab
 indent_size = 4
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
 
 [*.{props,csproj,json}]
 indent_size = 2
