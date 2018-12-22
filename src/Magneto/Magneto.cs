@@ -7,6 +7,7 @@ using Magneto.Core;
 namespace Magneto
 {
 	/// <summary>
+	/// The main entry point for consumers to execute queries and commands using context retrieved from the given <see cref="IServiceProvider"/>.
 	/// If using an IoC container, it's highly recommended that this be registered as a scoped service
 	/// so that the injected <see cref="IServiceProvider"/> is scoped appropriately.
 	/// </summary>
@@ -14,18 +15,31 @@ namespace Magneto
 	{
 		/// <summary>
 		/// Creates a new instance of <see cref="Magneto"/>.
+		/// The <see cref="Mediary"/> is initialized from retrieving and instance of <see cref="IMediary"/> from the given <see cref="IServiceProvider"/>,
+		/// or a new instance of <see cref="Mediary"/> if the <see cref="IServiceProvider"/> doesn't have it.
 		/// </summary>
 		/// <param name="serviceProvider">Used for obtaining instances of the context objects with which queries and commands are invoked.</param>
 		public Magneto(IServiceProvider serviceProvider)
 		{
 			ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-			Mediary = ServiceProvider.GetService<IMediary>() ?? new Mediary(ServiceProvider, ServiceProvider.GetService<IDecorator>());
+			Mediary = ServiceProvider.GetService<IMediary>() ?? new Mediary(ServiceProvider);
 		}
 
+		/// <summary>
+		/// Exposes the <see cref="IServiceProvider"/> provided in the constructor.
+		/// </summary>
 		protected IServiceProvider ServiceProvider { get; }
 
+		/// <summary>
+		/// Exposes the <see cref="IMediary"/> retrieved from the <see cref="ServiceProvider"/>, or an instance of <see cref="Mediary"/> if the <see cref="ServiceProvider"/> didn't have it.
+		/// </summary>
 		protected IMediary Mediary { get; }
 
+		/// <summary>
+		/// Gets the <typeparamref name="TContext"/> from the <see cref="ServiceProvider"/>.
+		/// </summary>
+		/// <typeparam name="TContext">The type of context object required.</typeparam>
+		/// <returns>The result from calling <see cref="IServiceProvider.GetService"/>.</returns>
 		protected virtual TContext GetContext<TContext>() => ServiceProvider.GetService<TContext>();
 
 		/// <inheritdoc cref="ISyncQueryMagneto.Query{TContext,TResult}"/>

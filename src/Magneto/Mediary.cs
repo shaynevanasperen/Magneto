@@ -8,6 +8,7 @@ using Magneto.Core;
 namespace Magneto
 {
 	/// <summary>
+	/// A lower level abstraction for invoking queries and commands by passing the context manually.
 	/// If using an IoC container, it's highly recommended that this be registered as a scoped service
 	/// so that the injected <see cref="IServiceProvider"/> is scoped appropriately.
 	/// </summary>
@@ -17,6 +18,8 @@ namespace Magneto
 
 		/// <summary>
 		/// Creates a new instance of <see cref="Mediary"/>.
+		/// The <see cref="Decorator"/> is initialized from retrieving an instance of <see cref="IDecorator"/> from the given <see cref="IServiceProvider"/>,
+		/// or a new instance of <see cref="NullDecorator"/> if the <see cref="IServiceProvider"/> was not provided or doesn't have it.
 		/// </summary>
 		/// <param name="serviceProvider">Used for obtaining instances of cache store objects with which cached queries are invoked.</param>
 		/// <param name="decorator">Used for decorating invocations in order to apply cross-cutting concerns.</param>
@@ -26,17 +29,47 @@ namespace Magneto
 			Decorator = decorator ?? serviceProvider?.GetService<IDecorator>() ?? NullDecorator.Instance;
 		}
 
+		/// <summary>
+		/// Exposes the <see cref="IServiceProvider"/> provided in the constructor.
+		/// </summary>
 		protected IServiceProvider ServiceProvider { get; }
 
+		/// <summary>
+		/// Exposes the <see cref="IDecorator"/> provided in the constructor or from the <see cref="IServiceProvider"/>, or a <see cref="NullDecorator"/> if neither exist.
+		/// </summary>
 		protected IDecorator Decorator { get; }
 
+		/// <summary>
+		/// Gets an instance of <see cref="ICacheStore{TCacheEntryOptions}"/> from the <see cref="ServiceProvider"/>,
+		/// or a <see cref="NullCacheStore{TCacheEntryOptions}"/> if the <see cref="ServiceProvider"/> doesn't have one.
+		/// </summary>
+		/// <typeparam name="TCacheEntryOptions">The type of cache entry options closed over by the requested <see cref="ICacheStore{TCacheEntryOptions}"/></typeparam>
+		/// <returns>An instance of <see cref="ICacheStore{TCacheEntryOptions}"/>.</returns>
 		protected virtual ICacheStore<TCacheEntryOptions> GetCacheStore<TCacheEntryOptions>() =>
 			ServiceProvider?.GetService<ICacheStore<TCacheEntryOptions>>() ?? NullCacheStores.GetOrAdd<ICacheStore<TCacheEntryOptions>>(() => new NullCacheStore<TCacheEntryOptions>());
 
+		/// <summary>
+		/// Gets an instance of <see cref="ISyncCacheStore{TCacheEntryOptions}"/> from the <see cref="ServiceProvider"/>,
+		/// or a <see cref="NullCacheStore{TCacheEntryOptions}"/> if the <see cref="ServiceProvider"/> doesn't have one.
+		/// </summary>
+		/// <typeparam name="TCacheEntryOptions">The type of cache entry options closed over by the requested <see cref="ISyncCacheStore{TCacheEntryOptions}"/></typeparam>
+		/// <returns>An instance of <see cref="ISyncCacheStore{TCacheEntryOptions}"/>.</returns>
 		protected virtual ISyncCacheStore<TCacheEntryOptions> GetSyncCacheStore<TCacheEntryOptions>() => GetCacheStore<TCacheEntryOptions>();
 
+		/// <summary>
+		/// Gets an instance of <see cref="IAsyncCacheStore{TCacheEntryOptions}"/> from the <see cref="ServiceProvider"/>,
+		/// or a <see cref="NullCacheStore{TCacheEntryOptions}"/> if the <see cref="ServiceProvider"/> doesn't have one.
+		/// </summary>
+		/// <typeparam name="TCacheEntryOptions">The type of cache entry options closed over by the requested <see cref="IAsyncCacheStore{TCacheEntryOptions}"/></typeparam>
+		/// <returns>An instance of <see cref="IAsyncCacheStore{TCacheEntryOptions}"/>.</returns>
 		protected virtual IAsyncCacheStore<TCacheEntryOptions> GetAsyncCacheStore<TCacheEntryOptions>() => GetCacheStore<TCacheEntryOptions>();
 
+		/// <summary>
+		/// Creates a name from the given <paramref name="instance"/> and <paramref name="methodName"/>.
+		/// </summary>
+		/// <param name="instance">The object from which to retrieve the full type name.</param>
+		/// <param name="methodName">The name of a method on the given object.</param>
+		/// <returns>A string made up of the full type name and the given method name, joined by a dot.</returns>
 		protected virtual string GetOperationName(object instance, string methodName) => $"{instance.GetType().FullName}.{methodName}";
 
 		/// <inheritdoc cref="ISyncQueryMediary.Query{TContext,TResult}"/>

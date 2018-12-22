@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Magneto.Configuration;
@@ -7,10 +7,17 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Magneto.Microsoft
 {
+	/// <summary>
+	/// An implementation of <see cref="ICacheStore{TCacheEntryOptions}"/> backed by <see cref="IMemoryCache"/>.
+	/// </summary>
 	public class MemoryCacheStore : ICacheStore<MemoryCacheEntryOptions>
 	{
 		readonly IMemoryCache _memoryCache;
 
+		/// <summary>
+		/// Creates a new instance of <see cref="MemoryCacheStore"/> using the given <see cref="IMemoryCache"/>.
+		/// </summary>
+		/// <param name="memoryCache">The underlying cache implementation.</param>
 		public MemoryCacheStore(IMemoryCache memoryCache) => _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
 
 		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Get{T}"/>

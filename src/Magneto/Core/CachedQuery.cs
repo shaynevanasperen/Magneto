@@ -99,6 +99,9 @@ namespace Magneto.Core
 	/// <typeparam name="TCachedResult">The type of the query result.</typeparam>
 	public abstract class CachedQuery<TContext, TCacheEntryOptions, TCachedResult> : Operation
 	{
+		/// <summary>
+		/// Creates a new instance of <see cref="CachedQuery{TContext,TCacheEntryOptions,TCachedResult}"/> and initializes the internal state.
+		/// </summary>
 		protected CachedQuery() => State = new Store(this, getCacheKey);
 
 		string getCacheKey()
