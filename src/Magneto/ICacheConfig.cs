@@ -23,6 +23,9 @@ namespace Magneto
 		object VaryBy { set; }
 	}
 
+	/// <summary>
+	/// An extension class for fluent configuration of <see cref="ICacheConfig"/> instances.
+	/// </summary>
 	public static class CacheConfigExtensions
 	{
 		/// <summary>

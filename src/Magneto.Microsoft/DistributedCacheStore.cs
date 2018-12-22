@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Magneto.Configuration;
@@ -8,10 +8,17 @@ using Newtonsoft.Json;
 
 namespace Magneto.Microsoft
 {
+	/// <summary>
+	/// An implementation of <see cref="ICacheStore{TCacheEntryOptions}"/> backed by <see cref="IDistributedCache"/>.
+	/// </summary>
 	public class DistributedCacheStore : ICacheStore<DistributedCacheEntryOptions>
 	{
 		readonly IDistributedCache _distributedCache;
 
+		/// <summary>
+		/// Creates a new instance of <see cref="DistributedCacheStore"/> using the given <see cref="IDistributedCache"/>.
+		/// </summary>
+		/// <param name="distributedCache">The underlying cache implementation.</param>
 		public DistributedCacheStore(IDistributedCache distributedCache) => _distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
 
 		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Get{T}"/>
