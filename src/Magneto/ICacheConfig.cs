@@ -9,7 +9,7 @@ namespace Magneto
 		/// A value to be combined with <see cref="VaryBy"/> to form the cache key.
 		/// Defaults to the fully qualified type name of the query class.
 		/// </summary>
-		string KeyPrefix { set; }
+		string KeyPrefix { get; set; }
 
 		/// <summary>
 		/// An object or collection specifying values to be combined with <see cref="KeyPrefix"/>
@@ -20,7 +20,7 @@ namespace Magneto
 		/// <c>VaryBy = string.Format("{0}_{1}", Value1, Reference1.Id)</c><br/>
 		/// <c>VaryBy = Value1</c>
 		/// </summary>
-		object VaryBy { set; }
+		object VaryBy { get; set; }
 	}
 
 	/// <summary>

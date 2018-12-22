@@ -62,9 +62,9 @@ namespace Samples.Domain
 		public string Website { get; set; }
 		public Company Company { get; set; }
 
-		public static string AllUsersCacheKeyPrefix = "Samples.Domain.Users";
+		public const string AllUsersCacheKeyPrefix = "Samples.Domain.Users";
 
-		public static DistributedCacheEntryOptions AllUsersCacheEntryOptions(JsonPlaceHolderHttpClient context) =>
+		public static DistributedCacheEntryOptions AllUsersCacheEntryOptions() =>
 			new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 
 		public static Task<User[]> AllUsersAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>

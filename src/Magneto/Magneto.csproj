@@ -10,6 +10,7 @@
 		<DebugType>embedded</DebugType>
 		<DocumentationFile>$(MSBuildProjectName).xml</DocumentationFile>
 		<SignAssembly>true</SignAssembly>
+		<NoWarn>$(NoWarn);CA1716;CA1724</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
