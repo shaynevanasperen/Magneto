@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp2.2</TargetFramework>
+		<NoWarn>$(NoWarn);CA2007;CA1819;CA1054;CA2234</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

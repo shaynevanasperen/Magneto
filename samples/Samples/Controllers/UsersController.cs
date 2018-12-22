@@ -49,7 +49,7 @@ namespace Samples.Controllers
 	{
 		protected override void ConfigureCache(ICacheConfig cacheConfig) => cacheConfig.KeyPrefix = User.AllUsersCacheKeyPrefix;
 
-		protected override DistributedCacheEntryOptions GetCacheEntryOptions(JsonPlaceHolderHttpClient context) => User.AllUsersCacheEntryOptions(context);
+		protected override DistributedCacheEntryOptions GetCacheEntryOptions(JsonPlaceHolderHttpClient context) => User.AllUsersCacheEntryOptions();
 
 		protected override Task<User[]> QueryAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) => User.AllUsersAsync(context, cancellationToken);
 	}
@@ -58,7 +58,7 @@ namespace Samples.Controllers
 	{
 		protected override void ConfigureCache(ICacheConfig cacheConfig) => cacheConfig.KeyPrefix = User.AllUsersCacheKeyPrefix;
 
-		protected override DistributedCacheEntryOptions GetCacheEntryOptions(JsonPlaceHolderHttpClient context) => User.AllUsersCacheEntryOptions(context);
+		protected override DistributedCacheEntryOptions GetCacheEntryOptions(JsonPlaceHolderHttpClient context) => User.AllUsersCacheEntryOptions();
 
 		protected override Task<User[]> QueryAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) => User.AllUsersAsync(context, cancellationToken);
 

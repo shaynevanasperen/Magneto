@@ -10,7 +10,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Polly;
 using Samples.Domain;
 using Samples.Infrastructure;
@@ -79,7 +78,7 @@ namespace Samples
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}
 
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
 			if (env.IsDevelopment())
 			{
