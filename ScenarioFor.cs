@@ -3,7 +3,7 @@ using Specify.Stories;
 using TestStack.BDDfy.Configuration;
 using TestStack.BDDfy.Xunit;
 
-namespace Magneto.Tests
+namespace Magneto
 {
 	public abstract class ScenarioFor<TSut, TStory> : Specify.ScenarioFor<TSut, TStory>
 		where TSut : class
