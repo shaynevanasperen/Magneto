@@ -9,6 +9,7 @@
 		<VersionSuffix>rc-2</VersionSuffix>
 		<DebugType>embedded</DebugType>
 		<DocumentationFile>$(MSBuildProjectName).xml</DocumentationFile>
+		<SignAssembly>true</SignAssembly>
 		<NoWarn>$(NoWarn);1591</NoWarn>
 	</PropertyGroup>
 

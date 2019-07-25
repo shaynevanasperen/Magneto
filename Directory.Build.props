@@ -7,6 +7,7 @@
 		<PackageIconUrl>https://raw.githubusercontent.com/shaynevanasperen/Magneto/master/Magneto.png</PackageIconUrl>
 		<RepositoryUrl>https://github.com/shaynevanasperen/Magneto.git</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
+		<AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Magneto.snk</AssemblyOriginatorKeyFile>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
