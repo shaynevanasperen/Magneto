@@ -1,8 +1,8 @@
-﻿<Project>
+<Project>
 
 	<PropertyGroup>
 		<Authors>Shayne van Asperen</Authors>
-		<PackageLicenseUrl>https://github.com/shaynevanasperen/Magneto/blob/master/LICENSE</PackageLicenseUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/shaynevanasperen/Magneto</PackageProjectUrl>
 		<PackageIconUrl>https://raw.githubusercontent.com/shaynevanasperen/Magneto/master/Magneto.png</PackageIconUrl>
 		<RepositoryUrl>https://github.com/shaynevanasperen/Magneto.git</RepositoryUrl>
