@@ -27,22 +27,22 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 		}
 
 		protected async Task WhenExecutingTheQuery() => Result = await SUT.ExecuteAsync(QueryContext, The<IAsyncCacheStore<CacheEntryOptions>>(), CacheOption, CancellationToken);
-		protected void ThenTheCacheKeyContainsTheFullClassName() => SUT.State.CacheKey.Contains(SUT.GetType().FullName).Should().BeTrue();
-		protected void AndTheCacheKeyContainsTheVaryByValue() => SUT.State.CacheKey.Contains(nameof(ICacheConfig.VaryBy)).Should().BeTrue();
+		protected void ThenTheCacheKeyContainsTheFullClassName() => SUT.GetCacheKey().Contains(SUT.GetType().FullName).Should().BeTrue();
+		protected void AndTheCacheKeyContainsTheVaryByValue() => SUT.GetCacheKey().Contains(nameof(ICacheConfig.VaryBy)).Should().BeTrue();
 		protected void AndThenNothingIsRemovedFromTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().DidNotReceive().Remove(Arg.Any<string>());
-		protected void AndThenTheCachedResultIsSet() => SUT.State.CachedResult.Should().BeSameAs(Result);
+		protected void AndThenTheCachedResultIsSet() => SUT.GetCachedResult().Should().BeSameAs(Result);
 
 		public abstract class CacheOptionIsDefault : Executing
 		{
 			protected void GivenCacheOptionIsDefault() => CacheOption = CacheOption.Default;
-			protected void AndThenTheCacheStoreIsQueried() => The<IAsyncCacheStore<CacheEntryOptions>>().Received().GetAsync<QueryResult>(SUT.State.CacheKey, CancellationToken);
+			protected void AndThenTheCacheStoreIsQueried() => The<IAsyncCacheStore<CacheEntryOptions>>().Received().GetAsync<QueryResult>(SUT.GetCacheKey(), CancellationToken);
 
 			public class CacheMiss : CacheOptionIsDefault
 			{
 				void AndGivenThereIsACacheMiss() { }
 				void AndThenTheQueryIsExecuted() => The<IAsyncCachedQueryStub>().Received().QueryAsync(QueryContext, CancellationToken);
 				void AndThenTheCacheEntryOptionsAreRequested() => The<IAsyncCachedQueryStub>().Received().GetCacheEntryOptions(QueryContext);
-				void AndThenTheResultIsSetInTheCacheStore() => The<IAsyncCacheStore<CacheEntryOptions>>().Received().SetAsync(SUT.State.CacheKey, Arg.Is<CacheEntry<QueryResult>>(x => x.Value == QueryResult), CacheEntryOptions, CancellationToken);
+				void AndThenTheResultIsSetInTheCacheStore() => The<IAsyncCacheStore<CacheEntryOptions>>().Received().SetAsync(SUT.GetCacheKey(), Arg.Is<CacheEntry<QueryResult>>(x => x.Value == QueryResult), CacheEntryOptions, CancellationToken);
 				void AndThenTheResultIsTheQueryResult() => Result.Should().BeSameAs(QueryResult);
 			}
 
@@ -50,7 +50,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 			{
 				readonly QueryResult _cachedResult = new QueryResult();
 
-				void AndGivenThereIsACacheHit() => The<IAsyncCacheStore<CacheEntryOptions>>().GetAsync<QueryResult>(SUT.State.CacheKey, CancellationToken).Returns(x => _cachedResult.ToCacheEntry());
+				void AndGivenThereIsACacheHit() => The<IAsyncCacheStore<CacheEntryOptions>>().GetAsync<QueryResult>(SUT.GetCacheKey(), CancellationToken).Returns(x => _cachedResult.ToCacheEntry());
 				void AndThenTheQueryIsNotExecuted() => The<IAsyncCachedQueryStub>().DidNotReceive().QueryAsync(QueryContext);
 				void AndThenTheCacheEntryOptionsAreNotRequested() => The<IAsyncCachedQueryStub>().DidNotReceive().GetCacheEntryOptions(Arg.Any<QueryContext>());
 				void AndThenTheResultIsNotSetInTheCacheStore() => The<IAsyncCacheStore<CacheEntryOptions>>().DidNotReceive().SetAsync(Arg.Any<string>(), Arg.Any<CacheEntry<QueryResult>>(), Arg.Any<CacheEntryOptions>(), Arg.Any<CancellationToken>());
@@ -64,7 +64,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 			void AndThenTheCacheStoreIsNotQueried() => The<IAsyncCacheStore<CacheEntryOptions>>().DidNotReceive().GetAsync<QueryResult>(Arg.Any<string>(), Arg.Any<CancellationToken>());
 			void AndThenTheQueryIsExecuted() => The<IAsyncCachedQueryStub>().Received().QueryAsync(QueryContext, CancellationToken);
 			void AndThenTheCacheEntryOptionsAreRequested() => The<IAsyncCachedQueryStub>().Received().GetCacheEntryOptions(QueryContext);
-			void AndThenTheResultIsSetInTheCacheStore() => The<IAsyncCacheStore<CacheEntryOptions>>().Received().SetAsync(SUT.State.CacheKey, Arg.Is<CacheEntry<QueryResult>>(x => x.Value == QueryResult), CacheEntryOptions, CancellationToken);
+			void AndThenTheResultIsSetInTheCacheStore() => The<IAsyncCacheStore<CacheEntryOptions>>().Received().SetAsync(SUT.GetCacheKey(), Arg.Is<CacheEntry<QueryResult>>(x => x.Value == QueryResult), CacheEntryOptions, CancellationToken);
 			void AndThenTheResultIsTheQueryResult() => Result.Should().BeSameAs(QueryResult);
 		}
 	}
@@ -76,7 +76,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 		public override void Setup() => SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
 
 		void WhenEvictingCachedResult() => SUT.EvictCachedResultAsync(The<IAsyncCacheStore<object>>(), _cancellationToken);
-		void ThenItDelegatesToTheCacheStore() => The<IAsyncCacheStore<object>>().Received().RemoveAsync(SUT.State.CacheKey, _cancellationToken);
+		void ThenItDelegatesToTheCacheStore() => The<IAsyncCacheStore<object>>().Received().RemoveAsync(SUT.GetCacheKey(), _cancellationToken);
 	}
 
 	public abstract class UpdatingCachedResult : ScenarioFor<AsyncCachedQuery<QueryContext, CacheEntryOptions, QueryResult>>
@@ -111,10 +111,10 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 				The<IAsyncCachedQueryStub>().QueryAsync(QueryContext, CancellationToken).Returns(_queryResult);
 			}
 
-			void GivenTheQueryWasExecuted() => SUT.ExecuteAsync(QueryContext, The<IAsyncCacheStore<CacheEntryOptions>>(), cancellationToken:CancellationToken);
+			void GivenTheQueryWasExecuted() => SUT.ExecuteAsync(QueryContext, The<IAsyncCacheStore<CacheEntryOptions>>(), cancellationToken: CancellationToken);
 			void WhenUpdatingCachedResult() => SUT.UpdateCachedResultAsync(The<IAsyncCacheStore<CacheEntryOptions>>(), CancellationToken);
 			void ThenTheCacheEntryOptionsAreNotRequestedAgain() => The<IAsyncCachedQueryStub>().Received(1).GetCacheEntryOptions(QueryContext);
-			void AndThenItDelegatesToTheCacheStore() => The<IAsyncCacheStore<CacheEntryOptions>>().Received(2).SetAsync(SUT.State.CacheKey, Arg.Is<CacheEntry<QueryResult>>(x => x.Value == _queryResult), CacheEntryOptions, CancellationToken);
+			void AndThenItDelegatesToTheCacheStore() => The<IAsyncCacheStore<CacheEntryOptions>>().Received(2).SetAsync(SUT.GetCacheKey(), Arg.Is<CacheEntry<QueryResult>>(x => x.Value == _queryResult), CacheEntryOptions, CancellationToken);
 		}
 	}
 
