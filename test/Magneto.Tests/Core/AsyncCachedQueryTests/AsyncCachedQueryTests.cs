@@ -93,7 +93,7 @@ namespace Magneto.Tests.Core.AsyncCachedQueryTests
 
 		public class QueryWasNotExecuted : UpdatingCachedResult
 		{
-			Action _invocation;
+			Func<Task> _invocation;
 
 			void GivenTheQueryWasNotExecuted() { }
 			void WhenUpdatingCachedResult() => _invocation = SUT.Invoking(x => x.UpdateCachedResultAsync(The<IAsyncCacheStore<CacheEntryOptions>>(), CancellationToken));

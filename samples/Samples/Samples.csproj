@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp2.1</TargetFramework>
+		<TargetFramework>netcoreapp2.2</TargetFramework>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -9,10 +9,10 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.4" />
-		<PackageReference Include="BuildBundlerMinifier" Version="2.8.391" />
-		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.4.1" />
-		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="2.1.1" />
+		<PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
+		<PackageReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="2.2.0" />
 	</ItemGroup>
 	
 	<ItemGroup>
