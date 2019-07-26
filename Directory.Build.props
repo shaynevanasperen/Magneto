@@ -10,6 +10,8 @@
 		<AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Magneto.snk</AssemblyOriginatorKeyFile>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<LangVersion>latest</LangVersion>
+		<APPVEYOR_BUILD_NUMBER Condition="'$(APPVEYOR_BUILD_NUMBER)' == ''">0</APPVEYOR_BUILD_NUMBER>
+		<MinVerTagPrefix>$(MSBuildProjectName).</MinVerTagPrefix>
 	</PropertyGroup>
 
 	<ItemGroup>
