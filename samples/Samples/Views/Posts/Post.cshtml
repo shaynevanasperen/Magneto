@@ -5,7 +5,10 @@
 }
 
 <h3>@Model.Post.Title</h3>
-<div>@Model.Post.Body</div>
+<form asp-action="Post" asp-route-id="@Model.Post.Id">
+	<textarea name="Body" type="input">@Model.Post.Body</textarea>
+	<button>Update</button>
+</form>
 <h4>Comments</h4>
 <ul class="list-unstyled">
 	@foreach (var comment in Model.Comments)

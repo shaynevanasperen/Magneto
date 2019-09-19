@@ -1,16 +1,29 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+#if NETSTANDARD
+using Code.Extensions.ValueTuple.ServiceProvider;
+#endif
 using Magneto.Core;
 
 namespace Magneto
 {
+#if NETSTANDARD
 	/// <summary>
 	/// The main entry point for consumers to execute queries and commands using context retrieved from the given <see cref="IServiceProvider"/>.
-	/// If using an IoC container, it's highly recommended that this be registered as a scoped service
-	/// so that the injected <see cref="IServiceProvider"/> is scoped appropriately.
+	/// If using an IoC container, it's highly recommended that this be registered as a scoped service so that the injected <see cref="IServiceProvider"/>
+	/// is scoped appropriately. A special wrapper is used for the <see cref="IServiceProvider"/> which can resolve instances of <see cref="ValueTuple"/>
+	/// having up to 8 items by resolving each item from the wrapped <see cref="IServiceProvider"/>.
 	/// </summary>
 	public class Magneto : IMagneto
+#else
+	/// <summary>
+	/// The main entry point for consumers to execute queries and commands using context retrieved from the given <see cref="IServiceProvider"/>.
+	/// If using an IoC container, it's highly recommended that this be registered as a scoped service so that the injected <see cref="IServiceProvider"/>
+	/// is scoped appropriately.
+	/// </summary>
+	public class Magneto : IMagneto
+#endif
 	{
 		/// <summary>
 		/// Creates a new instance of <see cref="Magneto"/>.
@@ -22,6 +35,9 @@ namespace Magneto
 		{
 			ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 			Mediary = ServiceProvider.GetService<IMediary>() ?? new Mediary(ServiceProvider);
+#if NETSTANDARD
+			ServiceProvider = new ValueTupleServiceProvider(ServiceProvider);
+#endif
 		}
 
 		/// <summary>

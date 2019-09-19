@@ -10,6 +10,8 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Polly;
 using Samples.Domain;
 using Samples.Infrastructure;
@@ -18,26 +20,20 @@ namespace Samples
 {
 	public class Startup
 	{
-		public Startup(IHostingEnvironment env)
+		public Startup(IHostingEnvironment environment, IConfiguration configuration)
 		{
-			Environment = env;
+			Environment = environment;
+			Configuration = configuration;
 			InitializeAlbums();
-			var builder = new ConfigurationBuilder()
-				.SetBasePath(env.ContentRootPath)
-				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-				.AddEnvironmentVariables();
-			Configuration = builder.Build();
 		}
 
 		void InitializeAlbums()
 		{
-			const string filename = "albums.json";
-			using (var streamReader = new StreamReader(Environment.ContentRootFileProvider.GetFileInfo(filename).CreateReadStream()))
-				File.WriteAllText(Path.Combine(Environment.WebRootPath, filename), streamReader.ReadToEnd());
+			using (var streamReader = new StreamReader(Environment.ContentRootFileProvider.GetFileInfo(Album.AllAlbumsFilename).CreateReadStream()))
+				File.WriteAllText(Path.Combine(Environment.WebRootPath, Album.AllAlbumsFilename), streamReader.ReadToEnd());
 		}
 
-		public IConfigurationRoot Configuration { get; }
+		public IConfiguration Configuration { get; }
 
 		protected IHostingEnvironment Environment { get; }
 
@@ -57,10 +53,15 @@ namespace Samples
 			// Here we add a decorator object which performs exception logging and timing telemetry for all our Magneto operations.
 			services.AddSingleton<IDecorator, ApplicationInsightsDecorator>();
 
-			// Here we add the two context objects with which our queries and commands are executed.
+			// Here we add the three context objects with which our queries and commands are executed. The first two are actually
+			// used together in a ValueTuple and are resolved as such by a special wrapper around IServiceProvider.
 			services.AddSingleton(Environment.WebRootFileProvider);
-			services
-				.AddHttpClient<JsonPlaceHolderHttpClient>()
+			services.AddSingleton(new JsonSerializerSettings
+			{
+				ContractResolver = new CamelCasePropertyNamesContractResolver(),
+				Formatting = Formatting.Indented
+			});
+			services.AddHttpClient<JsonPlaceHolderHttpClient>()
 				.AddHttpMessageHandler(() => new EnsureSuccessHandler())
 				.AddTransientHttpErrorPolicy(x => x.WaitAndRetryAsync(new[]
 				{
@@ -78,9 +79,9 @@ namespace Samples
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}
 
-		public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		public void Configure(IApplicationBuilder app)
 		{
-			if (env.IsDevelopment())
+			if (Environment.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
 			}

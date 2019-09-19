@@ -1,4 +1,3 @@
-﻿using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -8,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Samples.Domain;
 using Samples.Models;
 
@@ -62,26 +61,26 @@ namespace Samples.Controllers
 
 		protected override Task<User[]> QueryAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) => User.AllUsersAsync(context, cancellationToken);
 
-		protected override Task<User> TransformCachedResultAsync(User[] cachedResult, CancellationToken cancellationToken = default) => Task.FromResult(cachedResult.Single(x => x.Id == Id));
+		protected override Task<User> TransformCachedResultAsync(User[] cachedResult, CancellationToken cancellationToken = default) => Task.FromResult(cachedResult.SingleOrDefault(x => x.Id == Id));
 
 		public int Id { get; set; }
 	}
 
-	public class AlbumsByUserId : SyncTransformedCachedQuery<IFileProvider, MemoryCacheEntryOptions, Album[], Album[]>
+	public class AlbumsByUserId : SyncTransformedCachedQuery<(IFileProvider, ILogger<AlbumsByUserId>), MemoryCacheEntryOptions, Album[], Album[]>
 	{
-		const string Filename = "albums.json";
-
-		protected override MemoryCacheEntryOptions GetCacheEntryOptions(IFileProvider context) =>
-			new MemoryCacheEntryOptions()
-				.AddExpirationToken(context.Watch(Filename))
-				.RegisterPostEvictionCallback((echoKey, value, reason, state) =>
-				{
-					Console.WriteLine($"{echoKey} : {value} was evicted due to {reason}");
-				});
-
-		protected override Album[] Query(IFileProvider context)
+		protected override MemoryCacheEntryOptions GetCacheEntryOptions((IFileProvider, ILogger<AlbumsByUserId>) context)
 		{
-			using (var streamReader = new StreamReader(context.GetFileInfo(Filename).CreateReadStream()))
+			var (fileProvider, logger) = context;
+			return new MemoryCacheEntryOptions()
+				.AddExpirationToken(fileProvider.Watch(Album.AllAlbumsFilename))
+				.RegisterPostEvictionCallback((key, value, reason, state) =>
+					logger.LogInformation($"{key} : {value} was evicted due to {reason}"));
+		}
+
+		protected override Album[] Query((IFileProvider, ILogger<AlbumsByUserId>) context)
+		{
+			var (fileProvider, _) = context;
+			using (var streamReader = new StreamReader(fileProvider.GetFileInfo(Album.AllAlbumsFilename).CreateReadStream()))
 			{
 				var json = streamReader.ReadToEnd();
 				return JsonConvert.DeserializeObject<Album[]>(json);
@@ -93,15 +92,14 @@ namespace Samples.Controllers
 		public int UserId { get; set; }
 	}
 
-	public class SaveAlbum : SyncCommand<IFileProvider>
+	public class SaveAlbum : SyncCommand<(IFileProvider, JsonSerializerSettings)>
 	{
-		const string Filename = "albums.json";
-
-		public override void Execute(IFileProvider context)
+		public override void Execute((IFileProvider, JsonSerializerSettings) context)
 		{
-			lock (context)
+			var (fileProvider, jsonSerializerSettings) = context;
+			lock (fileProvider)
 			{
-				var fileInfo = context.GetFileInfo(Filename);
+				var fileInfo = fileProvider.GetFileInfo(Album.AllAlbumsFilename);
 				Album[] albums;
 				using (var streamReader = new StreamReader(fileInfo.CreateReadStream()))
 				{
@@ -110,7 +108,7 @@ namespace Samples.Controllers
 					Album.Id = existingAlbums.Max(x => x.Id) + 1;
 					albums = existingAlbums.Concat(new[] { Album }).ToArray();
 				}
-				File.WriteAllText(fileInfo.PhysicalPath, JsonConvert.SerializeObject(albums, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
+				File.WriteAllText(fileInfo.PhysicalPath, JsonConvert.SerializeObject(albums, jsonSerializerSettings));
 			}
 		}
 

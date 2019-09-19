@@ -19,6 +19,8 @@ namespace Samples.Domain
 		public int UserId { get; set; }
 		public int Id { get; set; }
 		public string Title { get; set; }
+
+		public const string AllAlbumsFilename = "albums.json";
 	}
 
 	public class Comment

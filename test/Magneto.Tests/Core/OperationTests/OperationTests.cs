@@ -294,12 +294,12 @@ namespace Magneto.Tests.Core.OperationTests
 
 	public class SyncQueryWithoutProperties : SyncQuery<object, object>
 	{
-		public override object Execute(object context) => throw new NotImplementedException();
+		protected override object Query(object context) => throw new NotImplementedException();
 	}
 
 	public class AsyncQueryWithoutProperties : AsyncQuery<object, object>
 	{
-		public override Task<object> ExecuteAsync(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		protected override Task<object> QueryAsync(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 	}
 
 	public class SyncCachedQueryWithoutProperties : SyncCachedQuery<object, object, object>
