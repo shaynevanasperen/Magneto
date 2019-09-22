@@ -29,24 +29,24 @@ namespace Magneto
 
 	/// <summary>
 	/// <para>A base class for asynchronous commands which don't return results.</para>
-	/// <para>Implementors must override <see cref="ExecuteAsync"/> in order to define how the command is executed.</para>
+	/// <para>Implementors must override <see cref="Execute"/> in order to define how the command is executed.</para>
 	/// </summary>
 	/// <typeparam name="TContext">The type of context with which the command is executed.</typeparam>
 	public abstract class AsyncCommand<TContext> : Operation, IAsyncCommand<TContext>
 	{
-		/// <inheritdoc cref="IAsyncCommand{TContext}.ExecuteAsync"/>
-		public abstract Task ExecuteAsync(TContext context, CancellationToken cancellationToken = default);
+		/// <inheritdoc cref="IAsyncCommand{TContext}.Execute"/>
+		public abstract Task Execute(TContext context, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>
 	/// <para>A base class for asynchronous commands which return results.</para>
-	/// <para>Implementors must override <see cref="ExecuteAsync"/> in order to define how the command is executed.</para>
+	/// <para>Implementors must override <see cref="Execute"/> in order to define how the command is executed.</para>
 	/// </summary>
 	/// <typeparam name="TContext">The type of context with which the command is executed.</typeparam>
 	/// <typeparam name="TResult">The type of the command result.</typeparam>
 	public abstract class AsyncCommand<TContext, TResult> : Operation, IAsyncCommand<TContext, TResult>
 	{
-		/// <inheritdoc cref="IAsyncCommand{TContext,TResult}.ExecuteAsync"/>
-		public abstract Task<TResult> ExecuteAsync(TContext context, CancellationToken cancellationToken = default);
+		/// <inheritdoc cref="IAsyncCommand{TContext,TResult}.Execute"/>
+		public abstract Task<TResult> Execute(TContext context, CancellationToken cancellationToken = default);
 	}
 }

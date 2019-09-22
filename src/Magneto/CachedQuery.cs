@@ -1,14 +1,15 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using Magneto.Configuration;
+using Magneto.Core;
 
 namespace Magneto
 {
 	/// <summary>
 	/// <para>A base class for synchronous queries which can have their results cached.</para>
-	/// <para>Implementors can optionally override <see cref="Core.CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.ConfigureCache"/>
+	/// <para>Implementors can optionally override <see cref="CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.CacheKey"/>
 	/// in order to specify a custom cache key prefix and/or which values should be used to construct a cache key.</para>
-	/// <para>Implementors must override <see cref="Core.CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.GetCacheEntryOptions"/> in order to specify options for cache entries (such as expiration policy).</para>
+	/// <para>Implementors must override <see cref="CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.CacheEntryOptions"/> in order to specify options for cache entries (such as expiration policy).</para>
 	/// <para>Implementors must override <see cref="Core.SyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Query"/> in order to define how the query is executed.</para>
 	/// </summary>
 	/// <typeparam name="TContext">The type of context with which the query is executed.</typeparam>
@@ -24,9 +25,9 @@ namespace Magneto
 
 	/// <summary>
 	/// <para>A base class for synchronous queries which can have intermediate results cached and then transformed into final results.</para>
-	/// <para>Implementors can optionally override <see cref="Core.CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.ConfigureCache"/>
+	/// <para>Implementors can optionally override <see cref="CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.CacheKey"/>
 	/// in order to specify a custom cache key prefix and/or which values should be used to construct a cache key.</para>
-	/// <para>Implementors must override <see cref="Core.CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.GetCacheEntryOptions"/> in order to specify options for cache entries (such as expiration policy).</para>
+	/// <para>Implementors must override <see cref="CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.CacheEntryOptions"/> in order to specify options for cache entries (such as expiration policy).</para>
 	/// <para>Implementors must override <see cref="Core.SyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Query"/> in order to define how the query is executed to obtain the intermediate result.</para>
 	/// <para>Implementors must override <see cref="TransformCachedResult"/> in order to define how the intermediate result is transformed into a final result.</para>
 	/// </summary>
@@ -54,11 +55,11 @@ namespace Magneto
 
 	/// <summary>
 	/// <para>A base class for asynchronous queries which can have their results cached.</para>
-	/// <para>Implementors can optionally override <see cref="Core.CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.ConfigureCache"/>
+	/// <para>Implementors can optionally override <see cref="CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.CacheKey"/>
 	/// in order to specify a custom cache key prefix and/or which values should be used to construct a cache key.</para>
-	/// <para>Implementors must override <see cref="Core.CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.GetCacheEntryOptions"/> in order to specify options
+	/// <para>Implementors must override <see cref="CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.CacheEntryOptions"/> in order to specify options
 	/// for cache entries (such as expiration policy).</para>
-	/// <para>Implementors must override <see cref="Core.AsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.QueryAsync"/> in order to define how the query is executed.</para>
+	/// <para>Implementors must override <see cref="Core.AsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Query"/> in order to define how the query is executed.</para>
 	/// </summary>
 	/// <typeparam name="TContext">The type of context with which the query is executed.</typeparam>
 	/// <typeparam name="TCacheEntryOptions">The type of cache entry options configured by the query.</typeparam>
@@ -66,18 +67,18 @@ namespace Magneto
 	public abstract class AsyncCachedQuery<TContext, TCacheEntryOptions, TResult> :
 		Core.AsyncCachedQuery<TContext, TCacheEntryOptions, TResult>, IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult>
 	{
-		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.ExecuteAsync"/>
-		public virtual Task<TResult> ExecuteAsync(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default) =>
-			GetCachedResultAsync(context, cacheStore, cacheOption, cancellationToken);
+		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Execute"/>
+		public virtual Task<TResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default) =>
+			GetCachedResult(context, cacheStore, cacheOption, cancellationToken);
 	}
 
 	/// <summary>
 	/// <para>A base class for asynchronous queries which can have intermediate results cached and then transformed into final results.</para>
-	/// <para>Implementors can optionally override <see cref="Core.CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.ConfigureCache"/>
+	/// <para>Implementors can optionally override <see cref="CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.CacheKey"/>
 	/// in order to specify a custom cache key prefix and/or which values should be used to construct a cache key.</para>
-	/// <para>Implementors must override <see cref="Core.CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.GetCacheEntryOptions"/> in order to specify options for cache entries (such as expiration policy).</para>
-	/// <para>Implementors must override <see cref="Core.AsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.QueryAsync"/> in order to define how the query is executed to obtain the intermediate result.</para>
-	/// <para>Implementors must override <see cref="TransformCachedResultAsync"/> in order to define how the intermediate result is transformed into a final result.</para>
+	/// <para>Implementors must override <see cref="CachedQuery{TContext,TCacheEntryOptions,TCachedResult}.CacheEntryOptions"/> in order to specify options for cache entries (such as expiration policy).</para>
+	/// <para>Implementors must override <see cref="Core.AsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Query"/> in order to define how the query is executed to obtain the intermediate result.</para>
+	/// <para>Implementors must override <see cref="TransformCachedResult"/> in order to define how the intermediate result is transformed into a final result.</para>
 	/// </summary>
 	/// <typeparam name="TContext">The type of context with which the query is executed.</typeparam>
 	/// <typeparam name="TCacheEntryOptions">The type of cache entry options configured by the query.</typeparam>
@@ -92,13 +93,13 @@ namespace Magneto
 		/// <param name="cachedResult">The intermediate result to be transformed.</param>
 		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of transforming the intermediate result.</returns>
-		protected abstract Task<TTransformedResult> TransformCachedResultAsync(TCachedResult cachedResult, CancellationToken cancellationToken = default);
+		protected abstract Task<TTransformedResult> TransformCachedResult(TCachedResult cachedResult, CancellationToken cancellationToken = default);
 
-		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.ExecuteAsync"/>
-		public virtual async Task<TTransformedResult> ExecuteAsync(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default)
+		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Execute"/>
+		public virtual async Task<TTransformedResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default)
 		{
-			var cachedResult = await GetCachedResultAsync(context, cacheStore, cacheOption, cancellationToken).ConfigureAwait(false);
-			return await TransformCachedResultAsync(cachedResult, cancellationToken).ConfigureAwait(false);
+			var cachedResult = await GetCachedResult(context, cacheStore, cacheOption, cancellationToken).ConfigureAwait(false);
+			return await TransformCachedResult(cachedResult, cancellationToken).ConfigureAwait(false);
 		}
 	}
 }

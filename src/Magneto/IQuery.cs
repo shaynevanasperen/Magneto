@@ -31,6 +31,6 @@ namespace Magneto
 		/// <param name="context">The context with which the query is executed.</param>
 		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of query execution.</returns>
-		Task<TResult> ExecuteAsync(TContext context, CancellationToken cancellationToken = default);
+		Task<TResult> Execute(TContext context, CancellationToken cancellationToken = default);
 	}
 }

@@ -17,18 +17,18 @@ namespace Magneto.Core
 			if (context == null) throw new ArgumentNullException(nameof(context));
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));
 
-			State.Context = context;
+			State.SetContext(context);
 
 			if (cacheOption == CacheOption.Default)
 			{
 				var cacheEntry = cacheStore.Get<TCachedResult>(State.CacheKey);
 				if (cacheEntry != null)
-					return State.CachedResult = cacheEntry.Value;
+					return State.SetCachedResult(cacheEntry.Value);
 			}
 
-			var cachedResult = Query(State.Context);
-			cacheStore.Set(State.CacheKey, cachedResult.ToCacheEntry(), State.CacheEntryOptions);
-			return State.CachedResult = cachedResult;
+			var result = Query(context);
+			cacheStore.Set(State.CacheKey, result.ToCacheEntry(), State.CacheEntryOptions);
+			return State.SetCachedResult(result);
 		}
 
 		/// <inheritdoc cref="ISyncCachedQuery{TCacheEntryOptions}.EvictCachedResult"/>
@@ -51,39 +51,39 @@ namespace Magneto.Core
 	/// <inheritdoc cref="IAsyncCachedQuery{TCacheEntryOptions}"/>
 	public abstract class AsyncCachedQuery<TContext, TCacheEntryOptions, TCachedResult> : CachedQuery<TContext, TCacheEntryOptions, TCachedResult>, IAsyncCachedQuery<TCacheEntryOptions>
 	{
-		/// <inheritdoc cref="IAsyncQuery{TContext,TResult}.ExecuteAsync"/>
-		protected abstract Task<TCachedResult> QueryAsync(TContext context, CancellationToken cancellationToken = default);
+		/// <inheritdoc cref="IAsyncQuery{TContext,TResult}.Execute"/>
+		protected abstract Task<TCachedResult> Query(TContext context, CancellationToken cancellationToken = default);
 
-		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.ExecuteAsync"/>
-		protected virtual async Task<TCachedResult> GetCachedResultAsync(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default)
+		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Execute"/>
+		protected virtual async Task<TCachedResult> GetCachedResult(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default)
 		{
 			if (context == null) throw new ArgumentNullException(nameof(context));
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));
 
-			State.Context = context;
+			State.SetContext(context);
 
 			if (cacheOption == CacheOption.Default)
 			{
 				var cacheEntry = await cacheStore.GetAsync<TCachedResult>(State.CacheKey, cancellationToken).ConfigureAwait(false);
 				if (cacheEntry != null)
-					return State.CachedResult = cacheEntry.Value;
+					return State.SetCachedResult(cacheEntry.Value);
 			}
 
-			var cachedResult = await QueryAsync(State.Context, cancellationToken).ConfigureAwait(false);
-			await cacheStore.SetAsync(State.CacheKey, cachedResult.ToCacheEntry(), State.CacheEntryOptions, cancellationToken).ConfigureAwait(false);
-			return State.CachedResult = cachedResult;
+			var result = await Query(context, cancellationToken).ConfigureAwait(false);
+			await cacheStore.SetAsync(State.CacheKey, result.ToCacheEntry(), State.CacheEntryOptions, cancellationToken).ConfigureAwait(false);
+			return State.SetCachedResult(result);
 		}
 
-		/// <inheritdoc cref="IAsyncCachedQuery{TCacheEntryOptions}.EvictCachedResultAsync"/>
-		public virtual Task EvictCachedResultAsync(IAsyncCacheStore<TCacheEntryOptions> cacheStore, CancellationToken cancellationToken = default)
+		/// <inheritdoc cref="IAsyncCachedQuery{TCacheEntryOptions}.EvictCachedResult"/>
+		public virtual Task EvictCachedResult(IAsyncCacheStore<TCacheEntryOptions> cacheStore, CancellationToken cancellationToken = default)
 		{
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));
 
 			return cacheStore.RemoveAsync(State.CacheKey, cancellationToken);
 		}
 
-		/// <inheritdoc cref="IAsyncCachedQuery{TCacheEntryOptions}.UpdateCachedResultAsync"/>
-		public virtual Task UpdateCachedResultAsync(IAsyncCacheStore<TCacheEntryOptions> cacheStore, CancellationToken cancellationToken = default)
+		/// <inheritdoc cref="IAsyncCachedQuery{TCacheEntryOptions}.UpdateCachedResult"/>
+		public virtual Task UpdateCachedResult(IAsyncCacheStore<TCacheEntryOptions> cacheStore, CancellationToken cancellationToken = default)
 		{
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));
 
@@ -102,14 +102,7 @@ namespace Magneto.Core
 		/// <summary>
 		/// Creates a new instance of <see cref="CachedQuery{TContext,TCacheEntryOptions,TCachedResult}"/> and initializes the internal state.
 		/// </summary>
-		protected CachedQuery() => State = new Store(this, getCacheKey);
-
-		string getCacheKey()
-		{
-			var cacheConfig = new CacheConfig(GetType().FullName);
-			ConfigureCache(cacheConfig);
-			return cacheConfig.Key;
-		}
+		protected CachedQuery() => State = new Store(this);
 
 		internal readonly Store State;
 
@@ -117,8 +110,8 @@ namespace Magneto.Core
 		/// <para>Configures details for constructing a cache key.</para>
 		/// <para>Implementors can choose not to override this method if the cache key doesn't need to vary by anything.</para>
 		/// </summary>
-		/// <param name="cacheConfig">The configuration object.</param>
-		protected virtual void ConfigureCache(ICacheConfig cacheConfig) { }
+		/// <param name="keyConfig">The configuration object.</param>
+		protected virtual void CacheKey(IKeyConfig keyConfig) { }
 
 		/// <summary>
 		/// <para>Returns options pertaining to the cache entry (such as expiration policy).</para>
@@ -126,23 +119,37 @@ namespace Magneto.Core
 		/// </summary>
 		/// <param name="context">The context with which the query will execute.</param>
 		/// <returns>The options pertaining to the cache entry.</returns>
-		protected abstract TCacheEntryOptions GetCacheEntryOptions(TContext context);
+		protected abstract TCacheEntryOptions CacheEntryOptions(TContext context);
 
 		internal class Store
 		{
-			public Store(CachedQuery<TContext, TCacheEntryOptions, TCachedResult> query, Func<string> makeCacheKey)
+			readonly CachedQuery<TContext, TCacheEntryOptions, TCachedResult> _query;
+			
+			internal Store(CachedQuery<TContext, TCacheEntryOptions, TCachedResult> query)
 			{
-				_cacheKey = new Lazy<string>(makeCacheKey);
-				_cacheEntryOptions = new Lazy<TCacheEntryOptions>(() => query.GetCacheEntryOptions(Context));
+				_query = query;
+				SetContext(default);
 			}
 
-			internal TContext Context;
+			internal void SetContext(TContext context)
+			{
+				_hasCachedResult = false;
+				_cacheKey = new Lazy<string>(() => new KeyConfig(_query.GetType().FullName).Configure(_query.CacheKey).Key);
+				_cacheEntryOptions = new Lazy<TCacheEntryOptions>(() => _query.CacheEntryOptions(context));
+			}
 
-			readonly Lazy<string> _cacheKey;
+			Lazy<string> _cacheKey;
 			internal string CacheKey => _cacheKey.Value;
 
-			readonly Lazy<TCacheEntryOptions> _cacheEntryOptions;
+			Lazy<TCacheEntryOptions> _cacheEntryOptions;
 			internal TCacheEntryOptions CacheEntryOptions => _cacheEntryOptions.Value;
+
+			internal TCachedResult SetCachedResult(TCachedResult value)
+			{
+				_cachedResult = value;
+				_hasCachedResult = true;
+				return value;
+			}
 
 			bool _hasCachedResult;
 			TCachedResult _cachedResult;
@@ -153,11 +160,6 @@ namespace Magneto.Core
 					if (!_hasCachedResult)
 						throw new InvalidOperationException("Cached result is not available");
 					return _cachedResult;
-				}
-				set
-				{
-					_cachedResult = value;
-					_hasCachedResult = true;
 				}
 			}
 		}

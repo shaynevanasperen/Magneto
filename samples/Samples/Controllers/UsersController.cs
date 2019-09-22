@@ -46,29 +46,34 @@ namespace Samples.Controllers
 
 	public class AllUsers : AsyncCachedQuery<JsonPlaceHolderHttpClient, DistributedCacheEntryOptions, User[]>
 	{
-		protected override void ConfigureCache(ICacheConfig cacheConfig) => cacheConfig.KeyPrefix = User.AllUsersCacheKeyPrefix;
+		protected override void CacheKey(IKeyConfig keyConfig) => keyConfig.Prefix = User.AllUsersCacheKeyPrefix;
 
-		protected override DistributedCacheEntryOptions GetCacheEntryOptions(JsonPlaceHolderHttpClient context) => User.AllUsersCacheEntryOptions();
+		protected override DistributedCacheEntryOptions CacheEntryOptions(JsonPlaceHolderHttpClient context) =>
+			User.AllUsersCacheEntryOptions();
 
-		protected override Task<User[]> QueryAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) => User.AllUsersAsync(context, cancellationToken);
+		protected override Task<User[]> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+			User.AllUsersAsync(context, cancellationToken);
 	}
 
 	public class UserById : AsyncTransformedCachedQuery<JsonPlaceHolderHttpClient, DistributedCacheEntryOptions, User[], User>
 	{
-		protected override void ConfigureCache(ICacheConfig cacheConfig) => cacheConfig.KeyPrefix = User.AllUsersCacheKeyPrefix;
+		protected override void CacheKey(IKeyConfig keyConfig) => keyConfig.UsePrefix(User.AllUsersCacheKeyPrefix);
 
-		protected override DistributedCacheEntryOptions GetCacheEntryOptions(JsonPlaceHolderHttpClient context) => User.AllUsersCacheEntryOptions();
+		protected override DistributedCacheEntryOptions CacheEntryOptions(JsonPlaceHolderHttpClient context) =>
+			User.AllUsersCacheEntryOptions();
 
-		protected override Task<User[]> QueryAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) => User.AllUsersAsync(context, cancellationToken);
+		protected override Task<User[]> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+			User.AllUsersAsync(context, cancellationToken);
 
-		protected override Task<User> TransformCachedResultAsync(User[] cachedResult, CancellationToken cancellationToken = default) => Task.FromResult(cachedResult.SingleOrDefault(x => x.Id == Id));
+		protected override Task<User> TransformCachedResult(User[] cachedResult, CancellationToken cancellationToken = default) =>
+			Task.FromResult(cachedResult.SingleOrDefault(x => x.Id == Id));
 
 		public int Id { get; set; }
 	}
 
 	public class AlbumsByUserId : SyncTransformedCachedQuery<(IFileProvider, ILogger<AlbumsByUserId>), MemoryCacheEntryOptions, Album[], Album[]>
 	{
-		protected override MemoryCacheEntryOptions GetCacheEntryOptions((IFileProvider, ILogger<AlbumsByUserId>) context)
+		protected override MemoryCacheEntryOptions CacheEntryOptions((IFileProvider, ILogger<AlbumsByUserId>) context)
 		{
 			var (fileProvider, logger) = context;
 			return new MemoryCacheEntryOptions()
@@ -100,15 +105,16 @@ namespace Samples.Controllers
 			lock (fileProvider)
 			{
 				var fileInfo = fileProvider.GetFileInfo(Album.AllAlbumsFilename);
-				Album[] albums;
+
+				string json;
 				using (var streamReader = new StreamReader(fileInfo.CreateReadStream()))
-				{
-					var json = streamReader.ReadToEnd();
-					var existingAlbums = JsonConvert.DeserializeObject<Album[]>(json);
-					Album.Id = existingAlbums.Max(x => x.Id) + 1;
-					albums = existingAlbums.Concat(new[] { Album }).ToArray();
-				}
-				File.WriteAllText(fileInfo.PhysicalPath, JsonConvert.SerializeObject(albums, jsonSerializerSettings));
+					json = streamReader.ReadToEnd();
+
+				var existingAlbums = JsonConvert.DeserializeObject<Album[]>(json);
+				Album.Id = existingAlbums.Max(x => x.Id) + 1;
+				json = JsonConvert.SerializeObject(existingAlbums.Concat(new[] { Album }), jsonSerializerSettings);
+
+				File.WriteAllText(fileInfo.PhysicalPath, json);
 			}
 		}
 

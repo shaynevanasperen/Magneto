@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 
 namespace Magneto.Tests.MagnetoTests
@@ -9,9 +8,9 @@ namespace Magneto.Tests.MagnetoTests
 	{
 		readonly ServiceProvider _serviceProvider = new ServiceProvider();
 
-		protected Foo Foo;
-		protected Bar Bar;
-		protected Baz Baz;
+		protected Foo ResolvedFoo;
+		protected Bar ResolvedBar;
+		protected Baz ResolvedBaz;
 
 		public override void Setup()
 		{
@@ -21,30 +20,45 @@ namespace Magneto.Tests.MagnetoTests
 			SUT = new MagnetoTest(_serviceProvider);
 		}
 
-		protected void ThenTheContextIsResolvedCorrectly()
-		{
-			_serviceProvider.Services.SingleOrDefault(x => x.Value == Foo).Should().NotBeNull();
-			_serviceProvider.Services.SingleOrDefault(x => x.Value == Bar).Should().NotBeNull();
-			_serviceProvider.Services.SingleOrDefault(x => x.Value == Baz).Should().NotBeNull();
-		}
-
 		public class ForNormalType : GettingContext
 		{
-			protected void WhenGettingContext()
+			void WhenContextIsResolved()
 			{
-				Foo = SUT.GetContextPublic<Foo>();
-				Bar = SUT.GetContextPublic<Bar>();
-				Baz = SUT.GetContextPublic<Baz>();
+				ResolvedFoo = SUT.ResolveContext<Foo>();
+				ResolvedBar = SUT.ResolveContext<Bar>();
+				ResolvedBaz = SUT.ResolveContext<Baz>();
 			}
+
+			void ThenContextIsResolvedCorrectly() => AssertContextIsResolvedCorrectly();
 		}
 
 		public class ForValueTupleType : GettingContext
 		{
-			protected void WhenGettingContext()
+			void WhenContextIsResolved()
 			{
-				var context = SUT.GetContextPublic<(Foo, Bar, Baz)>();
-				(Foo, Bar, Baz) = context;
+				var context = SUT.ResolveContext<(Foo, Bar, Baz)>();
+				(ResolvedFoo, ResolvedBar, ResolvedBaz) = context;
 			}
+
+			void ThenContextIsResolvedCorrectly() => AssertContextIsResolvedCorrectly();
+		}
+
+		public class ForNestedValueTupleType : GettingContext
+		{
+			void WhenContextIsResolved()
+			{
+				var context = SUT.ResolveContext<(Foo, (Bar, Baz))>();
+				(ResolvedFoo, (ResolvedBar, ResolvedBaz)) = context;
+			}
+
+			void ThenContextIsResolvedCorrectly() => AssertContextIsResolvedCorrectly();
+		}
+
+		protected void AssertContextIsResolvedCorrectly()
+		{
+			ResolvedFoo.Should().Be(_serviceProvider.Services[typeof(Foo)]);
+			ResolvedBar.Should().Be(_serviceProvider.Services[typeof(Bar)]);
+			ResolvedBaz.Should().Be(_serviceProvider.Services[typeof(Baz)]);
 		}
 	}
 
@@ -52,7 +66,7 @@ namespace Magneto.Tests.MagnetoTests
 	{
 		private readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();
 
-		public IReadOnlyCollection<KeyValuePair<Type, object>> Services => _services;
+		public IReadOnlyDictionary<Type, object> Services => _services;
 
 		public void Register(object instance) => _services.TryAdd(instance.GetType(), instance);
 
@@ -63,7 +77,7 @@ namespace Magneto.Tests.MagnetoTests
 	{
 		public MagnetoTest(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
-		public TContext GetContextPublic<TContext>() => GetContext<TContext>();
+		public TContext ResolveContext<TContext>() => GetContext<TContext>();
 	}
 
 	public class Foo { }

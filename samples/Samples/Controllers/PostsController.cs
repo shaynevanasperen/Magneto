@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Magneto;
@@ -33,50 +33,57 @@ namespace Samples.Controllers
 		}
 
 		[HttpPost("{id:int}")]
-		public async Task<IActionResult> Post(Post model)
+		public async Task<IActionResult> Post(int id, string body)
 		{
-			var postById = new PostById { Id = model.Id };
-			var post = await _magneto.QueryAsync(postById);
-			post.Body = model.Body;
+			var postById = new PostById { Id = id };
+			// Make sure to bypass reading from the cache, as we know we are about to modify this entity
+			var post = await _magneto.QueryAsync(postById, CacheOption.Refresh);
+			post.Body = body;
 			await _magneto.CommandAsync(new SavePost { Post = post });
 			// When using a distributed cache, we should either evict or update the entry, since we know it to be stale now
 			await _magneto.UpdateCachedResultAsync(postById);
 			//await _magneto.EvictCachedResultAsync(postById);
 
-			return RedirectToAction(nameof(Index), new { post.Id });
+			return RedirectToAction(nameof(Index), new { id });
 		}
 	}
 
 	public class AllPosts : AsyncQuery<JsonPlaceHolderHttpClient, Post[]>
 	{
-		protected override Task<Post[]> QueryAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) => context.GetAsync<Post[]>("/posts", cancellationToken);
+		protected override Task<Post[]> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+			context.GetAsync<Post[]>("/posts", cancellationToken);
 	}
 
 	public class PostById : AsyncCachedQuery<JsonPlaceHolderHttpClient, DistributedCacheEntryOptions, Post>
 	{
-		protected override void ConfigureCache(ICacheConfig cacheConfig) => cacheConfig.VaryBy(Id);
+		protected override void CacheKey(IKeyConfig keyConfig) => keyConfig.VaryBy = Id;
 
-		protected override DistributedCacheEntryOptions GetCacheEntryOptions(JsonPlaceHolderHttpClient context) => new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
+		protected override DistributedCacheEntryOptions CacheEntryOptions(JsonPlaceHolderHttpClient context) =>
+			new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 
-		protected override Task<Post> QueryAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) => context.GetAsync<Post>($"/posts/{Id}", cancellationToken);
+		protected override Task<Post> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+			context.GetAsync<Post>($"/posts/{Id}", cancellationToken);
 
 		public int Id { get; set; }
 	}
 
 	public class CommentsByPostId : AsyncCachedQuery<JsonPlaceHolderHttpClient, MemoryCacheEntryOptions, Comment[]>
 	{
-		protected override void ConfigureCache(ICacheConfig cacheConfig) => cacheConfig.VaryBy(PostId);
+		protected override void CacheKey(IKeyConfig keyConfig) => keyConfig.VaryBy(PostId);
 
-		protected override MemoryCacheEntryOptions GetCacheEntryOptions(JsonPlaceHolderHttpClient context) => new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
+		protected override MemoryCacheEntryOptions CacheEntryOptions(JsonPlaceHolderHttpClient context) =>
+			new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 
-		protected override Task<Comment[]> QueryAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) => context.GetAsync<Comment[]>($"/posts/{PostId}/comments", cancellationToken);
+		protected override Task<Comment[]> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+			context.GetAsync<Comment[]>($"/posts/{PostId}/comments", cancellationToken);
 
 		public int PostId { get; set; }
 	}
 
 	public class SavePost : AsyncCommand<JsonPlaceHolderHttpClient>
 	{
-		public override Task ExecuteAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) => context.PostAsync($"/posts/{Post.Id}", Post, cancellationToken);
+		public override Task Execute(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+			context.PostAsync($"/posts/{Post.Id}", Post, cancellationToken);
 
 		public Post Post { get; set; }
 	}

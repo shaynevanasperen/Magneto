@@ -8,18 +8,19 @@ using Magneto.Core;
 namespace Magneto
 {
 	/// <summary>
-	/// A lower level abstraction for invoking queries and commands by passing the context manually.
-	/// If using an IoC container, it's highly recommended that this be registered as a scoped service
-	/// so that the injected <see cref="IServiceProvider"/> is scoped appropriately.
+	/// A lower level abstraction for invoking queries and commands by passing the context manually. If an <see cref="IServiceProvider"/> is provided,
+	/// it will be used to obtain instances of the various cache stores required by any cached queries. If the <see cref="IServiceProvider"/> is not
+	/// able to provide the required <see cref="ISyncCacheStore{TCacheEntryOptions}"/> or <see cref="IAsyncCacheStore{TCacheEntryOptions}"/> for a
+	/// given cached query, or if the <see cref="IServiceProvider"/> wasn't provided, caching functionality is disabled for that cached query.
 	/// </summary>
 	public class Mediary : IMediary
 	{
 		static readonly ConcurrentDictionary<Type, object> NullCacheStores = new ConcurrentDictionary<Type, object>();
 
 		/// <summary>
-		/// Creates a new instance of <see cref="Mediary"/>.
-		/// The <see cref="Decorator"/> is initialized from retrieving an instance of <see cref="IDecorator"/> from the given <see cref="IServiceProvider"/>,
-		/// or a new instance of <see cref="NullDecorator"/> if the <see cref="IServiceProvider"/> was not provided or doesn't have it.
+		/// Creates a new instance of <see cref="Mediary"/>. The contained <see cref="IDecorator"/> is initialized from obtaining an instance of
+		/// <see cref="IDecorator"/> from the given <see cref="IServiceProvider"/>, or a new instance of <see cref="NullDecorator"/> if the
+		/// <see cref="IServiceProvider"/> was not provided or couldn't provide it.
 		/// </summary>
 		/// <param name="serviceProvider">Used for obtaining instances of cache store objects with which cached queries are invoked.</param>
 		/// <param name="decorator">Used for decorating invocations in order to apply cross-cutting concerns.</param>
@@ -87,7 +88,7 @@ namespace Magneto
 			if (query == null) throw new ArgumentNullException(nameof(query));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(GetOperationName(query, nameof(query.ExecuteAsync)), () => query.ExecuteAsync(context, cancellationToken));
+			return Decorator.Decorate(GetOperationName(query, nameof(query.Execute)), () => query.Execute(context, cancellationToken));
 		}
 
 		/// <inheritdoc cref="ISyncQueryMediary.Query{TContext,TCacheEntryOptions,TResult}"/>
@@ -105,7 +106,7 @@ namespace Magneto
 			if (query == null) throw new ArgumentNullException(nameof(query));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(GetOperationName(query, nameof(query.ExecuteAsync)), () => query.ExecuteAsync(context, GetAsyncCacheStore<TCacheEntryOptions>(), cacheOption, cancellationToken));
+			return Decorator.Decorate(GetOperationName(query, nameof(query.Execute)), () => query.Execute(context, GetAsyncCacheStore<TCacheEntryOptions>(), cacheOption, cancellationToken));
 		}
 
 		/// <inheritdoc cref="ISyncCacheManager.EvictCachedResult{TCacheEntryOptions}"/>
@@ -121,7 +122,7 @@ namespace Magneto
 		{
 			if (query == null) throw new ArgumentNullException(nameof(query));
 
-			return Decorator.Decorate(GetOperationName(query, nameof(query.EvictCachedResultAsync)), () => query.EvictCachedResultAsync(GetAsyncCacheStore<TCacheEntryOptions>(), cancellationToken));
+			return Decorator.Decorate(GetOperationName(query, nameof(query.EvictCachedResult)), () => query.EvictCachedResult(GetAsyncCacheStore<TCacheEntryOptions>(), cancellationToken));
 		}
 
 		/// <inheritdoc cref="ISyncCacheManager.UpdateCachedResult{TCacheEntryOptions}"/>
@@ -137,7 +138,7 @@ namespace Magneto
 		{
 			if (executedQuery == null) throw new ArgumentNullException(nameof(executedQuery));
 
-			return Decorator.Decorate(GetOperationName(executedQuery, nameof(executedQuery.UpdateCachedResultAsync)), () => executedQuery.UpdateCachedResultAsync(GetAsyncCacheStore<TCacheEntryOptions>(), cancellationToken));
+			return Decorator.Decorate(GetOperationName(executedQuery, nameof(executedQuery.UpdateCachedResult)), () => executedQuery.UpdateCachedResult(GetAsyncCacheStore<TCacheEntryOptions>(), cancellationToken));
 		}
 
 		/// <inheritdoc cref="ISyncCommandMediary.Command{TContext}"/>
@@ -155,7 +156,7 @@ namespace Magneto
 			if (command == null) throw new ArgumentNullException(nameof(command));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(GetOperationName(command, nameof(command.ExecuteAsync)), () => command.ExecuteAsync(context, cancellationToken));
+			return Decorator.Decorate(GetOperationName(command, nameof(command.Execute)), () => command.Execute(context, cancellationToken));
 		}
 
 		/// <inheritdoc cref="ISyncCommandMediary.Command{TContext,TResult}"/>
@@ -173,7 +174,7 @@ namespace Magneto
 			if (command == null) throw new ArgumentNullException(nameof(command));
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return Decorator.Decorate(GetOperationName(command, nameof(command.ExecuteAsync)), () => command.ExecuteAsync(context, cancellationToken));
+			return Decorator.Decorate(GetOperationName(command, nameof(command.Execute)), () => command.Execute(context, cancellationToken));
 		}
 	}
 }

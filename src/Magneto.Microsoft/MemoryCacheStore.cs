@@ -28,6 +28,14 @@ namespace Magneto.Microsoft
 			return _memoryCache.Get<CacheEntry<T>>(key);
 		}
 
+		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.GetAsync{T}"/>
+		public Task<CacheEntry<T>> GetAsync<T>(string key, CancellationToken cancellationToken = default)
+		{
+			if (key == null) throw new ArgumentNullException(nameof(key));
+
+			return Task.FromResult(_memoryCache.Get<CacheEntry<T>>(key));
+		}
+
 		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Set{T}"/>
 		public void Set<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions)
 		{
@@ -38,6 +46,17 @@ namespace Magneto.Microsoft
 			_memoryCache.Set(key, item, cacheEntryOptions);
 		}
 
+		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.SetAsync{T}"/>
+		public Task SetAsync<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions, CancellationToken cancellationToken = default)
+		{
+			if (key == null) throw new ArgumentNullException(nameof(key));
+			if (item == null) throw new ArgumentNullException(nameof(item));
+			if (cacheEntryOptions == null) throw new ArgumentNullException(nameof(cacheEntryOptions));
+
+			_memoryCache.Set(key, item, cacheEntryOptions);
+			return Task.CompletedTask;
+		}
+
 		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Remove"/>
 		public void Remove(string key)
 		{
@@ -46,31 +65,12 @@ namespace Magneto.Microsoft
 			_memoryCache.Remove(key);
 		}
 
-		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.GetAsync{T}"/>
-		public Task<CacheEntry<T>> GetAsync<T>(string key, CancellationToken cancellationToken = default)
-		{
-			if (key == null) throw new ArgumentNullException(nameof(key));
-
-			return Task.FromResult(Get<T>(key));
-		}
-
-		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.SetAsync{T}"/>
-		public Task SetAsync<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions, CancellationToken cancellationToken = default)
-		{
-			if (key == null) throw new ArgumentNullException(nameof(key));
-			if (item == null) throw new ArgumentNullException(nameof(item));
-			if (cacheEntryOptions == null) throw new ArgumentNullException(nameof(cacheEntryOptions));
-
-			Set(key, item, cacheEntryOptions);
-			return Task.CompletedTask;
-		}
-
 		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.RemoveAsync"/>
 		public Task RemoveAsync(string key, CancellationToken cancellationToken = default)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 
-			Remove(key);
+			_memoryCache.Remove(key);
 			return Task.CompletedTask;
 		}
 	}

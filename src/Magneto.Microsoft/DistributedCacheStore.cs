@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Magneto.Configuration;
 using Magneto.Core;
 using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json;
 
 namespace Magneto.Microsoft
 {
@@ -14,29 +13,55 @@ namespace Magneto.Microsoft
 	public class DistributedCacheStore : ICacheStore<DistributedCacheEntryOptions>
 	{
 		readonly IDistributedCache _distributedCache;
+		readonly IStringSerializer _stringSerializer;
 
 		/// <summary>
 		/// Creates a new instance of <see cref="DistributedCacheStore"/> using the given <see cref="IDistributedCache"/>.
 		/// </summary>
 		/// <param name="distributedCache">The underlying cache implementation.</param>
-		public DistributedCacheStore(IDistributedCache distributedCache) => _distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
+		/// <param name="stringSerializer">The serializer to use for cached objects.</param>
+		public DistributedCacheStore(IDistributedCache distributedCache, IStringSerializer stringSerializer)
+		{
+			_distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
+			_stringSerializer = stringSerializer ?? throw new ArgumentNullException(nameof(stringSerializer));
+		}
 
 		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Get{T}"/>
 		public CacheEntry<T> Get<T>(string key)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 
-			var json = _distributedCache.GetString(key);
-			if (json == null)
+			var value = _distributedCache.GetString(key);
+			if (value == null)
 				return null;
 
 			try
 			{
-				return JsonConvert.DeserializeObject<CacheEntry<T>>(json);
+				return _stringSerializer.Deserialize<CacheEntry<T>>(value);
 			}
-			catch (JsonSerializationException)
+			catch
 			{
-				Remove(key);
+				_distributedCache.Remove(key);
+				throw;
+			}
+		}
+
+		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.GetAsync{T}"/>
+		public async Task<CacheEntry<T>> GetAsync<T>(string key, CancellationToken cancellationToken = default)
+		{
+			if (key == null) throw new ArgumentNullException(nameof(key));
+
+			var value = await _distributedCache.GetStringAsync(key, cancellationToken).ConfigureAwait(false);
+			if (value == null)
+				return null;
+
+			try
+			{
+				return _stringSerializer.Deserialize<CacheEntry<T>>(value);
+			}
+			catch
+			{
+				await _distributedCache.RemoveAsync(key, cancellationToken).ConfigureAwait(false);
 				throw;
 			}
 		}
@@ -48,36 +73,8 @@ namespace Magneto.Microsoft
 			if (item == null) throw new ArgumentNullException(nameof(item));
 			if (cacheEntryOptions == null) throw new ArgumentNullException(nameof(cacheEntryOptions));
 
-			var json = JsonConvert.SerializeObject(item);
-			_distributedCache.SetString(key, json, cacheEntryOptions);
-		}
-
-		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Remove"/>
-		public void Remove(string key)
-		{
-			if (key == null) throw new ArgumentNullException(nameof(key));
-
-			_distributedCache.Remove(key);
-		}
-
-		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.GetAsync{T}"/>
-		public async Task<CacheEntry<T>> GetAsync<T>(string key, CancellationToken cancellationToken = default)
-		{
-			if (key == null) throw new ArgumentNullException(nameof(key));
-
-			var json = await _distributedCache.GetStringAsync(key, cancellationToken).ConfigureAwait(false);
-			if (json == null)
-				return null;
-
-			try
-			{
-				return JsonConvert.DeserializeObject<CacheEntry<T>>(json);
-			}
-			catch (JsonSerializationException)
-			{
-				await RemoveAsync(key, cancellationToken).ConfigureAwait(false);
-				throw;
-			}
+			var value = _stringSerializer.Serialize(item);
+			_distributedCache.SetString(key, value, cacheEntryOptions);
 		}
 
 		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.SetAsync{T}"/>
@@ -87,8 +84,16 @@ namespace Magneto.Microsoft
 			if (item == null) throw new ArgumentNullException(nameof(item));
 			if (cacheEntryOptions == null) throw new ArgumentNullException(nameof(cacheEntryOptions));
 
-			var json = JsonConvert.SerializeObject(item);
-			return _distributedCache.SetStringAsync(key, json, cacheEntryOptions, cancellationToken);
+			var value = _stringSerializer.Serialize(item);
+			return _distributedCache.SetStringAsync(key, value, cacheEntryOptions, cancellationToken);
+		}
+
+		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Remove"/>
+		public void Remove(string key)
+		{
+			if (key == null) throw new ArgumentNullException(nameof(key));
+
+			_distributedCache.Remove(key);
 		}
 
 		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.RemoveAsync"/>

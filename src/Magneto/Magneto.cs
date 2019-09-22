@@ -1,52 +1,53 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-#if NETSTANDARD
 using Code.Extensions.ValueTuple.ServiceProvider;
-#endif
+using Magneto.Configuration;
 using Magneto.Core;
 
 namespace Magneto
 {
-#if NETSTANDARD
 	/// <summary>
-	/// The main entry point for consumers to execute queries and commands using context retrieved from the given <see cref="IServiceProvider"/>.
-	/// If using an IoC container, it's highly recommended that this be registered as a scoped service so that the injected <see cref="IServiceProvider"/>
-	/// is scoped appropriately. A special wrapper is used for the <see cref="IServiceProvider"/> which can resolve instances of <see cref="ValueTuple"/>
-	/// having up to 8 items by resolving each item from the wrapped <see cref="IServiceProvider"/>.
+	/// <para>
+	/// The main entry point for consumers to execute queries and commands using context obtained from the given <see cref="IServiceProvider"/>. If using
+	/// cached queries, make sure to register their respective cache stores in the given <see cref="IServiceProvider"/>. If the given <see cref="IServiceProvider"/>
+	/// is not able to provide the required <see cref="ISyncCacheStore{TCacheEntryOptions}"/> or <see cref="IAsyncCacheStore{TCacheEntryOptions}"/> for a
+	/// given cached query, caching functionality is disabled for that cached query. A special wrapper is used for the <see cref="IServiceProvider"/>
+	/// which can resolve instances of <see cref="ValueTuple"/> by resolving each item from the inner <see cref="IServiceProvider"/>. This enables queries
+	/// and commands to express the required context as being a composite of several items. For example:
+	/// </para>
+	/// <example>
+	/// <c>class MyQuery : ISyncQuery&lt;(DbContext, IFileProvider), string&gt; { ... }</c>
+	/// </example>
 	/// </summary>
 	public class Magneto : IMagneto
-#else
-	/// <summary>
-	/// The main entry point for consumers to execute queries and commands using context retrieved from the given <see cref="IServiceProvider"/>.
-	/// If using an IoC container, it's highly recommended that this be registered as a scoped service so that the injected <see cref="IServiceProvider"/>
-	/// is scoped appropriately.
-	/// </summary>
-	public class Magneto : IMagneto
-#endif
 	{
 		/// <summary>
-		/// Creates a new instance of <see cref="Magneto"/>.
-		/// The <see cref="Mediary"/> is initialized from retrieving and instance of <see cref="IMediary"/> from the given <see cref="IServiceProvider"/>,
-		/// or a new instance of <see cref="Mediary"/> if the <see cref="IServiceProvider"/> doesn't have it.
+		/// Creates a new instance of <see cref="Magneto"/>. The contained <see cref="IMediary"/> is initialized from either the instance of
+		/// <see cref="IMediary"/> obtained from the given <see cref="IServiceProvider"/>, or a new instance of <see cref="Mediary"/> if the given
+		/// <see cref="IServiceProvider"/> couldn't provide it. The contained <see cref="IServiceProvider"/> wraps <paramref name="serviceProvider"/>,
+		/// adding the capability to resolve instances of <see cref="ValueTuple"/>.
 		/// </summary>
 		/// <param name="serviceProvider">Used for obtaining instances of the context objects with which queries and commands are invoked.</param>
+		/// <exception cref="ArgumentNullException">Thrown if the <paramref name="serviceProvider"/> is null.</exception>
 		public Magneto(IServiceProvider serviceProvider)
 		{
-			ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-			Mediary = ServiceProvider.GetService<IMediary>() ?? new Mediary(ServiceProvider);
-#if NETSTANDARD
-			ServiceProvider = new ValueTupleServiceProvider(ServiceProvider);
-#endif
+			if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
+			
+			Mediary = serviceProvider.GetService<IMediary>() ?? new Mediary(serviceProvider);
+			ServiceProvider = new ValueTupleServiceProvider(serviceProvider);
 		}
 
 		/// <summary>
-		/// Exposes the <see cref="IServiceProvider"/> provided in the constructor.
+		/// Exposes an <see cref="IServiceProvider"/> which wraps the one provided in the constructor. The wrapper can resolve instances of
+		/// <see cref="ValueTuple"/> by resolving each item from the inner <see cref="IServiceProvider"/>. This enables queries and commands
+		/// to express the required context as being a composite of several items.
 		/// </summary>
 		protected IServiceProvider ServiceProvider { get; }
 
 		/// <summary>
-		/// Exposes the <see cref="IMediary"/> retrieved from the <see cref="ServiceProvider"/>, or an instance of <see cref="Mediary"/> if the <see cref="ServiceProvider"/> didn't have it.
+		/// Exposes the <see cref="IMediary"/> obtained from the <see cref="IServiceProvider"/> provided in the constructor, or an instance of
+		/// <see cref="Mediary"/> if that <see cref="IServiceProvider"/> couldn't provide it.
 		/// </summary>
 		protected IMediary Mediary { get; }
 

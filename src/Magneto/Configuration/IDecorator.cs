@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 
 namespace Magneto.Configuration
@@ -39,10 +39,10 @@ namespace Magneto.Configuration
 		/// Decorates the given operation with predefined behaviour (such as logging, tracing, or error handling).
 		/// </summary>
 		/// <typeparam name="TResult">The type of the result returned by the operation.</typeparam>
-		/// <param name="operation">The name of the operation which will be decorated with behaviour.</param>
+		/// <param name="operationName">The name of the operation which will be decorated with behaviour.</param>
 		/// <param name="invoke">A delegate representing the invocation of the operation.</param>
 		/// <returns>The result returned by the operation invocation.</returns>
-		Task<TResult> Decorate<TResult>(string operation, Func<Task<TResult>> invoke);
+		Task<TResult> Decorate<TResult>(string operationName, Func<Task<TResult>> invoke);
 
 		/// <summary>
 		/// Decorates the given operation with predefined behaviour (such as logging, tracing, or error handling).

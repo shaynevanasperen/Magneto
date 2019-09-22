@@ -43,7 +43,7 @@ namespace Magneto
 		/// <param name="context">The context with which the command is executed.</param>
 		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>A task representing the execution of the command.</returns>
-		Task ExecuteAsync(TContext context, CancellationToken cancellationToken = default);
+		Task Execute(TContext context, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>
@@ -59,6 +59,6 @@ namespace Magneto
 		/// <param name="context">The context with which the command is executed.</param>
 		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of command execution.</returns>
-		Task<TResult> ExecuteAsync(TContext context, CancellationToken cancellationToken = default);
+		Task<TResult> Execute(TContext context, CancellationToken cancellationToken = default);
 	}
 }

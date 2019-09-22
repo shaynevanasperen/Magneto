@@ -1,4 +1,4 @@
-﻿namespace Magneto
+namespace Magneto
 {
 	/// <summary>
 	/// An option designating whether or not the cache should be read when executing a query.
@@ -6,12 +6,12 @@
 	public enum CacheOption
 	{
 		/// <summary>
-		/// Specifies that the cache <c>should be read</c> when executing a cached query <c>(read-write)</c>.
+		/// Specifies that the cache should be read when executing a cached query (read-write).
 		/// </summary>
 		Default,
 
 		/// <summary>
-		/// Specifies that the cache <c>should not be read</c> when executing a cached query <c>(write-only)</c>.
+		/// Specifies that the cache should not be read when executing a cached query (write-only).
 		/// </summary>
 		Refresh
 	}

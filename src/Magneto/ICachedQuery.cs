@@ -40,7 +40,7 @@ namespace Magneto
 		/// <param name="cacheOption">Optional. An option designating whether or not the cache should be read when executing the query.</param>
 		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of query execution in the case of a cache miss or if <paramref name="cacheOption"/> is <see cref="CacheOption.Refresh"/>, otherwise the cached result.</returns>
-		Task<TResult> ExecuteAsync(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default);
+		Task<TResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>
@@ -74,7 +74,7 @@ namespace Magneto
 		/// <param name="cacheStore">An object used for storing and retrieving cached values.</param>
 		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>A task representing the eviction of the cached result.</returns>
-		Task EvictCachedResultAsync(IAsyncCacheStore<TCacheEntryOptions> cacheStore, CancellationToken cancellationToken = default);
+		Task EvictCachedResult(IAsyncCacheStore<TCacheEntryOptions> cacheStore, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Updates the prior cached result from previous execution of the query. Useful when the underlying cache store is not in memory.
@@ -82,6 +82,6 @@ namespace Magneto
 		/// <param name="cacheStore">An object used for storing and retrieving cached values.</param>
 		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>A task representing the update of the cached result.</returns>
-		Task UpdateCachedResultAsync(IAsyncCacheStore<TCacheEntryOptions> cacheStore, CancellationToken cancellationToken = default);
+		Task UpdateCachedResult(IAsyncCacheStore<TCacheEntryOptions> cacheStore, CancellationToken cancellationToken = default);
 	}
 }

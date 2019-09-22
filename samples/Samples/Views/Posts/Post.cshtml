@@ -5,7 +5,7 @@
 }
 
 <h3>@Model.Post.Title</h3>
-<form asp-action="Post" asp-route-id="@Model.Post.Id">
+<form asp-action="Post">
 	<textarea name="Body" type="input">@Model.Post.Body</textarea>
 	<button>Update</button>
 </form>

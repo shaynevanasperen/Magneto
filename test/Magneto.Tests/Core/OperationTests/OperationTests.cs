@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -299,33 +299,33 @@ namespace Magneto.Tests.Core.OperationTests
 
 	public class AsyncQueryWithoutProperties : AsyncQuery<object, object>
 	{
-		protected override Task<object> QueryAsync(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		protected override Task<object> Query(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 	}
 
 	public class SyncCachedQueryWithoutProperties : SyncCachedQuery<object, object, object>
 	{
-		protected override object GetCacheEntryOptions(object context) => throw new NotImplementedException();
+		protected override object CacheEntryOptions(object context) => throw new NotImplementedException();
 		protected override object Query(object context) => throw new NotImplementedException();
 	}
 
 	public class AsyncCachedQueryWithoutProperties : AsyncCachedQuery<object, object, object>
 	{
-		protected override object GetCacheEntryOptions(object context) => throw new NotImplementedException();
-		protected override Task<object> QueryAsync(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		protected override object CacheEntryOptions(object context) => throw new NotImplementedException();
+		protected override Task<object> Query(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 	}
 
 	public class SyncTransformedCachedQueryWithoutProperties : SyncTransformedCachedQuery<object, object, object, object>
 	{
-		protected override object GetCacheEntryOptions(object context) => throw new NotImplementedException();
+		protected override object CacheEntryOptions(object context) => throw new NotImplementedException();
 		protected override object Query(object context) => throw new NotImplementedException();
 		protected override object TransformCachedResult(object cachedResult) => throw new NotImplementedException();
 	}
 
 	public class AsyncTransformedCachedQueryWithoutProperties : AsyncTransformedCachedQuery<object, object, object, object>
 	{
-		protected override object GetCacheEntryOptions(object context) => throw new NotImplementedException();
-		protected override Task<object> QueryAsync(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-		protected override Task<object> TransformCachedResultAsync(object cachedResult, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		protected override object CacheEntryOptions(object context) => throw new NotImplementedException();
+		protected override Task<object> Query(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		protected override Task<object> TransformCachedResult(object cachedResult, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 	}
 
 	public class SyncCommandWithoutProperties : SyncCommand<object>
@@ -338,7 +338,7 @@ namespace Magneto.Tests.Core.OperationTests
 
 	public class AsyncCommandWithoutProperties : AsyncCommand<object>
 	{
-		public override Task ExecuteAsync(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		public override Task Execute(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 	}
 
 	public class SyncReturningCommandWithoutProperties : SyncCommand<object, object>
@@ -348,7 +348,7 @@ namespace Magneto.Tests.Core.OperationTests
 
 	public class AsyncReturningCommandWithoutProperties : AsyncCommand<object, object>
 	{
-		public override Task<object> ExecuteAsync(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		public override Task<object> Execute(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 	}
 
 	public class OperationWithProperties1 : Operation

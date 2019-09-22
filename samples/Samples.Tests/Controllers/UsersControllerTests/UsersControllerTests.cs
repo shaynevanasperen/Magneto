@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Magneto;
 using Microsoft.AspNetCore.Mvc;
@@ -51,8 +52,9 @@ namespace Samples.Tests.Controllers.UsersControllerTests
 	{
 		IActionResult _result;
 
-		void WhenPostingAlbum() => _result = SUT.Album(1, "Title");
-		void ThenTheAlbumIsSaved() => The<IMagneto>().Received().Command(new SaveAlbum { Album = new Album { UserId = 1, Title = "Title" } });
-		void AndThenTheResponseIsRedirectedToTheUser() => _result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("Index");
+		void WhenPostingAlbum() => _result = SUT.Album(1, "title");
+		void ThenTheAlbumIsSaved() => The<IMagneto>().Received().Command(new SaveAlbum { Album = new Album { UserId = 1, Title = "title" } });
+		void AndThenTheResponseIsRedirectedToTheUser() => _result.Should().BeOfType<RedirectToActionResult>().Which.Should()
+			.Match<RedirectToActionResult>(x => x.ActionName == "Index" && Equals(x.RouteValues.SingleOrDefault(v => v.Key == "id").Value, 1));
 	}
 }

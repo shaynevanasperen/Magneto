@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Magneto;
 using Magneto.Configuration;
@@ -45,9 +45,10 @@ namespace Samples
 			services.AddMemoryCache();
 			services.AddSingleton<ICacheStore<MemoryCacheEntryOptions>, MemoryCacheStore>();
 
-			// Here we add the Microsoft distributed cache and our associated cache store. Normally we'd only have one type of cache
-			// in an application, but this is a sample application so we've got both here as examples.
+			// Here we add the Microsoft distributed cache and our associated cache store with it's associated serializer. Normally
+			// we'd only have one type of cache in an application, but this is a sample application so we've got both here as examples.
 			services.AddDistributedMemoryCache();
+			services.AddSingleton<IStringSerializer, JsonConvertStringSerializer>();
 			services.AddSingleton<ICacheStore<DistributedCacheEntryOptions>, DistributedCacheStore>();
 
 			// Here we add a decorator object which performs exception logging and timing telemetry for all our Magneto operations.
@@ -74,7 +75,11 @@ namespace Samples
 			// the interfaces which Magneto.IMagneto is comprised of, to enable exposing limited functionality to some consumers.
 			// Internally, Magneto.Magneto relies on Magneto.IMediary to do it's work, so we could also add that or any of the interfaces
 			// it's comprised of in order to take control of passing the context when executing queries or commands.
-			services.AddScoped<IMagneto, Magneto.Magneto>();
+			services.AddTransient<IMagneto, Magneto.Magneto>();
+
+			// Here we specify how cache keys are created. This is optional as there is already a default built-in method,
+			// but consumers may want to use their own method instead.
+			CachedQuery.UseKeyCreator((prefix, varyBy) => $"{prefix}.{JsonConvert.SerializeObject(varyBy)}");
 			
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}

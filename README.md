@@ -21,7 +21,7 @@ Define a query object:
 public class PostById : AsyncQuery<HttpClient, Post>
 {
     // The context here is an HttpClient, but it could be an IDbConnection or anything you want
-    public override async Task<Post> ExecuteAsync(HttpClient context, CancellationToken cancellationToken = default)
+    public override async Task<Post> Query(HttpClient context, CancellationToken cancellationToken = default)
     {
         var response = await context.GetAsync($"https://jsonplaceholder.typicode.com/posts/{Id}", cancellationToken);
         return await response.Content.ReadAsAsync<Post>(cancellationToken);
@@ -35,7 +35,7 @@ public class PostById : AsyncQuery<HttpClient, Post>
 Invoke it:
 
 ```cs
-// Allow IMagneto to fetch the appropriate context from the ServiceProvider
+// Allow IMagneto to fetch the appropriate context from the IServiceProvider
 var post = await _magneto.QueryAsync(new PostById { Id = 1 });
 // Or pass the context yourself by using IMediary
 var post = await _mediary.QueryAsync(new PostById { Id = 1 }, _httpClient);
@@ -49,21 +49,49 @@ in unit tests (just make sure to model all the parameters as public properties):
 magnetoMock.Setup(x => x.QueryAsync(new PostById { Id = 1 })).ReturnsAsync(new Post());
 // NSubstitute
 magneto.QueryAsync(new PostById { Id = 1 }).Returns(new Post());
+// Both of the above will be "strict" mocks that only match if the "Id" property is equal to 1
 ```
 
-Leverage built-in caching by deriving from a base class and specifying the type of cache options:
+Use a ValueTuple for the context (if you require more than one service and don't want to create a class to hold them):
+```cs
+public class SaveAlbum : SyncCommand<(IFileProvider, JsonSerializerSettings)>
+{
+    public override void Execute((IFileProvider, JsonSerializerSettings) context)
+    {
+        var (fileProvider, jsonSerializerSettings) = context;
+        lock (fileProvider)
+        {
+            var fileInfo = fileProvider.GetFileInfo(Album.AllAlbumsFilename);
+
+            string json;
+            using (var streamReader = new StreamReader(fileInfo.CreateReadStream()))
+                json = streamReader.ReadToEnd();
+            
+            var existingAlbums = JsonConvert.DeserializeObject<Album[]>(json);
+            Album.Id = existingAlbums.Max(x => x.Id) + 1;
+            json = JsonConvert.SerializeObject(existingAlbums.Concat(new[] { Album }), jsonSerializerSettings);
+            
+            File.WriteAllText(fileInfo.PhysicalPath, json);
+        }
+    }
+
+    public Album Album { get; set; }
+}
+```
+
+Leverage built-in caching by deriving from a base class and specifying the type of cache-entry options:
 
 ```cs
 public class CommentsByPostId : AsyncCachedQuery<HttpClient, MemoryCacheEntryOptions, Comment[]>
 {
     // Here we get to specify which parameters comprise the cache key
-    protected override void ConfigureCache(ICacheConfig cacheConfig) => cacheConfig.VaryBy = PostId;
+    protected override void CacheKey(IKeyConfig keyConfig) => keyConfig.VaryBy = PostId;
     
     // Here we get to specify the caching policy (absolute/sliding)
-    protected override MemoryCacheEntryOptions GetCacheEntryOptions(HttpClient context) =>
+    protected override MemoryCacheEntryOptions CacheEntryOptions(HttpClient context) =>
         new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 
-    protected override async Task<Comment[]> QueryAsync(HttpClient context, CancellationToken cancellationToken = default)
+    protected override async Task<Comment[]> Query(HttpClient context, CancellationToken cancellationToken = default)
     {
         var response = await context.GetAsync($"https://jsonplaceholder.typicode.com/posts/{PostId}/comments", cancellationToken);
         return await response.Content.ReadAsAsync<Comment[]>(cancellationToken);
@@ -78,16 +106,16 @@ Cache intermediate results and transform to a final result:
 ```cs
 public class UserById : AsyncTransformedCachedQuery<HttpClient, DistributedCacheEntryOptions, User[], User>
 {
-    protected override DistributedCacheEntryOptions GetCacheEntryOptions(HttpClient context) =>
+    protected override DistributedCacheEntryOptions CacheEntryOptions(HttpClient context) =>
         new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
     
-    protected override async Task<User[]> QueryAsync(HttpClient context, CancellationToken cancellationToken = default)
+    protected override async Task<User[]> Query(HttpClient context, CancellationToken cancellationToken = default)
     {
         var response = await context.GetAsync("https://jsonplaceholder.typicode.com/users", cancellationToken);
         return await response.Content.ReadAsAsync<User[]>(cancellationToken);
     }
     
-    protected override Task<User> TransformCachedResultAsync(User[] cachedResult, CancellationToken cancellationToken = default) =>
+    protected override Task<User> TransformCachedResult(User[] cachedResult, CancellationToken cancellationToken = default) =>
         Task.FromResult(cachedResult.Single(x => x.Id == Id));
     
     public int Id { get; set; }

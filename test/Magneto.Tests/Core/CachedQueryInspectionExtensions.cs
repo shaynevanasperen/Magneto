@@ -3,14 +3,19 @@ using Magneto.Core;
 
 namespace Magneto.Tests.Core
 {
-	public static class CachedQueryExtensions
+	public static class CachedQueryInspectionExtensions
 	{
-		public static string GetCacheKey<TContext, TCacheEntryOptions, TCachedResult>(this CachedQuery<TContext, TCacheEntryOptions, TCachedResult> cachedQuery)
+		public static string PeekCacheKey<TContext, TCacheEntryOptions, TCachedResult>(this CachedQuery<TContext, TCacheEntryOptions, TCachedResult> cachedQuery)
 		{
 			return cachedQuery.getStateProperty<string>("CacheKey");
 		}
 
-		public static TCachedResult GetCachedResult<TContext, TCacheEntryOptions, TCachedResult>(this CachedQuery<TContext, TCacheEntryOptions, TCachedResult> cachedQuery)
+		public static TCacheEntryOptions PeekCacheEntryOptions<TContext, TCacheEntryOptions, TCachedResult>(this CachedQuery<TContext, TCacheEntryOptions, TCachedResult> cachedQuery)
+		{
+			return cachedQuery.getStateProperty<TCacheEntryOptions>("CacheEntryOptions");
+		}
+
+		public static TCachedResult PeekCachedResult<TContext, TCacheEntryOptions, TCachedResult>(this CachedQuery<TContext, TCacheEntryOptions, TCachedResult> cachedQuery)
 		{
 			return cachedQuery.getStateProperty<TCachedResult>("CachedResult");
 		}

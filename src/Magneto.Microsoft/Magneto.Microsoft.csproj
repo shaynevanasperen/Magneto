@@ -4,10 +4,10 @@
 		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 		<Description>A library extending Magneto with implementations of ICacheStore backed by implementations from Microsoft.Extensions.Caching.</Description>
 		<PackageTags>query command object queryobject commandobject mediator cqs cqrs operation read write cache caching async mock mocking</PackageTags>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).$(APPVEYOR_BUILD_NUMBER)</FileVersion>
 		<DebugType>embedded</DebugType>
-		<DocumentationFile>$(MSBuildProjectName).xml</DocumentationFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<SignAssembly>true</SignAssembly>
 	</PropertyGroup>
 

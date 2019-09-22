@@ -4,10 +4,10 @@
 		<TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
 		<Description>A library for implementing the Command Pattern, providing of a set of base classes and an invoker class. Useful for abstracting data access and API calls as either queries (for read operations) or commands (for write operations).</Description>
 		<PackageTags>query command object queryobject commandobject mediator cqs cqrs operation read write cache caching async mock mocking</PackageTags>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).$(APPVEYOR_BUILD_NUMBER)</FileVersion>
 		<DebugType>embedded</DebugType>
-		<DocumentationFile>$(MSBuildProjectName).xml</DocumentationFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<SignAssembly>true</SignAssembly>
 		<NoWarn>$(NoWarn);CA1716;CA1724</NoWarn>
 	</PropertyGroup>
@@ -15,9 +15,10 @@
 	<ItemGroup>
 		<PackageReference Include="Code.Extensions.Generic.QuasiEquals" Version="1.0.0" PrivateAssets="All" />
 		<PackageReference Include="Code.Extensions.Object.Flatten" Version="1.0.3" PrivateAssets="All" />
-		<PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'" Include="Code.Extensions.ValueTuple.ServiceProvider" Version="1.0.0" PrivateAssets="All" />
+		<PackageReference Include="Code.Extensions.ValueTuple.ServiceProvider" Version="1.0.0" PrivateAssets="All" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01" PrivateAssets="All" />
 		<PackageReference Include="MinVer" Version="1.1.0" PrivateAssets="All" />
+		<PackageReference Condition="'$(TargetFramework)' == 'net461'" Include="System.ValueTuple" Version="4.3.0" />
 	</ItemGroup>
 
 </Project>
