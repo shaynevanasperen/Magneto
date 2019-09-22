@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Magneto
@@ -49,9 +49,10 @@ namespace Magneto
 		/// <typeparam name="TCacheEntryOptions">The type of cache entry options configured by the <paramref name="query"/>.</typeparam>
 		/// <typeparam name="TResult">The type of the <paramref name="query"/> result.</typeparam>
 		/// <param name="query">The query object which will be executed.</param>
-		/// <param name="cacheOption">An option designating whether or not the cache should be read when executing the query.</param>
+		/// <param name="cacheOption">An option designating whether or not the cache should be checked when executing the query.
+		/// Use <see cref="CacheOption.Refresh"/> to skip reading from the cache and ensure a fresh result.</param>
 		/// <returns>The result of the query execution (which could be a value returned from the cache).</returns>
-		TResult Query<TContext, TCacheEntryOptions, TResult>(ISyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption = CacheOption.Default);
+		TResult Query<TContext, TCacheEntryOptions, TResult>(ISyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption);
 	}
 
 	/// <summary>
@@ -76,10 +77,11 @@ namespace Magneto
 		/// <typeparam name="TCacheEntryOptions">The type of cache entry options configured by the <paramref name="query"/>.</typeparam>
 		/// <typeparam name="TResult">The type of the <paramref name="query"/> result.</typeparam>
 		/// <param name="query">The query object which will be executed.</param>
-		/// <param name="cacheOption">An option designating whether or not the cache should be read when executing the query.</param>
+		/// <param name="cacheOption">An option designating whether or not the cache should be checked when executing the query.
+		/// Use <see cref="CacheOption.Refresh"/> to skip reading from the cache and ensure a fresh result.</param>
 		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of the query execution (which could be a value returned from the cache).</returns>
-		Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default);
+		Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, CacheOption cacheOption, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>

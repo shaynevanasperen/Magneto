@@ -19,7 +19,7 @@ namespace Magneto
 		Core.SyncCachedQuery<TContext, TCacheEntryOptions, TResult>, ISyncCachedQuery<TContext, TCacheEntryOptions, TResult>
 	{
 		/// <inheritdoc cref="ISyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Execute"/>
-		public virtual TResult Execute(TContext context, ISyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default) =>
+		public virtual TResult Execute(TContext context, ISyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption) =>
 			GetCachedResult(context, cacheStore, cacheOption);
 	}
 
@@ -46,7 +46,7 @@ namespace Magneto
 		protected abstract TTransformedResult TransformCachedResult(TCachedResult cachedResult);
 
 		/// <inheritdoc cref="ISyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Execute"/>
-		public virtual TTransformedResult Execute(TContext context, ISyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default)
+		public virtual TTransformedResult Execute(TContext context, ISyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption)
 		{
 			var cachedResult = GetCachedResult(context, cacheStore, cacheOption);
 			return TransformCachedResult(cachedResult);
@@ -68,7 +68,7 @@ namespace Magneto
 		Core.AsyncCachedQuery<TContext, TCacheEntryOptions, TResult>, IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult>
 	{
 		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Execute"/>
-		public virtual Task<TResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default) =>
+		public virtual Task<TResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption, CancellationToken cancellationToken = default) =>
 			GetCachedResult(context, cacheStore, cacheOption, cancellationToken);
 	}
 
@@ -96,7 +96,7 @@ namespace Magneto
 		protected abstract Task<TTransformedResult> TransformCachedResult(TCachedResult cachedResult, CancellationToken cancellationToken = default);
 
 		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Execute"/>
-		public virtual async Task<TTransformedResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default)
+		public virtual async Task<TTransformedResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption, CancellationToken cancellationToken = default)
 		{
 			var cachedResult = await GetCachedResult(context, cacheStore, cacheOption, cancellationToken).ConfigureAwait(false);
 			return await TransformCachedResult(cachedResult, cancellationToken).ConfigureAwait(false);

@@ -25,10 +25,10 @@ namespace Samples.Controllers
 		}
 
 		[HttpGet("{id:int}")]
-		public async Task<IActionResult> Index(int id)
+		public async Task<IActionResult> Index(int id, CancellationToken token)
 		{
-			var post = await _magneto.QueryAsync(new PostById { Id = id });
-			var postComments = await _magneto.QueryAsync(new CommentsByPostId { PostId = id });
+			var post = await _magneto.QueryAsync(new PostById { Id = id }, CacheOption.Default, token);
+			var postComments = await _magneto.QueryAsync(new CommentsByPostId { PostId = id }, CacheOption.Default, token);
 			return View("Post", new PostViewModel { Post = post, Comments = postComments });
 		}
 

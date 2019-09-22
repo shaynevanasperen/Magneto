@@ -12,7 +12,7 @@ namespace Magneto.Core
 		protected abstract TCachedResult Query(TContext context);
 
 		/// <inheritdoc cref="ISyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Execute"/>
-		protected virtual TCachedResult GetCachedResult(TContext context, ISyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default)
+		protected virtual TCachedResult GetCachedResult(TContext context, ISyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption)
 		{
 			if (context == null) throw new ArgumentNullException(nameof(context));
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));
@@ -55,7 +55,7 @@ namespace Magneto.Core
 		protected abstract Task<TCachedResult> Query(TContext context, CancellationToken cancellationToken = default);
 
 		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Execute"/>
-		protected virtual async Task<TCachedResult> GetCachedResult(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default)
+		protected virtual async Task<TCachedResult> GetCachedResult(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption, CancellationToken cancellationToken = default)
 		{
 			if (context == null) throw new ArgumentNullException(nameof(context));
 			if (cacheStore == null) throw new ArgumentNullException(nameof(cacheStore));

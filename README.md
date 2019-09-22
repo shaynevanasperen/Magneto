@@ -122,11 +122,18 @@ public class UserById : AsyncTransformedCachedQuery<HttpClient, DistributedCache
 }
 ```
 
-Easily skip reading from the cache if required, by passing the optional argument `CacheOption.Refresh` (the fresh result
+Easily skip reading from the cache if required, by passing the argument `CacheOption.Refresh` (the fresh result
 will be written to the cache):
 
 ```cs
 var postComments = await _magneto.QueryAsync(new CommentsByPostId { PostId = id }, CacheOption.Refresh);
+```
+
+Otherwise, when invoking a cached query, pass the argument `CacheOption.Default` (or use the `default` keyword). This
+parameter is intentionally left as required rather than optional, to make it clear that a cached query is being used:
+
+```cs
+var postComments = await _magneto.QueryAsync(new CommentsByPostId { PostId = id }, CacheOption.Default);
 ```
 
 Easily evict a previously cached result for a query:

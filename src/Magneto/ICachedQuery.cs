@@ -18,9 +18,10 @@ namespace Magneto
 		/// </summary>
 		/// <param name="context">The context with which to execute the query.</param>
 		/// <param name="cacheStore">An object used for storing and retrieving cached values.</param>
-		/// <param name="cacheOption">Optional. An option designating whether or not the cache should be read when executing the query.</param>
+		/// <param name="cacheOption">An option designating whether or not the cache should be checked when executing the query.
+		/// Use <see cref="CacheOption.Refresh"/> to skip reading from the cache and ensure a fresh result.</param>
 		/// <returns>The result of query execution in the case of a cache miss or if <paramref name="cacheOption"/> is <see cref="CacheOption.Refresh"/>, otherwise the cached result.</returns>
-		TResult Execute(TContext context, ISyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default);
+		TResult Execute(TContext context, ISyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption);
 	}
 
 	/// <summary>
@@ -37,10 +38,11 @@ namespace Magneto
 		/// </summary>
 		/// <param name="context">The context with which to execute the query.</param>
 		/// <param name="cacheStore">An object used for storing and retrieving cached values.</param>
-		/// <param name="cacheOption">Optional. An option designating whether or not the cache should be read when executing the query.</param>
+		/// <param name="cacheOption">An option designating whether or not the cache should be checked when executing the query.
+		/// Use <see cref="CacheOption.Refresh"/> to skip reading from the cache and ensure a fresh result.</param>
 		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of query execution in the case of a cache miss or if <paramref name="cacheOption"/> is <see cref="CacheOption.Refresh"/>, otherwise the cached result.</returns>
-		Task<TResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default);
+		Task<TResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>

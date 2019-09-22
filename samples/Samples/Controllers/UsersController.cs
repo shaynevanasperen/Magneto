@@ -24,15 +24,15 @@ namespace Samples.Controllers
 		[HttpGet("")]
 		public async Task<IActionResult> Index()
 		{
-			var users = await _magneto.QueryAsync(new AllUsers());
+			var users = await _magneto.QueryAsync(new AllUsers(), CacheOption.Default);
 			return View(users);
 		}
 
 		[HttpGet("{id:int}")]
 		public async Task<IActionResult> Index(int id)
 		{
-			var user = await _magneto.QueryAsync(new UserById { Id = id });
-			var userAlbums = _magneto.Query(new AlbumsByUserId { UserId = id });
+			var user = await _magneto.QueryAsync(new UserById { Id = id }, default); // Use either "default" or "CacheOption.Default"
+			var userAlbums = _magneto.Query(new AlbumsByUserId { UserId = id }, CacheOption.Default);
 			return View("User", new UserViewModel { User = user, Albums = userAlbums });
 		}
 

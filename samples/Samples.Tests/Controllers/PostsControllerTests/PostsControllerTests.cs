@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Magneto;
@@ -37,9 +38,9 @@ namespace Samples.Tests.Controllers.PostsControllerTests
 			new Comment()
 		};
 
-		void GivenThereIsAKnownPost() => The<IMagneto>().QueryAsync(new PostById { Id = _post.Id }).Returns(_post);
-		void AndGivenThereAreSomeCommentsForTheKnownPost() => The<IMagneto>().QueryAsync(new CommentsByPostId { PostId = _post.Id }).Returns(_comments);
-		async Task WhenGettingIndexWithKnownPostId() => _result = await SUT.Index(_post.Id);
+		void GivenThereIsAKnownPost() => The<IMagneto>().QueryAsync(new PostById { Id = _post.Id }, CacheOption.Default).Returns(_post);
+		void AndGivenThereAreSomeCommentsForTheKnownPost() => The<IMagneto>().QueryAsync(new CommentsByPostId { PostId = _post.Id }, CacheOption.Default).Returns(_comments);
+		async Task WhenGettingIndexWithKnownPostId() => _result = await SUT.Index(_post.Id, CancellationToken.None);
 		void ThenThePostViewIsDisplayed() => _result.Should().BeOfType<ViewResult>().Which.ViewName.Should().Be("Post");
 		void AndThenViewModelIsTheKnownPostAndItsComments() => _result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<PostViewModel>().Which.Should().BeEquivalentTo(new PostViewModel
 		{

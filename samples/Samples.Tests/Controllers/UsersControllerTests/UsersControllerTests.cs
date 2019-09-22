@@ -20,7 +20,7 @@ namespace Samples.Tests.Controllers.UsersControllerTests
 			new User()
 		};
 
-		void GivenThereAreSomeKnownUsers() => The<IMagneto>().QueryAsync(new AllUsers()).Returns(_users);
+		void GivenThereAreSomeKnownUsers() => The<IMagneto>().QueryAsync(new AllUsers(), CacheOption.Default).Returns(_users);
 		async Task WhenGettingIndex() => _result = await SUT.Index();
 		void ThenTheIndexViewIsDisplayed() => _result.Should().BeOfType<ViewResult>().Which.ViewName.Should().BeNull();
 		void AndThenViewModelIsTheKnownUsers() => _result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<User[]>().Which.Should().BeSameAs(_users);
@@ -37,8 +37,8 @@ namespace Samples.Tests.Controllers.UsersControllerTests
 			new Album()
 		};
 
-		void GivenThereIsAKnownUser() => The<IMagneto>().QueryAsync(new UserById { Id = _user.Id }).Returns(_user);
-		void AndGivenThereAreSomeAlbumsForTheKnownUser() => The<IMagneto>().Query(new AlbumsByUserId { UserId = _user.Id }).Returns(_albums);
+		void GivenThereIsAKnownUser() => The<IMagneto>().QueryAsync(new UserById { Id = _user.Id }, CacheOption.Default).Returns(_user);
+		void AndGivenThereAreSomeAlbumsForTheKnownUser() => The<IMagneto>().Query(new AlbumsByUserId { UserId = _user.Id }, CacheOption.Default).Returns(_albums);
 		async Task WhenGettingIndexWithKnownUserId() => _result = await SUT.Index(_user.Id);
 		void ThenTheUserViewIsDisplayed() => _result.Should().BeOfType<ViewResult>().Which.ViewName.Should().Be("User");
 		void AndThenViewModelIsTheKnownUserAndItsAlbums() => _result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<UserViewModel>().Which.Should().BeEquivalentTo(new UserViewModel

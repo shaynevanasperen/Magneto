@@ -92,7 +92,7 @@ namespace Magneto
 		}
 
 		/// <inheritdoc cref="ISyncQueryMediary.Query{TContext,TCacheEntryOptions,TResult}"/>
-		public virtual TResult Query<TContext, TCacheEntryOptions, TResult>(ISyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, TContext context, CacheOption cacheOption = CacheOption.Default)
+		public virtual TResult Query<TContext, TCacheEntryOptions, TResult>(ISyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, TContext context, CacheOption cacheOption)
 		{
 			if (query == null) throw new ArgumentNullException(nameof(query));
 			if (context == null) throw new ArgumentNullException(nameof(context));
@@ -101,7 +101,7 @@ namespace Magneto
 		}
 
 		/// <inheritdoc cref="IAsyncQueryMediary.QueryAsync{TContext,TCacheEntryOptions,TResult}"/>
-		public virtual Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, TContext context, CacheOption cacheOption = CacheOption.Default, CancellationToken cancellationToken = default)
+		public virtual Task<TResult> QueryAsync<TContext, TCacheEntryOptions, TResult>(IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult> query, TContext context, CacheOption cacheOption, CancellationToken cancellationToken = default)
 		{
 			if (query == null) throw new ArgumentNullException(nameof(query));
 			if (context == null) throw new ArgumentNullException(nameof(context));
