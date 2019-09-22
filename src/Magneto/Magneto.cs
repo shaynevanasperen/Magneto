@@ -17,7 +17,7 @@ namespace Magneto
 	/// and commands to express the required context as being a composite of several items. For example:
 	/// </para>
 	/// <example>
-	/// <c>class MyQuery : ISyncQuery&lt;(DbContext, IFileProvider), string&gt; { ... }</c>
+	/// class MyQuery : ISyncQuery&lt;(DbContext, IFileProvider), string&gt; { ... }
 	/// </example>
 	/// </summary>
 	public class Magneto : IMagneto
@@ -56,7 +56,8 @@ namespace Magneto
 		/// </summary>
 		/// <typeparam name="TContext">The type of context object required.</typeparam>
 		/// <returns>The result from calling <see cref="IServiceProvider.GetService"/>.</returns>
-		protected virtual TContext GetContext<TContext>() => ServiceProvider.GetService<TContext>();
+		/// <exception cref="InvalidOperationException">Thrown if the <see cref="ServiceProvider"/> couldn't provide it.</exception>
+		protected virtual TContext GetContext<TContext>() => ServiceProvider.GetRequiredService<TContext>();
 
 		/// <inheritdoc cref="ISyncQueryMagneto.Query{TContext,TResult}"/>
 		public virtual TResult Query<TContext, TResult>(ISyncQuery<TContext, TResult> query) =>

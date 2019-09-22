@@ -20,6 +20,16 @@ namespace Magneto.Tests.MagnetoTests
 			SUT = new MagnetoTest(_serviceProvider);
 		}
 
+		public class ForUnavailableType : GettingContext
+		{
+			Func<Attribute> _invocation;
+
+			void WhenContextIsResolved() => _invocation = SUT.Invoking(x => x.ResolveContext<Attribute>());
+
+			void ThenItThrowsAnExceptionStatingThatTheServiceIsNotRegistered() => _invocation.Should().Throw<InvalidOperationException>()
+				.Which.Message.Should().Be("No service for type 'System.Attribute' has been registered.");
+		}
+
 		public class ForNormalType : GettingContext
 		{
 			void WhenContextIsResolved()
