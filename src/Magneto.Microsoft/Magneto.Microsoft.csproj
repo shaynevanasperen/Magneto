@@ -12,10 +12,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Magneto\Magneto.csproj" />
+		<ProjectReference Condition="'$(Configuration)' == 'Debug'" Include="..\Magneto\Magneto.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Condition="'$(Configuration)' == 'Release'" Include="Magneto" Version="1.0.0-rc-3" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.0.0" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01" PrivateAssets="All" />
 		<PackageReference Include="MinVer" Version="1.1.0" PrivateAssets="All" />
