@@ -140,7 +140,7 @@ Easily evict a previously cached result for a query:
 
 ```cs
 var commentsByPostById = new CommentsByPostId { PostId = 1 };
-var comments = await _magneto.QueryAsync(commentsByPostById);
+var comments = await _magneto.QueryAsync(commentsByPostById, CacheOption.Default);
 ...
 await _magneto.EvictCachedResultAsync(commentsByPostById);
 ```
@@ -149,7 +149,7 @@ When using a distributed cache store, changes to a previously cached result for 
 
 ```cs
 var commentsByPostById = new CommentsByPostId { PostId = 1 };
-var comments = await _magneto.QueryAsync(commentsByPostById);
+var comments = await _magneto.QueryAsync(commentsByPostById, CacheOption.Refresh);
 ...
 comments[0].Votes++;
 await _magneto.UpdateCachedResultAsync(commentsByPostById);
