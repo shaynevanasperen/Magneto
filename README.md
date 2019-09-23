@@ -58,21 +58,9 @@ public class SaveAlbum : SyncCommand<(IFileProvider, JsonSerializerSettings)>
 {
     public override void Execute((IFileProvider, JsonSerializerSettings) context)
     {
+        // Here we deconstruct the context into two local variables
         var (fileProvider, jsonSerializerSettings) = context;
-        lock (fileProvider)
-        {
-            var fileInfo = fileProvider.GetFileInfo(Album.AllAlbumsFilename);
-
-            string json;
-            using (var streamReader = new StreamReader(fileInfo.CreateReadStream()))
-                json = streamReader.ReadToEnd();
-            
-            var existingAlbums = JsonConvert.DeserializeObject<Album[]>(json);
-            Album.Id = existingAlbums.Max(x => x.Id) + 1;
-            json = JsonConvert.SerializeObject(existingAlbums.Concat(new[] { Album }), jsonSerializerSettings);
-            
-            File.WriteAllText(fileInfo.PhysicalPath, json);
-        }
+        ...
     }
 
     public Album Album { get; set; }
