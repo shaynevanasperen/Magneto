@@ -10,6 +10,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Polly;
@@ -20,7 +21,7 @@ namespace Samples
 {
 	public class Startup
 	{
-		public Startup(IHostingEnvironment environment, IConfiguration configuration)
+		public Startup(IWebHostEnvironment environment, IConfiguration configuration)
 		{
 			Environment = environment;
 			Configuration = configuration;
@@ -29,13 +30,13 @@ namespace Samples
 
 		void InitializeAlbums()
 		{
-			using (var streamReader = new StreamReader(Environment.ContentRootFileProvider.GetFileInfo(Album.AllAlbumsFilename).CreateReadStream()))
-				File.WriteAllText(Path.Combine(Environment.WebRootPath, Album.AllAlbumsFilename), streamReader.ReadToEnd());
+			using var streamReader = new StreamReader(Environment.ContentRootFileProvider.GetFileInfo(Album.AllAlbumsFilename).CreateReadStream());
+			File.WriteAllText(Path.Combine(Environment.WebRootPath, Album.AllAlbumsFilename), streamReader.ReadToEnd());
 		}
 
 		public IConfiguration Configuration { get; }
 
-		protected IHostingEnvironment Environment { get; }
+		protected IWebHostEnvironment Environment { get; }
 
 		public void ConfigureServices(IServiceCollection services)
 		{
@@ -80,8 +81,8 @@ namespace Samples
 			// Here we specify how cache keys are created. This is optional as there is already a default built-in method,
 			// but consumers may want to use their own method instead.
 			CachedQuery.UseKeyCreator((prefix, varyBy) => $"{prefix}.{JsonConvert.SerializeObject(varyBy)}");
-			
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+			services.AddControllersWithViews().SetCompatibilityVersion(CompatibilityVersion.Latest);
 		}
 
 		public void Configure(IApplicationBuilder app)
@@ -100,7 +101,11 @@ namespace Samples
 			app.UseStaticFiles();
 			app.UseCookiePolicy();
 
-			app.UseMvc();
+			app.UseRouting();
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapControllers();
+			});
 		}
 	}
 }

@@ -13,11 +13,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Code.Extensions.Generic.QuasiEquals" Version="1.0.0" PrivateAssets="All" />
+		<PackageReference Include="Code.Extensions.Generic.QuasiEquals" Version="1.0.1" PrivateAssets="All" />
 		<PackageReference Include="Code.Extensions.Object.Flatten" Version="1.0.3" PrivateAssets="All" />
 		<PackageReference Include="Code.Extensions.ValueTuple.ServiceProvider" Version="1.0.0" PrivateAssets="All" />
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01" PrivateAssets="All" />
-		<PackageReference Include="MinVer" Version="1.1.0" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+		<PackageReference Include="MinVer" Version="2.1.0" PrivateAssets="All" />
 		<PackageReference Condition="'$(TargetFramework)' == 'net461'" Include="System.ValueTuple" Version="4.3.0" />
 	</ItemGroup>
 

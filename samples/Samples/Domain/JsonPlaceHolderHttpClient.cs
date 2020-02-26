@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Samples.Domain
 {
@@ -19,7 +20,8 @@ namespace Samples.Domain
 		public async Task<T> GetAsync<T>(string requestUri, CancellationToken cancellationToken = default)
 		{
 			var response = await _httpClient.GetAsync(requestUri, cancellationToken);
-			return await response.Content.ReadAsAsync<T>(cancellationToken);
+			var content = await response.Content.ReadAsStringAsync();
+			return JsonConvert.DeserializeObject<T>(content);
 		}
 
 		public Task<HttpResponseMessage> PostAsync<T>(string requestUri, T data, CancellationToken cancellationToken = default) =>
