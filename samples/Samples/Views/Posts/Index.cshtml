@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Post>
+@model IEnumerable<Post>
 
 @{
 	ViewData["Title"] = "Posts";
@@ -17,7 +17,7 @@
 		@foreach (var post in Model)
 		{
 			<tr>
-				<td>@Html.ActionLink(post.Id.ToString(), "Index", new { post.Id })</td>
+				<td><a asp-area="" asp-controller="Posts" asp-action="Index", asp-route-id="@post.Id">@post.Id</a></td>
 				<td>@post.Title</td>
 				<td>@post.Body</td>
 				<td>@post.UserId</td>
