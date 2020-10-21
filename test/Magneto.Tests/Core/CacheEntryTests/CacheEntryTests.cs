@@ -5,7 +5,9 @@ namespace Magneto.Tests.Core.CacheEntryTests
 {
 	public abstract class CheckingEquality : ScenarioFor<CacheEntry<object>>
 	{
+#pragma warning disable CA1720 // Identifier contains type name
 		protected object Object;
+#pragma warning restore CA1720 // Identifier contains type name
 
 		bool _objectsAreEqual;
 		bool _cacheEntriesAreEqual;

@@ -1,8 +1,8 @@
 using System;
 using System.IO;
+using System.Text.Json;
 using Magneto;
 using Magneto.Configuration;
-using Magneto.Microsoft;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +11,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Polly;
 using Samples.Domain;
 using Samples.Infrastructure;
@@ -40,29 +38,21 @@ namespace Samples
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			// Here we add ApplicationInsights, which is a dependency of our Magneto decorator.
 			services.AddApplicationInsightsTelemetry(Configuration);
 
-			// Here we add the Microsoft memory cache and our associated cache store.
+			// Here we add the Microsoft memory cache, used by some of our Magneto cached queries.
 			services.AddMemoryCache();
-			services.AddSingleton<ICacheStore<MemoryCacheEntryOptions>, MemoryCacheStore>();
 
-			// Here we add the Microsoft distributed cache and our associated cache store with it's associated serializer. Normally
-			// we'd only have one type of cache in an application, but this is a sample application so we've got both here as examples.
+			// Here we add the Microsoft distributed cache, used by some of our Magneto cached queries.
+			// Normally we'd only have one type of cache in an application, but this is a
+			// sample application so we've got both here as examples.
 			services.AddDistributedMemoryCache();
-			services.AddSingleton<IStringSerializer, JsonConvertStringSerializer>();
-			services.AddSingleton<ICacheStore<DistributedCacheEntryOptions>, DistributedCacheStore>();
-
-			// Here we add a decorator object which performs exception logging and timing telemetry for all our Magneto operations.
-			services.AddSingleton<IDecorator, ApplicationInsightsDecorator>();
 
 			// Here we add the three context objects with which our queries and commands are executed. The first two are actually
 			// used together in a ValueTuple and are resolved as such by a special wrapper around IServiceProvider.
 			services.AddSingleton(Environment.WebRootFileProvider);
-			services.AddSingleton(new JsonSerializerSettings
-			{
-				ContractResolver = new CamelCasePropertyNamesContractResolver(),
-				Formatting = Formatting.Indented
-			});
+			services.AddSingleton(new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true });
 			services.AddHttpClient<JsonPlaceHolderHttpClient>()
 				.AddHttpMessageHandler(() => new EnsureSuccessHandler())
 				.AddTransientHttpErrorPolicy(x => x.WaitAndRetryAsync(new[]
@@ -71,18 +61,44 @@ namespace Samples
 					TimeSpan.FromSeconds(5),
 					TimeSpan.FromSeconds(10)
 				}));
-			
-			// Here we add Magneto.IMagneto as the main entry point for consumers, because it can do everything. We could also add any of
-			// the interfaces which Magneto.IMagneto is comprised of, to enable exposing limited functionality to some consumers.
-			// Internally, Magneto.Magneto relies on Magneto.IMediary to do it's work, so we could also add that or any of the interfaces
+
+			// Here we configure Magneto fluently.
+			services.AddMagneto()
+				.WithDecorator<ApplicationInsightsDecorator>()
+				.WithCacheKeyCreator((prefix, varyBy) => $"{prefix}.{JsonSerializer.Serialize(varyBy)}")
+				.WithMemoryCacheStore()
+				.WithDistributedCacheStore();
+
+			// Or we could configure it manually.
+			//ConfigureMagnetoManually(services);
+
+			services.AddControllersWithViews().SetCompatibilityVersion(CompatibilityVersion.Latest);
+		}
+
+#pragma warning disable IDE0051 // Remove unused private members
+		static void ConfigureMagnetoManually(IServiceCollection services)
+#pragma warning restore IDE0051 // Remove unused private members
+		{
+			// Here we add IMagneto as the main entry point for consumers, because it can do everything. We could also add any of
+			// the interfaces which IMagneto is comprised of, to enable exposing limited functionality to some consumers.
+			// Internally, Conductor relies on IMediary to do its work, so we could also add that or any of the interfaces
 			// it's comprised of in order to take control of passing the context when executing queries or commands.
-			services.AddTransient<IMagneto, Magneto.Magneto>();
+			services.AddTransient<IMagneto, Conductor>();
+
+			// Here we add a decorator object which performs exception logging and timing telemetry for all our Magneto operations.
+			services.AddSingleton<IDecorator, ApplicationInsightsDecorator>();
+
+			// Here we add the our cache store associated with the Microsoft memory cache.
+			services.AddSingleton<ICacheStore<MemoryCacheEntryOptions>, MemoryCacheStore>();
+
+			// Here we add our cache store and serializer associated with the Microsoft distributed cache. Normally we'd only
+			// have one type of cache in an application, but this is a sample application so we've got both here as examples.
+			services.AddSingleton<IStringSerializer, SystemTextStringSerializer>();
+			services.AddSingleton<ICacheStore<DistributedCacheEntryOptions>, DistributedCacheStore>();
 
 			// Here we specify how cache keys are created. This is optional as there is already a default built-in method,
 			// but consumers may want to use their own method instead.
-			CachedQuery.UseKeyCreator((prefix, varyBy) => $"{prefix}.{JsonConvert.SerializeObject(varyBy)}");
-
-			services.AddControllersWithViews().SetCompatibilityVersion(CompatibilityVersion.Latest);
+			CachedQuery.UseKeyCreator((prefix, varyBy) => $"{prefix}.{JsonSerializer.Serialize(varyBy)}");
 		}
 
 		public void Configure(IApplicationBuilder app)

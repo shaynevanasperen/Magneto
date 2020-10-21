@@ -1,4 +1,4 @@
-﻿@model UserViewModel
+@model UserViewModel
 
 @{
 	ViewData["Title"] = $"User {Model.User.Id}";
@@ -27,13 +27,13 @@
 	<div class="col-md-2">
 		<strong>Address</strong>
 	</div>
-	<div class="col-md-10">@Model.User.Address</div>
+	<div class="col-md-10">@Model.User.Address.Suite @Model.User.Address.Street @Model.User.Address.City @Model.User.Address.Zipcode @Model.User.Address.Geo</div>
 </div>
 <div class="row">
 	<div class="col-md-2">
 		<strong>Company</strong>
 	</div>
-	<div class="col-md-10">@Model.User.Company</div>
+	<div class="col-md-10">@Model.User.Company.Name @Model.User.Company.Bs @Model.User.Company.CatchPhrase</div>
 </div>
 <div class="row">
 	<div class="col-md-2">

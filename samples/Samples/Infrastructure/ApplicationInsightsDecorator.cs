@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Magneto.Configuration;
@@ -6,7 +6,9 @@ using Microsoft.ApplicationInsights;
 
 namespace Samples.Infrastructure
 {
-	public class ApplicationInsightsDecorator : IDecorator
+#pragma warning disable CA1812 // Avoid uninstantiated internal classes
+	internal class ApplicationInsightsDecorator : IDecorator
+#pragma warning restore CA1812 // Avoid uninstantiated internal classes
 	{
 		readonly TelemetryClient _telemetryClient;
 

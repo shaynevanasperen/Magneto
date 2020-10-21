@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
@@ -69,7 +69,7 @@ namespace Samples.Domain
 		public static DistributedCacheEntryOptions AllUsersCacheEntryOptions() =>
 			new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 
-		public static Task<User[]> AllUsersAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+		public static Task<User[]> AllUsersAsync(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken) =>
 			context.GetAsync<User[]>("/users", cancellationToken);
 	}
 }

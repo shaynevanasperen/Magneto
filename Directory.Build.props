@@ -2,23 +2,61 @@
 
 	<PropertyGroup>
 		<Authors>Shayne van Asperen</Authors>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<LangVersion>latest</LangVersion>
+		<DebugType>embedded</DebugType>
+		<Deterministic>true</Deterministic>
+		<ContinuousIntegrationBuild Condition="'$(APPVEYOR_BUILD_NUMBER)' != ''">true</ContinuousIntegrationBuild>
+		<IsTestProject>$(MSBuildProjectName.EndsWith('Tests'))</IsTestProject>
+		<IsSampleProject>$(MSBuildProjectName.StartsWith('Sample'))</IsSampleProject>
+		<IsPackable>false</IsPackable>
+		<IsPackable Condition="!$(IsTestProject) AND !$(IsSampleProject)">true</IsPackable>
+		<NotNCrunch>false</NotNCrunch>
+		<NotNCrunch Condition="'$(NCrunch)' == ''">true</NotNCrunch>
+		<GenerateDocumentationFile Condition="$(NotNCrunch)">$(IsPackable)</GenerateDocumentationFile>
+		<GeneratePackageOnBuild Condition="$(NotNCrunch)">$(IsPackable)</GeneratePackageOnBuild>
+		<SignAssembly Condition="$(GeneratePackageOnBuild)">true</SignAssembly>
+		<AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Magneto.snk</AssemblyOriginatorKeyFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/shaynevanasperen/Magneto</PackageProjectUrl>
+		<PackageIcon>Magneto.png</PackageIcon>
 		<PackageIconUrl>https://raw.githubusercontent.com/shaynevanasperen/Magneto/master/Magneto.png</PackageIconUrl>
 		<RepositoryUrl>https://github.com/shaynevanasperen/Magneto.git</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
-		<AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Magneto.snk</AssemblyOriginatorKeyFile>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<LangVersion>latest</LangVersion>
 		<APPVEYOR_BUILD_NUMBER Condition="'$(APPVEYOR_BUILD_NUMBER)' == ''">0</APPVEYOR_BUILD_NUMBER>
 		<MinVerTagPrefix>$(MSBuildProjectName).</MinVerTagPrefix>
+		<NoWarn Condition="$(IsTestProject)">$(NoWarn);CA1034;CA1051;CA1307;CA1822;CA2007;IDE0051</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Update="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.3" PrivateAssets="All" />
-		<PackageReference Update="Microsoft.CodeQuality.Analyzers" Version="2.9.3" PrivateAssets="All" />
-		<PackageReference Update="Microsoft.NetCore.Analyzers" Version="2.9.3" PrivateAssets="All" />
-		<PackageReference Update="Text.Analyzers" Version="2.6.4" PrivateAssets="All" />
+		<PackageReference Condition="$(NotNCrunch)" Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0" PrivateAssets="All" />
+		<PackageReference Condition="$(NotNCrunch)" Include="Microsoft.CodeQuality.Analyzers" Version="3.3.0" PrivateAssets="All" />
+		<PackageReference Condition="$(NotNCrunch)" Include="Microsoft.NetCore.Analyzers" Version="3.3.0" PrivateAssets="All" />
+		<PackageReference Condition="$(NotNCrunch) AND $(IsPackable)" Include="MinVer" Version="2.3.1" PrivateAssets="All" />
+		<PackageReference Condition="$(NotNCrunch) AND $(IsPackable)" Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+		<PackageReference Condition="$(IsTestProject)" Include="FluentAssertions" Version="5.10.3" />
+		<PackageReference Condition="$(IsTestProject)" Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+		<PackageReference Condition="$(IsTestProject)" Include="NSubstitute" Version="4.2.2" />
+		<PackageReference Condition="$(IsTestProject)" Include="Serilog" Version="2.10.0" />
+		<PackageReference Condition="$(IsTestProject)" Include="Specify" Version="2.4.0" />
+		<PackageReference Condition="$(IsTestProject)" Include="TestStack.BDDfy.Xunit" Version="1.2.0" />
+		<PackageReference Condition="$(IsTestProject)" Include="xunit" Version="2.4.1" />
+		<PackageReference Condition="$(IsTestProject)" Include="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="All" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<None Condition="$(IsPackable)" Include="$(MSBuildThisFileDirectory)Magneto.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<SourceRoot Include="$(MSBuildThisFileDirectory)/" />
+	</ItemGroup>
+
+	<Target Name="FileVersion" AfterTargets="MinVer">
+		<PropertyGroup>
+			<BUILD_NUMBER Condition="'$(BUILD_NUMBER)' == ''">0</BUILD_NUMBER>
+			<FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).$(BUILD_NUMBER)</FileVersion>
+		</PropertyGroup>
+	</Target>
 
 </Project>

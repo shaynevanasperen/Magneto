@@ -1,4 +1,5 @@
-﻿using Specify;
+using System;
+using Specify;
 using Specify.Stories;
 using TestStack.BDDfy.Configuration;
 using TestStack.BDDfy.Xunit;
@@ -34,9 +35,11 @@ namespace Magneto
     {
         public static string GetTitle<TSut, TStory>(this Specify.ScenarioFor<TSut, TStory> scenario) where TSut : class where TStory : Story, new()
         {
-            var type = scenario.GetType();
+	        if (scenario == null) throw new ArgumentNullException(nameof(scenario));
+
+	        var type = scenario.GetType();
 			var title = Configurator.Scanners
-					.Humanize(type.FullName.Replace(type.Namespace + ".", string.Empty))
+					.Humanize(type.FullName?.Replace(type.Namespace + ".", string.Empty))
 					.ToTitleCase();
 			if (scenario.Number != 0)
 			{

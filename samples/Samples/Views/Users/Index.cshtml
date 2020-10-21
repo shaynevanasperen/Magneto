@@ -26,8 +26,8 @@
 				<td>@user.Name</td>
 				<td>@user.Email</td>
 				<td>@user.Phone</td>
-				<td>@user.Address</td>
-				<td>@user.Company</td>
+				<td>@user.Address.Suite @user.Address.Street @user.Address.City @user.Address.Zipcode @user.Address.Geo</td>
+				<td>@user.Company.Name @user.Company.Bs @user.Company.CatchPhrase</td>
 				<td>@user.Website</td>
 			</tr>
 		}

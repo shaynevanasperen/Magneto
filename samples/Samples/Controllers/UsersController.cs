@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Magneto;
@@ -8,7 +9,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Samples.Domain;
 using Samples.Models;
 
@@ -51,7 +51,7 @@ namespace Samples.Controllers
 		protected override DistributedCacheEntryOptions CacheEntryOptions(JsonPlaceHolderHttpClient context) =>
 			User.AllUsersCacheEntryOptions();
 
-		protected override Task<User[]> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+		protected override Task<User[]> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken) =>
 			User.AllUsersAsync(context, cancellationToken);
 	}
 
@@ -62,10 +62,10 @@ namespace Samples.Controllers
 		protected override DistributedCacheEntryOptions CacheEntryOptions(JsonPlaceHolderHttpClient context) =>
 			User.AllUsersCacheEntryOptions();
 
-		protected override Task<User[]> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+		protected override Task<User[]> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken) =>
 			User.AllUsersAsync(context, cancellationToken);
 
-		protected override Task<User> TransformCachedResult(User[] cachedResult, CancellationToken cancellationToken = default) =>
+		protected override Task<User> TransformCachedResult(User[] cachedResult, CancellationToken cancellationToken) =>
 			Task.FromResult(cachedResult.SingleOrDefault(x => x.Id == Id));
 
 		public int Id { get; set; }
@@ -85,11 +85,9 @@ namespace Samples.Controllers
 		protected override Album[] Query((IFileProvider, ILogger<AlbumsByUserId>) context)
 		{
 			var (fileProvider, _) = context;
-			using (var streamReader = new StreamReader(fileProvider.GetFileInfo(Album.AllAlbumsFilename).CreateReadStream()))
-			{
-				var json = streamReader.ReadToEnd();
-				return JsonConvert.DeserializeObject<Album[]>(json);
-			}
+			using var streamReader = new StreamReader(fileProvider.GetFileInfo(Album.AllAlbumsFilename).CreateReadStream());
+			var json = streamReader.ReadToEnd();
+			return JsonSerializer.Deserialize<Album[]>(json);
 		}
 
 		protected override Album[] TransformCachedResult(Album[] cachedResult) => cachedResult.Where(x => x.UserId == UserId).ToArray();
@@ -97,11 +95,11 @@ namespace Samples.Controllers
 		public int UserId { get; set; }
 	}
 
-	public class SaveAlbum : SyncCommand<(IFileProvider, JsonSerializerSettings)>
+	public class SaveAlbum : SyncCommand<(IFileProvider, JsonSerializerOptions)>
 	{
-		public override void Execute((IFileProvider, JsonSerializerSettings) context)
+		public override void Execute((IFileProvider, JsonSerializerOptions) context)
 		{
-			var (fileProvider, jsonSerializerSettings) = context;
+			var (fileProvider, jsonSerializerOptions) = context;
 			lock (fileProvider)
 			{
 				var fileInfo = fileProvider.GetFileInfo(Album.AllAlbumsFilename);
@@ -110,9 +108,9 @@ namespace Samples.Controllers
 				using (var streamReader = new StreamReader(fileInfo.CreateReadStream()))
 					json = streamReader.ReadToEnd();
 
-				var existingAlbums = JsonConvert.DeserializeObject<Album[]>(json);
+				var existingAlbums = JsonSerializer.Deserialize<Album[]>(json);
 				Album.Id = existingAlbums.Max(x => x.Id) + 1;
-				json = JsonConvert.SerializeObject(existingAlbums.Concat(new[] { Album }), jsonSerializerSettings);
+				json = JsonSerializer.Serialize(existingAlbums.Concat(new[] { Album }), jsonSerializerOptions);
 
 				File.WriteAllText(fileInfo.PhysicalPath, json);
 			}

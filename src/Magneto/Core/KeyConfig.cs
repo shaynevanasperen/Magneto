@@ -25,6 +25,7 @@ namespace Magneto.Core
 		/// <returns>This same instance, after being configured by <paramref name="configure"/>.</returns>
 		public KeyConfig Configure(Action<KeyConfig> configure)
 		{
+			if (configure == null) throw new ArgumentNullException(nameof(configure));
 			configure(this);
 			return this;
 		}
@@ -32,7 +33,7 @@ namespace Magneto.Core
 		/// <summary>
 		/// The key that is generated from a combination of the <see cref="Prefix"/> and <see cref="VaryBy"/>.
 		/// </summary>
-		public string Key => _key ?? (_key = CreateKey(Prefix, VaryBy));
+		public string Key => _key ??= CreateKey(Prefix, VaryBy);
 
 		/// <inheritdoc />
 		public string Prefix

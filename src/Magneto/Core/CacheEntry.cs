@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Magneto.Core
 {
@@ -14,6 +15,7 @@ namespace Magneto.Core
 		/// Creates a new <see cref="CacheEntry{T}"/> wrapping the given <paramref name="value"/>.
 		/// </summary>
 		/// <param name="value">The value to wrap.</param>
+		[JsonConstructor]
 		public CacheEntry(T value) => Value = value;
 
 		/// <summary>
@@ -34,10 +36,7 @@ namespace Magneto.Core
 		}
 
 		/// <inheritdoc />
-		public override int GetHashCode()
-		{
-			return EqualityComparer<T>.Default.GetHashCode(Value);
-		}
+		public override int GetHashCode() => EqualityComparer<T>.Default.GetHashCode(Value);
 
 		/// <inheritdoc />
 		public bool Equals(CacheEntry<T> other)
