@@ -50,7 +50,7 @@ namespace Samples.Controllers
 
 	public class AllPosts : AsyncQuery<JsonPlaceHolderHttpClient, Post[]>
 	{
-		protected override Task<Post[]> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+		protected override Task<Post[]> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken) =>
 			context.GetAsync<Post[]>("/posts", cancellationToken);
 	}
 
@@ -61,7 +61,7 @@ namespace Samples.Controllers
 		protected override DistributedCacheEntryOptions CacheEntryOptions(JsonPlaceHolderHttpClient context) =>
 			new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 
-		protected override Task<Post> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+		protected override Task<Post> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken) =>
 			context.GetAsync<Post>($"/posts/{Id}", cancellationToken);
 
 		public int Id { get; set; }
@@ -74,7 +74,7 @@ namespace Samples.Controllers
 		protected override MemoryCacheEntryOptions CacheEntryOptions(JsonPlaceHolderHttpClient context) =>
 			new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 
-		protected override Task<Comment[]> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+		protected override Task<Comment[]> Query(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken) =>
 			context.GetAsync<Comment[]>($"/posts/{PostId}/comments", cancellationToken);
 
 		public int PostId { get; set; }
@@ -82,7 +82,7 @@ namespace Samples.Controllers
 
 	public class SavePost : AsyncCommand<JsonPlaceHolderHttpClient>
 	{
-		public override Task Execute(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken = default) =>
+		public override Task Execute(JsonPlaceHolderHttpClient context, CancellationToken cancellationToken) =>
 			context.PostAsync($"/posts/{Post.Id}", Post, cancellationToken);
 
 		public Post Post { get; set; }

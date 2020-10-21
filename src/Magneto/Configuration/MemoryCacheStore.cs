@@ -1,11 +1,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Magneto.Configuration;
 using Magneto.Core;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Magneto.Microsoft
+namespace Magneto.Configuration
 {
 	/// <summary>
 	/// An implementation of <see cref="ICacheStore{TCacheEntryOptions}"/> backed by <see cref="IMemoryCache"/>.
@@ -20,24 +19,24 @@ namespace Magneto.Microsoft
 		/// <param name="memoryCache">The underlying cache implementation.</param>
 		public MemoryCacheStore(IMemoryCache memoryCache) => _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
 
-		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Get{T}"/>
-		public CacheEntry<T> Get<T>(string key)
+		/// <inheritdoc cref="ISyncCacheStore{TCacheEntryOptions}.GetEntry{T}"/>
+		public CacheEntry<T> GetEntry<T>(string key)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 
 			return _memoryCache.Get<CacheEntry<T>>(key);
 		}
 
-		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.GetAsync{T}"/>
-		public Task<CacheEntry<T>> GetAsync<T>(string key, CancellationToken cancellationToken = default)
+		/// <inheritdoc cref="IAsyncCacheStore{TCacheEntryOptions}.GetEntryAsync{T}"/>
+		public Task<CacheEntry<T>> GetEntryAsync<T>(string key, CancellationToken cancellationToken)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 
 			return Task.FromResult(_memoryCache.Get<CacheEntry<T>>(key));
 		}
 
-		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Set{T}"/>
-		public void Set<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions)
+		/// <inheritdoc cref="ISyncCacheStore{TCacheEntryOptions}.SetEntry{T}"/>
+		public void SetEntry<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 			if (item == null) throw new ArgumentNullException(nameof(item));
@@ -46,8 +45,8 @@ namespace Magneto.Microsoft
 			_memoryCache.Set(key, item, cacheEntryOptions);
 		}
 
-		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.SetAsync{T}"/>
-		public Task SetAsync<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions, CancellationToken cancellationToken = default)
+		/// <inheritdoc cref="IAsyncCacheStore{TCacheEntryOptions}.SetEntryAsync{T}"/>
+		public Task SetEntryAsync<T>(string key, CacheEntry<T> item, MemoryCacheEntryOptions cacheEntryOptions, CancellationToken cancellationToken)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 			if (item == null) throw new ArgumentNullException(nameof(item));
@@ -57,16 +56,16 @@ namespace Magneto.Microsoft
 			return Task.CompletedTask;
 		}
 
-		/// <inheritdoc cref="ISyncCacheStore{DistributedCacheEntryOptions}.Remove"/>
-		public void Remove(string key)
+		/// <inheritdoc cref="ISyncCacheStore{TCacheEntryOptions}.RemoveEntry"/>
+		public void RemoveEntry(string key)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 
 			_memoryCache.Remove(key);
 		}
 
-		/// <inheritdoc cref="IAsyncCacheStore{DistributedCacheEntryOptions}.RemoveAsync"/>
-		public Task RemoveAsync(string key, CancellationToken cancellationToken = default)
+		/// <inheritdoc cref="IAsyncCacheStore{TCacheEntryOptions}.RemoveEntryAsync"/>
+		public Task RemoveEntryAsync(string key, CancellationToken cancellationToken)
 		{
 			if (key == null) throw new ArgumentNullException(nameof(key));
 

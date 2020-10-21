@@ -68,7 +68,7 @@ namespace Magneto
 		Core.AsyncCachedQuery<TContext, TCacheEntryOptions, TResult>, IAsyncCachedQuery<TContext, TCacheEntryOptions, TResult>
 	{
 		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Execute"/>
-		public virtual Task<TResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption, CancellationToken cancellationToken = default) =>
+		public virtual Task<TResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption, CancellationToken cancellationToken) =>
 			GetCachedResult(context, cacheStore, cacheOption, cancellationToken);
 	}
 
@@ -91,12 +91,12 @@ namespace Magneto
 		/// Transforms an intermediate result to a final result.
 		/// </summary>
 		/// <param name="cachedResult">The intermediate result to be transformed.</param>
-		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
+		/// <param name="cancellationToken">A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of transforming the intermediate result.</returns>
-		protected abstract Task<TTransformedResult> TransformCachedResult(TCachedResult cachedResult, CancellationToken cancellationToken = default);
+		protected abstract Task<TTransformedResult> TransformCachedResult(TCachedResult cachedResult, CancellationToken cancellationToken);
 
 		/// <inheritdoc cref="IAsyncCachedQuery{TContext,TCacheEntryOptions,TResult}.Execute"/>
-		public virtual async Task<TTransformedResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption, CancellationToken cancellationToken = default)
+		public virtual async Task<TTransformedResult> Execute(TContext context, IAsyncCacheStore<TCacheEntryOptions> cacheStore, CacheOption cacheOption, CancellationToken cancellationToken)
 		{
 			var cachedResult = await GetCachedResult(context, cacheStore, cacheOption, cancellationToken).ConfigureAwait(false);
 			return await TransformCachedResult(cachedResult, cancellationToken).ConfigureAwait(false);

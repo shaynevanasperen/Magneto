@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Magneto
@@ -41,9 +41,9 @@ namespace Magneto
 		/// Executes the command.
 		/// </summary>
 		/// <param name="context">The context with which the command is executed.</param>
-		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
+		/// <param name="cancellationToken">A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>A task representing the execution of the command.</returns>
-		Task Execute(TContext context, CancellationToken cancellationToken = default);
+		Task Execute(TContext context, CancellationToken cancellationToken);
 	}
 
 	/// <summary>
@@ -57,8 +57,8 @@ namespace Magneto
 		/// Executes the command and returns the result.
 		/// </summary>
 		/// <param name="context">The context with which the command is executed.</param>
-		/// <param name="cancellationToken">Optional. A <see cref="CancellationToken" /> to cancel the operation.</param>
+		/// <param name="cancellationToken">A <see cref="CancellationToken" /> to cancel the operation.</param>
 		/// <returns>The result of command execution.</returns>
-		Task<TResult> Execute(TContext context, CancellationToken cancellationToken = default);
+		Task<TResult> Execute(TContext context, CancellationToken cancellationToken);
 	}
 }

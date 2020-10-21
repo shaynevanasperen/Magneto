@@ -29,20 +29,20 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 		protected void ThenTheCacheKeyIsRequestedOnlyOnce() => The<ISyncCachedQueryStub>().Received(1).CacheKey(Arg.Any<IKeyConfig>());
 		protected void AndThenTheCacheKeyContainsTheFullClassName() => SUT.PeekCacheKey().Should().Contain(SUT.GetType().FullName);
 		protected void AndThenTheCacheKeyContainsTheVaryByValue() => SUT.PeekCacheKey().Should().Contain(nameof(IKeyConfig.VaryBy));
-		protected void AndThenNothingIsRemovedFromTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().DidNotReceive().Remove(Arg.Any<string>());
+		protected void AndThenNothingIsRemovedFromTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().DidNotReceive().RemoveEntry(Arg.Any<string>());
 		protected void AndThenTheCachedResultIsSet() => SUT.PeekCachedResult().Should().BeSameAs(Result);
 
 		public abstract class CacheOptionIsDefault : Executing
 		{
 			protected void GivenTheCacheOptionIsDefault() => CacheOption = CacheOption.Default;
-			protected void AndThenTheCacheStoreIsQueried() => The<ISyncCacheStore<CacheEntryOptions>>().Received().Get<QueryResult>(ExpectedCacheKey);
+			protected void AndThenTheCacheStoreIsQueried() => The<ISyncCacheStore<CacheEntryOptions>>().Received().GetEntry<QueryResult>(ExpectedCacheKey);
 
 			public class CacheMiss : CacheOptionIsDefault
 			{
 				void GivenTheQueryResultIsNotCached() { }
 				void AndThenTheQueryIsExecuted() => The<ISyncCachedQueryStub>().Received(1).Query(QueryContext);
 				void AndThenTheCacheEntryOptionsIsRequested() => The<ISyncCachedQueryStub>().Received(1).CacheEntryOptions(QueryContext);
-				void AndThenTheResultIsSetInTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(1).Set(ExpectedCacheKey, QueryResult.ToCacheEntry(), CacheEntryOptions);
+				void AndThenTheResultIsSetInTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(1).SetEntry(ExpectedCacheKey, QueryResult.ToCacheEntry(), CacheEntryOptions);
 				void AndThenTheResultIsTheQueryResult() => Result.Should().BeSameAs(QueryResult);
 			}
 
@@ -50,7 +50,7 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 			{
 				readonly QueryResult _cachedResult = new QueryResult();
 
-				void GivenTheQueryResultIsCached() => The<ISyncCacheStore<CacheEntryOptions>>().Get<QueryResult>(ExpectedCacheKey).Returns(_cachedResult.ToCacheEntry());
+				void GivenTheQueryResultIsCached() => The<ISyncCacheStore<CacheEntryOptions>>().GetEntry<QueryResult>(ExpectedCacheKey).Returns(_cachedResult.ToCacheEntry());
 				void AndThenTheQueryIsNotExecuted() => The<ISyncCachedQueryStub>().DidNotReceive().Query(QueryContext);
 				void AndThenTheCacheEntryOptionsIsNotRequested() => The<ISyncCachedQueryStub>().DidNotReceive().CacheEntryOptions(Arg.Any<QueryContext>());
 				void AndThenTheResultIsTheCachedResult() => Result.Should().BeSameAs(_cachedResult);
@@ -60,10 +60,10 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 		public class CacheOptionIsRefresh : Executing
 		{
 			void GivenTheCacheOptionIsRefresh() => CacheOption = CacheOption.Refresh;
-			void AndThenTheCacheStoreIsNotQueried() => The<ISyncCacheStore<CacheEntryOptions>>().DidNotReceive().Get<QueryResult>(Arg.Any<string>());
+			void AndThenTheCacheStoreIsNotQueried() => The<ISyncCacheStore<CacheEntryOptions>>().DidNotReceive().GetEntry<QueryResult>(Arg.Any<string>());
 			void AndThenTheQueryIsExecuted() => The<ISyncCachedQueryStub>().Received(1).Query(QueryContext);
 			void AndThenTheCacheEntryOptionsIsRequested() => The<ISyncCachedQueryStub>().Received(1).CacheEntryOptions(QueryContext);
-			void AndThenTheResultIsSetInTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(1).Set(ExpectedCacheKey, QueryResult.ToCacheEntry(), CacheEntryOptions);
+			void AndThenTheResultIsSetInTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(1).SetEntry(ExpectedCacheKey, QueryResult.ToCacheEntry(), CacheEntryOptions);
 			void AndThenTheResultIsTheQueryResult() => Result.Should().BeSameAs(QueryResult);
 		}
 	}
@@ -106,10 +106,10 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 		}
 
 		void ThenTheQueryIsExecutedTwice() => The<ISyncCachedQueryStub>().Received(2).Query(_queryContext);
-		void AndThenTwoResultsAreDifferent() => _result1.Should().NotBeSameAs(_result2);
-		void AndThenTwoStateCacheKeysAreDifferent() => _cacheKey1.Should().NotBeSameAs(_cacheKey2);
-		void AndThenTwoStateCacheEntryOptionsAreDifferent() => _cacheEntryOptions1.Should().NotBeSameAs(_cacheEntryOptions2);
-		void AndThenTwoStateCachedResultsAreDifferent() => _cachedResult1.Should().NotBeSameAs(_cachedResult2);
+		void AndThenTheTwoResultsAreDifferent() => _result1.Should().NotBeSameAs(_result2);
+		void AndThenTheTwoStateCacheKeysAreDifferent() => _cacheKey1.Should().NotBeSameAs(_cacheKey2);
+		void AndThenTheTwoStateCacheEntryOptionsAreDifferent() => _cacheEntryOptions1.Should().NotBeSameAs(_cacheEntryOptions2);
+		void AndThenTheTwoStateCachedResultsAreDifferent() => _cachedResult1.Should().NotBeSameAs(_cachedResult2);
 	}
 
 	public class EvictingCachedResult : ScenarioFor<SyncCachedQuery<QueryContext, CacheEntryOptions, QueryResult>>
@@ -117,7 +117,7 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 		public override void Setup() => SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
 
 		void WhenEvictingCachedResult() => SUT.EvictCachedResult(The<ISyncCacheStore<CacheEntryOptions>>());
-		void ThenItDelegatesToTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(1).Remove(SUT.PeekCacheKey());
+		void ThenItDelegatesToTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(1).RemoveEntry(SUT.PeekCacheKey());
 		void AndThenTheCacheKeyIsRequestedOnlyOnce() => The<ISyncCachedQueryStub>().Received(1).CacheKey(Arg.Any<IKeyConfig>());
 	}
 
@@ -157,7 +157,7 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 			protected void WhenUpdatingCachedResult() => SUT.UpdateCachedResult(The<ISyncCacheStore<CacheEntryOptions>>());
 			protected void ThenTheCacheKeyIsRequestedOnlyOnce() => The<ISyncCachedQueryStub>().Received(1).CacheKey(Arg.Any<IKeyConfig>());
 			protected void AndThenTheCacheEntryOptionsIsNotRequestedAgain() => The<ISyncCachedQueryStub>().Received(1).CacheEntryOptions(QueryContext);
-			protected void AndThenItDelegatesToTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(ExpectedCacheStoreSetCount).Set(ExpectedCacheKey, QueryResult.ToCacheEntry(), CacheEntryOptions);
+			protected void AndThenItDelegatesToTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(ExpectedCacheStoreSetCount).SetEntry(ExpectedCacheKey, QueryResult.ToCacheEntry(), CacheEntryOptions);
 
 			public class CacheMiss : QueryWasExecuted
 			{
@@ -172,7 +172,7 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 			{
 				void GivenTheQueryResultIsCached()
 				{
-					The<ISyncCacheStore<CacheEntryOptions>>().Get<QueryResult>(ExpectedCacheKey).Returns(QueryResult.ToCacheEntry());
+					The<ISyncCacheStore<CacheEntryOptions>>().GetEntry<QueryResult>(ExpectedCacheKey).Returns(QueryResult.ToCacheEntry());
 					ExpectedCacheStoreSetCount = 1;
 				}
 			}

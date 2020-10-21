@@ -1,7 +1,9 @@
 using System;
+using System.ComponentModel;
 
 namespace Magneto.Core
 {
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	static class ServiceProviderExtensions
 	{
 		internal static T GetService<T>(this IServiceProvider serviceProvider) => (T)serviceProvider.GetService(typeof(T));

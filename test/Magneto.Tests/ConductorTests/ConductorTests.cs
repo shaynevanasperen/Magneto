@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using FluentAssertions;
 
-namespace Magneto.Tests.MagnetoTests
+namespace Magneto.Tests.ConductorTests
 {
-	public abstract class GettingContext : ScenarioFor<MagnetoTest>
+	public abstract class GettingContext : ScenarioFor<ConductorTest>
 	{
 		readonly ServiceProvider _serviceProvider = new ServiceProvider();
 
@@ -17,7 +17,7 @@ namespace Magneto.Tests.MagnetoTests
 			_serviceProvider.Register(new Foo());
 			_serviceProvider.Register(new Bar());
 			_serviceProvider.Register(new Baz());
-			SUT = new MagnetoTest(_serviceProvider);
+			SUT = new ConductorTest(_serviceProvider);
 		}
 
 		public class ForUnavailableType : GettingContext
@@ -72,7 +72,7 @@ namespace Magneto.Tests.MagnetoTests
 		}
 	}
 
-	public class ServiceProvider : IServiceProvider
+	class ServiceProvider : IServiceProvider
 	{
 		private readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();
 
@@ -83,9 +83,9 @@ namespace Magneto.Tests.MagnetoTests
 		public object GetService(Type serviceType) => _services.GetValueOrDefault(serviceType);
 	}
 
-	public class MagnetoTest : Magneto
+	public class ConductorTest : Conductor
 	{
-		public MagnetoTest(IServiceProvider serviceProvider) : base(serviceProvider) { }
+		public ConductorTest(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
 		public TContext ResolveContext<TContext>() => GetContext<TContext>();
 	}

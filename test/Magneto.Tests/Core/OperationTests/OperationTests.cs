@@ -9,7 +9,9 @@ namespace Magneto.Tests.Core.OperationTests
 {
 	public abstract class CheckingEquality : ScenarioFor<Operation>
 	{
+#pragma warning disable CA1720 // Identifier contains type name
 		protected object Object;
+#pragma warning restore CA1720 // Identifier contains type name
 
 		bool _objectsAreEqual;
 		bool _operationsAreEqual;
@@ -299,7 +301,7 @@ namespace Magneto.Tests.Core.OperationTests
 
 	public class AsyncQueryWithoutProperties : AsyncQuery<object, object>
 	{
-		protected override Task<object> Query(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		protected override Task<object> Query(object context, CancellationToken cancellationToken) => throw new NotImplementedException();
 	}
 
 	public class SyncCachedQueryWithoutProperties : SyncCachedQuery<object, object, object>
@@ -311,7 +313,7 @@ namespace Magneto.Tests.Core.OperationTests
 	public class AsyncCachedQueryWithoutProperties : AsyncCachedQuery<object, object, object>
 	{
 		protected override object CacheEntryOptions(object context) => throw new NotImplementedException();
-		protected override Task<object> Query(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		protected override Task<object> Query(object context, CancellationToken cancellationToken) => throw new NotImplementedException();
 	}
 
 	public class SyncTransformedCachedQueryWithoutProperties : SyncTransformedCachedQuery<object, object, object, object>
@@ -324,8 +326,8 @@ namespace Magneto.Tests.Core.OperationTests
 	public class AsyncTransformedCachedQueryWithoutProperties : AsyncTransformedCachedQuery<object, object, object, object>
 	{
 		protected override object CacheEntryOptions(object context) => throw new NotImplementedException();
-		protected override Task<object> Query(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-		protected override Task<object> TransformCachedResult(object cachedResult, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		protected override Task<object> Query(object context, CancellationToken cancellationToken) => throw new NotImplementedException();
+		protected override Task<object> TransformCachedResult(object cachedResult, CancellationToken cancellationToken) => throw new NotImplementedException();
 	}
 
 	public class SyncCommandWithoutProperties : SyncCommand<object>
@@ -338,7 +340,7 @@ namespace Magneto.Tests.Core.OperationTests
 
 	public class AsyncCommandWithoutProperties : AsyncCommand<object>
 	{
-		public override Task Execute(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		public override Task Execute(object context, CancellationToken cancellationToken) => throw new NotImplementedException();
 	}
 
 	public class SyncReturningCommandWithoutProperties : SyncCommand<object, object>
@@ -348,26 +350,30 @@ namespace Magneto.Tests.Core.OperationTests
 
 	public class AsyncReturningCommandWithoutProperties : AsyncCommand<object, object>
 	{
-		public override Task<object> Execute(object context, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		public override Task<object> Execute(object context, CancellationToken cancellationToken) => throw new NotImplementedException();
 	}
 
 	public class OperationWithProperties1 : Operation
 	{
+#pragma warning disable CA1720 // Identifier contains type name
 		public int Integer { get; set; }
 		public bool Boolean { get; set; }
 		public string String { get; set; }
 		public UriKind Enum { get; set; }
 		public object Object { get; set; }
+#pragma warning restore CA1720 // Identifier contains type name
 		public IEnumerable<object> Collection { get; set; }
 	}
 
 	public class OperationWithProperties2 : Operation
 	{
+#pragma warning disable CA1720 // Identifier contains type name
 		public int Integer { get; set; }
 		public bool Boolean { get; set; }
 		public string String { get; set; }
 		public UriKind Enum { get; set; }
 		public object Object { get; set; }
+#pragma warning restore CA1720 // Identifier contains type name
 		public IEnumerable<object> Collection { get; set; }
 	}
 }

@@ -1,4 +1,4 @@
-namespace Magneto.Microsoft
+namespace Magneto.Configuration
 {
 	/// <summary>
 	/// An abstraction for serializing and deserializing objects to and from strings.

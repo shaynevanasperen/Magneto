@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<NoWarn>$(NoWarn);CA2007;CA1819;CA1054;CA2234</NoWarn>
+		<NoWarn>$(NoWarn);CA1054;CA1062;CA1819;CA2007;CA2234</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -10,13 +10,12 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="BuildBundlerMinifier" Version="3.2.435" />
-		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.13.1" />
-		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.2" />
+		<PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.9" />
 	</ItemGroup>
 	
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Magneto.Microsoft\Magneto.Microsoft.csproj" />
 		<ProjectReference Include="..\..\src\Magneto\Magneto.csproj" />
 	</ItemGroup>
 	

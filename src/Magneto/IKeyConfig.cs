@@ -1,3 +1,5 @@
+using System;
+
 namespace Magneto
 {
 	/// <summary>
@@ -39,6 +41,7 @@ namespace Magneto
 		/// </summary>
 		public static IKeyConfig UsePrefix(this IKeyConfig keyConfig, string value)
 		{
+			if (keyConfig == null) throw new ArgumentNullException(nameof(keyConfig));
 			keyConfig.Prefix = value;
 			return keyConfig;
 		}
@@ -58,6 +61,7 @@ namespace Magneto
 		/// </summary>
 		public static IKeyConfig VaryBy(this IKeyConfig keyConfig, params object[] value)
 		{
+			if (keyConfig == null) throw new ArgumentNullException(nameof(keyConfig));
 			keyConfig.VaryBy = value;
 			return keyConfig;
 		}

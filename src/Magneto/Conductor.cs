@@ -20,17 +20,17 @@ namespace Magneto
 	/// class MyQuery : ISyncQuery&lt;(DbContext, IFileProvider), string&gt; { ... }
 	/// </example>
 	/// </summary>
-	public class Magneto : IMagneto
+	public class Conductor : IMagneto
 	{
 		/// <summary>
-		/// Creates a new instance of <see cref="Magneto"/>. The contained <see cref="IMediary"/> is initialized from either the instance of
+		/// Creates a new instance of <see cref="Conductor"/>. The contained <see cref="IMediary"/> is initialized from either the instance of
 		/// <see cref="IMediary"/> obtained from the given <see cref="IServiceProvider"/>, or a new instance of <see cref="Mediary"/> if the given
 		/// <see cref="IServiceProvider"/> couldn't provide it. The contained <see cref="IServiceProvider"/> wraps <paramref name="serviceProvider"/>,
 		/// adding the capability to resolve instances of <see cref="ValueTuple"/>.
 		/// </summary>
 		/// <param name="serviceProvider">Used for obtaining instances of the context objects with which queries and commands are invoked.</param>
 		/// <exception cref="ArgumentNullException">Thrown if the <paramref name="serviceProvider"/> is null.</exception>
-		public Magneto(IServiceProvider serviceProvider)
+		public Conductor(IServiceProvider serviceProvider)
 		{
 			if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
 			

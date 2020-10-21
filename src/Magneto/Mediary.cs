@@ -71,7 +71,12 @@ namespace Magneto
 		/// <param name="instance">The object from which to retrieve the full type name.</param>
 		/// <param name="methodName">The name of a method on the given object.</param>
 		/// <returns>A string made up of the full type name and the given method name, joined by a dot.</returns>
-		protected virtual string GetOperationName(object instance, string methodName) => $"{instance.GetType().FullName}.{methodName}";
+		protected virtual string GetOperationName(object instance, string methodName)
+		{
+			if (instance == null) throw new ArgumentNullException(nameof(instance));
+
+			return $"{instance.GetType().FullName}.{methodName}";
+		}
 
 		/// <inheritdoc cref="ISyncQueryMediary.Query{TContext,TResult}"/>
 		public virtual TResult Query<TContext, TResult>(ISyncQuery<TContext, TResult> query, TContext context)
