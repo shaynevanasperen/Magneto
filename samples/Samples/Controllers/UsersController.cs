@@ -73,6 +73,8 @@ namespace Samples.Controllers
 
 	public class AlbumsByUserId : SyncTransformedCachedQuery<(IFileProvider, ILogger<AlbumsByUserId>), MemoryCacheEntryOptions, Album[], Album[]>
 	{
+		protected override void CacheKey(IKeyConfig keyConfig) => keyConfig.VaryByNothing();
+
 		protected override MemoryCacheEntryOptions CacheEntryOptions((IFileProvider, ILogger<AlbumsByUserId>) context)
 		{
 			var (fileProvider, logger) = context;

@@ -107,11 +107,10 @@ namespace Magneto.Core
 		internal readonly Store State;
 
 		/// <summary>
-		/// <para>Configures details for constructing a cache key.</para>
-		/// <para>Implementors can choose not to override this method if the cache key doesn't need to vary by anything.</para>
+		/// Configures details for constructing a cache key.
 		/// </summary>
 		/// <param name="keyConfig">The configuration object.</param>
-		protected virtual void CacheKey(IKeyConfig keyConfig) { }
+		protected abstract void CacheKey(IKeyConfig keyConfig);
 
 		/// <summary>
 		/// <para>Returns options pertaining to the cache entry (such as expiration policy).</para>

@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel;
+using System.Linq;
 
 namespace Magneto
 {
@@ -33,6 +35,7 @@ namespace Magneto
 	/// <summary>
 	/// An extension class for fluent configuration of <see cref="IKeyConfig"/> instances.
 	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static class KeyConfigExtensions
 	{
 		/// <summary>
@@ -59,10 +62,19 @@ namespace Magneto
 		/// keyConfig.VaryBy($"{Foo}_{Baz.Id}")<br/>
 		/// </para>
 		/// </summary>
-		public static IKeyConfig VaryBy(this IKeyConfig keyConfig, params object[] value)
+		public static IKeyConfig VaryBy(this IKeyConfig keyConfig, object firstValue, params object[] additionalValues)
 		{
 			if (keyConfig == null) throw new ArgumentNullException(nameof(keyConfig));
-			keyConfig.VaryBy = value;
+			keyConfig.VaryBy = new[] { firstValue }.Concat(additionalValues);
+			return keyConfig;
+		}
+
+		/// <summary>
+		/// A convenience method to express that the cache key should not vary by anything.
+		/// </summary>
+		public static IKeyConfig VaryByNothing(this IKeyConfig keyConfig)
+		{
+			if (keyConfig == null) throw new ArgumentNullException(nameof(keyConfig));
 			return keyConfig;
 		}
 	}
