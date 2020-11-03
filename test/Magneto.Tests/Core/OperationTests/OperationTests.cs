@@ -306,18 +306,21 @@ namespace Magneto.Tests.Core.OperationTests
 
 	public class SyncCachedQueryWithoutProperties : SyncCachedQuery<object, object, object>
 	{
+		protected override void CacheKey(IKeyConfig keyConfig) => throw new NotImplementedException();
 		protected override object CacheEntryOptions(object context) => throw new NotImplementedException();
 		protected override object Query(object context) => throw new NotImplementedException();
 	}
 
 	public class AsyncCachedQueryWithoutProperties : AsyncCachedQuery<object, object, object>
 	{
+		protected override void CacheKey(IKeyConfig keyConfig) => throw new NotImplementedException();
 		protected override object CacheEntryOptions(object context) => throw new NotImplementedException();
 		protected override Task<object> Query(object context, CancellationToken cancellationToken) => throw new NotImplementedException();
 	}
 
 	public class SyncTransformedCachedQueryWithoutProperties : SyncTransformedCachedQuery<object, object, object, object>
 	{
+		protected override void CacheKey(IKeyConfig keyConfig) => throw new NotImplementedException();
 		protected override object CacheEntryOptions(object context) => throw new NotImplementedException();
 		protected override object Query(object context) => throw new NotImplementedException();
 		protected override object TransformCachedResult(object cachedResult) => throw new NotImplementedException();
@@ -325,6 +328,7 @@ namespace Magneto.Tests.Core.OperationTests
 
 	public class AsyncTransformedCachedQueryWithoutProperties : AsyncTransformedCachedQuery<object, object, object, object>
 	{
+		protected override void CacheKey(IKeyConfig keyConfig) => throw new NotImplementedException();
 		protected override object CacheEntryOptions(object context) => throw new NotImplementedException();
 		protected override Task<object> Query(object context, CancellationToken cancellationToken) => throw new NotImplementedException();
 		protected override Task<object> TransformCachedResult(object cachedResult, CancellationToken cancellationToken) => throw new NotImplementedException();
