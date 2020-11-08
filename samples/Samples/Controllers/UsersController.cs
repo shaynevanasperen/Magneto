@@ -46,7 +46,7 @@ namespace Samples.Controllers
 
 	public class AllUsers : AsyncCachedQuery<JsonPlaceHolderHttpClient, DistributedCacheEntryOptions, User[]>
 	{
-		protected override void CacheKey(IKeyConfig keyConfig) => keyConfig.Prefix = User.AllUsersCacheKeyPrefix;
+		protected override void CacheKey(ICache cache) => cache.Prefix = User.AllUsersCacheKeyPrefix;
 
 		protected override DistributedCacheEntryOptions CacheEntryOptions(JsonPlaceHolderHttpClient context) =>
 			User.AllUsersCacheEntryOptions();
@@ -57,7 +57,7 @@ namespace Samples.Controllers
 
 	public class UserById : AsyncTransformedCachedQuery<JsonPlaceHolderHttpClient, DistributedCacheEntryOptions, User[], User>
 	{
-		protected override void CacheKey(IKeyConfig keyConfig) => keyConfig.UsePrefix(User.AllUsersCacheKeyPrefix);
+		protected override void CacheKey(ICache cache) => cache.UsePrefix(User.AllUsersCacheKeyPrefix);
 
 		protected override DistributedCacheEntryOptions CacheEntryOptions(JsonPlaceHolderHttpClient context) =>
 			User.AllUsersCacheEntryOptions();
@@ -73,7 +73,7 @@ namespace Samples.Controllers
 
 	public class AlbumsByUserId : SyncTransformedCachedQuery<(IFileProvider, ILogger<AlbumsByUserId>), MemoryCacheEntryOptions, Album[], Album[]>
 	{
-		protected override void CacheKey(IKeyConfig keyConfig) => keyConfig.VaryByNothing();
+		protected override void CacheKey(ICache cache) => cache.VaryByNothing();
 
 		protected override MemoryCacheEntryOptions CacheEntryOptions((IFileProvider, ILogger<AlbumsByUserId>) context)
 		{

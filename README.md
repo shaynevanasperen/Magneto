@@ -73,7 +73,7 @@ Leverage built-in caching by deriving from a base class and specifying the type 
 public class CommentsByPostId : AsyncCachedQuery<HttpClient, MemoryCacheEntryOptions, Comment[]>
 {
     // Here we get to specify which parameters comprise the cache key
-    protected override void CacheKey(IKeyConfig keyConfig) => keyConfig.VaryBy = PostId;
+    protected override void CacheKey(ICache cache) => cache.VaryBy = PostId;
     
     // Here we get to specify the caching policy (absolute/sliding)
     protected override MemoryCacheEntryOptions CacheEntryOptions(HttpClient context) =>

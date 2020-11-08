@@ -4,7 +4,7 @@ using Magneto.Configuration;
 namespace Magneto.Core
 {
 	/// <inheritdoc />
-	public class KeyConfig : IKeyConfig
+	public class CacheKey : ICache
 	{
 		string _key;
 		string _prefix;
@@ -13,17 +13,17 @@ namespace Magneto.Core
 		internal static Func<string, object, string> CreateKey = CachedQuery.DefaultKeyCreator;
 
 		/// <summary>
-		/// Create a new instance of <see cref="KeyConfig"/> with the given key prefix and an optional callback for creating the key.
+		/// Create a new instance of <see cref="CacheKey"/> with the given key prefix and an optional callback for creating the key.
 		/// </summary>
 		/// <param name="prefix">The prefix to use for generated keys.</param>
-		public KeyConfig(string prefix) => Prefix = prefix;
+		public CacheKey(string prefix) => Prefix = prefix;
 
 		/// <summary>
 		/// Configures this instance using the given <see cref="Action{T}"/>.
 		/// </summary>
 		/// <param name="configure">An action for configuring this instance.</param>
 		/// <returns>This same instance, after being configured by <paramref name="configure"/>.</returns>
-		public KeyConfig Configure(Action<KeyConfig> configure)
+		public CacheKey Configure(Action<CacheKey> configure)
 		{
 			if (configure == null) throw new ArgumentNullException(nameof(configure));
 			configure(this);
@@ -33,7 +33,7 @@ namespace Magneto.Core
 		/// <summary>
 		/// The key that is generated from a combination of the <see cref="Prefix"/> and <see cref="VaryBy"/>.
 		/// </summary>
-		public string Key => _key ??= CreateKey(Prefix, VaryBy);
+		public string Value => _key ??= CreateKey(Prefix, VaryBy);
 
 		/// <inheritdoc />
 		public string Prefix

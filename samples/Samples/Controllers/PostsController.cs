@@ -56,7 +56,7 @@ namespace Samples.Controllers
 
 	public class PostById : AsyncCachedQuery<JsonPlaceHolderHttpClient, DistributedCacheEntryOptions, Post>
 	{
-		protected override void CacheKey(IKeyConfig keyConfig) => keyConfig.VaryBy = Id;
+		protected override void CacheKey(ICache cache) => cache.VaryBy = Id;
 
 		protected override DistributedCacheEntryOptions CacheEntryOptions(JsonPlaceHolderHttpClient context) =>
 			new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
@@ -69,7 +69,7 @@ namespace Samples.Controllers
 
 	public class CommentsByPostId : AsyncCachedQuery<JsonPlaceHolderHttpClient, MemoryCacheEntryOptions, Comment[]>
 	{
-		protected override void CacheKey(IKeyConfig keyConfig) => keyConfig.VaryBy(PostId);
+		protected override void CacheKey(ICache cache) => cache.VaryBy(PostId);
 
 		protected override MemoryCacheEntryOptions CacheEntryOptions(JsonPlaceHolderHttpClient context) =>
 			new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(30));

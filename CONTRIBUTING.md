@@ -16,12 +16,12 @@
 
 ## Prerequisites
 
-By contributing to _Code_, you assert that:
+By contributing to _Magneto_, you assert that:
 
 * The contribution is your own original work.
 * You have the right to assign the copyright for the work (it is not owned by your employer, or
   you have been given copyright assignment in writing).
-* You [license](https://github.com/shaynevanasperen/magneto/blob/master/LICENSE) the contribution under the terms applied to the rest of the _Code_ project.
+* You [license](https://github.com/shaynevanasperen/magneto/blob/master/LICENSE) the contribution under the terms applied to the rest of the _Magneto_ project.
 * You agree to follow the [code of conduct](https://github.com/shaynevanasperen/magneto/blob/master/CODEOFCONDUCT.md).
 
 ## Definition of trivial contributions
