@@ -109,8 +109,8 @@ namespace Magneto.Core
 		/// <summary>
 		/// Configures details for constructing a cache key.
 		/// </summary>
-		/// <param name="keyConfig">The configuration object.</param>
-		protected abstract void CacheKey(IKeyConfig keyConfig);
+		/// <param name="cache">The configuration object.</param>
+		protected abstract void CacheKey(ICache cache);
 
 		/// <summary>
 		/// <para>Returns options pertaining to the cache entry (such as expiration policy).</para>
@@ -133,7 +133,7 @@ namespace Magneto.Core
 			internal void SetContext(TContext context)
 			{
 				_hasCachedResult = false;
-				_cacheKey = new Lazy<string>(() => new KeyConfig(_query.GetType().FullName).Configure(_query.CacheKey).Key);
+				_cacheKey = new Lazy<string>(() => new CacheKey(_query.GetType().FullName).Configure(_query.CacheKey).Value);
 				_cacheEntryOptions = new Lazy<TCacheEntryOptions>(() => _query.CacheEntryOptions(context));
 			}
 

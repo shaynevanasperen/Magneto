@@ -15,7 +15,7 @@ namespace Magneto.Configuration
 		/// <param name="createKey">The method to use for creating cache keys.</param>
 		/// <exception cref="ArgumentNullException">Thrown if <paramref name="createKey"/> is null.</exception>
 		public static void UseKeyCreator(Func<string, object, string> createKey) =>
-			KeyConfig.CreateKey = createKey ?? throw new ArgumentNullException(nameof(createKey));
+			CacheKey.CreateKey = createKey ?? throw new ArgumentNullException(nameof(createKey));
 
 		/// <summary>
 		/// The default method of creating cache keys. Uses reflection to serialize the <paramref name="varyBy"/> argument.

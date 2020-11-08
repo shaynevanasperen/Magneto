@@ -19,16 +19,16 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 		public override void Setup()
 		{
 			SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
-			The<ISyncCachedQueryStub>().When(x => x.CacheKey(Arg.Any<IKeyConfig>())).Do(x => x.ArgAt<IKeyConfig>(0).VaryBy = nameof(IKeyConfig.VaryBy));
-			ExpectedCacheKey = $"{SUT.GetType().FullName}_{nameof(IKeyConfig.VaryBy)}";
+			The<ISyncCachedQueryStub>().When(x => x.CacheKey(Arg.Any<ICache>())).Do(x => x.ArgAt<ICache>(0).VaryBy = nameof(ICache.VaryBy));
+			ExpectedCacheKey = $"{SUT.GetType().FullName}_{nameof(ICache.VaryBy)}";
 			The<ISyncCachedQueryStub>().CacheEntryOptions(QueryContext).Returns(CacheEntryOptions);
 			The<ISyncCachedQueryStub>().Query(QueryContext).Returns(QueryResult);
 		}
 
 		protected void WhenExecutingTheQuery() => Result = SUT.Execute(QueryContext, The<ISyncCacheStore<CacheEntryOptions>>(), CacheOption);
-		protected void ThenTheCacheKeyIsRequestedOnlyOnce() => The<ISyncCachedQueryStub>().Received(1).CacheKey(Arg.Any<IKeyConfig>());
+		protected void ThenTheCacheKeyIsRequestedOnlyOnce() => The<ISyncCachedQueryStub>().Received(1).CacheKey(Arg.Any<ICache>());
 		protected void AndThenTheCacheKeyContainsTheFullClassName() => SUT.PeekCacheKey().Should().Contain(SUT.GetType().FullName);
-		protected void AndThenTheCacheKeyContainsTheVaryByValue() => SUT.PeekCacheKey().Should().Contain(nameof(IKeyConfig.VaryBy));
+		protected void AndThenTheCacheKeyContainsTheVaryByValue() => SUT.PeekCacheKey().Should().Contain(nameof(ICache.VaryBy));
 		protected void AndThenNothingIsRemovedFromTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().DidNotReceive().RemoveEntry(Arg.Any<string>());
 		protected void AndThenTheCachedResultIsSet() => SUT.PeekCachedResult().Should().BeSameAs(Result);
 
@@ -84,7 +84,7 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 		public override void Setup()
 		{
 			SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
-			The<ISyncCachedQueryStub>().When(x => x.CacheKey(Arg.Any<IKeyConfig>())).Do(x => x.ArgAt<IKeyConfig>(0).VaryBy = Guid.NewGuid().ToString());
+			The<ISyncCachedQueryStub>().When(x => x.CacheKey(Arg.Any<ICache>())).Do(x => x.ArgAt<ICache>(0).VaryBy = Guid.NewGuid().ToString());
 			The<ISyncCachedQueryStub>().CacheEntryOptions(_queryContext).Returns(x => new CacheEntryOptions());
 			The<ISyncCachedQueryStub>().Query(_queryContext).Returns(x => new QueryResult());
 		}
@@ -118,7 +118,7 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 
 		void WhenEvictingCachedResult() => SUT.EvictCachedResult(The<ISyncCacheStore<CacheEntryOptions>>());
 		void ThenItDelegatesToTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(1).RemoveEntry(SUT.PeekCacheKey());
-		void AndThenTheCacheKeyIsRequestedOnlyOnce() => The<ISyncCachedQueryStub>().Received(1).CacheKey(Arg.Any<IKeyConfig>());
+		void AndThenTheCacheKeyIsRequestedOnlyOnce() => The<ISyncCachedQueryStub>().Received(1).CacheKey(Arg.Any<ICache>());
 	}
 
 	public abstract class UpdatingCachedResult : ScenarioFor<SyncCachedQuery<QueryContext, CacheEntryOptions, QueryResult>>
@@ -131,8 +131,8 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 		public override void Setup()
 		{
 			SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
-			The<ISyncCachedQueryStub>().When(x => x.CacheKey(Arg.Any<IKeyConfig>())).Do(x => x.ArgAt<IKeyConfig>(0).VaryBy = nameof(IKeyConfig.VaryBy));
-			ExpectedCacheKey = $"{SUT.GetType().FullName}_{nameof(IKeyConfig.VaryBy)}";
+			The<ISyncCachedQueryStub>().When(x => x.CacheKey(Arg.Any<ICache>())).Do(x => x.ArgAt<ICache>(0).VaryBy = nameof(ICache.VaryBy));
+			ExpectedCacheKey = $"{SUT.GetType().FullName}_{nameof(ICache.VaryBy)}";
 			The<ISyncCachedQueryStub>().CacheEntryOptions(QueryContext).Returns(CacheEntryOptions);
 		}
 
@@ -142,7 +142,7 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 
 			void GivenTheQueryWasNotExecuted() { }
 			void WhenUpdatingCachedResult() => _invocation = SUT.Invoking(x => x.UpdateCachedResult(The<ISyncCacheStore<CacheEntryOptions>>()));
-			void ThenTheCacheKeyIsNotRequested() => The<ISyncCachedQueryStub>().DidNotReceive().CacheKey(Arg.Any<IKeyConfig>());
+			void ThenTheCacheKeyIsNotRequested() => The<ISyncCachedQueryStub>().DidNotReceive().CacheKey(Arg.Any<ICache>());
 			void AndThenItThrowsAnExceptionStatingThatTheCachedResultIsNotAvailable() => _invocation.Should().Throw<InvalidOperationException>().Which.Message.Should().Be("Cached result is not available");
 			void AndThenTheCacheEntryOptionsIsNotRequested() => The<ISyncCachedQueryStub>().DidNotReceive().CacheEntryOptions(Arg.Any<QueryContext>());
 		}
@@ -155,7 +155,7 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 
 			protected void AndGivenTheQueryWasExecuted() => SUT.Execute(QueryContext, The<ISyncCacheStore<CacheEntryOptions>>(), CacheOption.Default);
 			protected void WhenUpdatingCachedResult() => SUT.UpdateCachedResult(The<ISyncCacheStore<CacheEntryOptions>>());
-			protected void ThenTheCacheKeyIsRequestedOnlyOnce() => The<ISyncCachedQueryStub>().Received(1).CacheKey(Arg.Any<IKeyConfig>());
+			protected void ThenTheCacheKeyIsRequestedOnlyOnce() => The<ISyncCachedQueryStub>().Received(1).CacheKey(Arg.Any<ICache>());
 			protected void AndThenTheCacheEntryOptionsIsNotRequestedAgain() => The<ISyncCachedQueryStub>().Received(1).CacheEntryOptions(QueryContext);
 			protected void AndThenItDelegatesToTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(ExpectedCacheStoreSetCount).SetEntry(ExpectedCacheKey, QueryResult.ToCacheEntry(), CacheEntryOptions);
 
@@ -181,7 +181,7 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 
 	public interface ISyncCachedQueryStub
 	{
-		void CacheKey(IKeyConfig keyConfig);
+		void CacheKey(ICache cache);
 		CacheEntryOptions CacheEntryOptions(QueryContext context);
 		QueryResult Query(QueryContext context);
 	}
@@ -192,7 +192,7 @@ namespace Magneto.Tests.Core.SyncCachedQueryTests
 
 		public ConcreteSyncCachedQuery(ISyncCachedQueryStub syncCachedQueryStub) => _syncCachedQueryStub = syncCachedQueryStub;
 
-		protected override void CacheKey(IKeyConfig keyConfig) => _syncCachedQueryStub.CacheKey(keyConfig);
+		protected override void CacheKey(ICache cache) => _syncCachedQueryStub.CacheKey(cache);
 
 		protected override CacheEntryOptions CacheEntryOptions(QueryContext context) => _syncCachedQueryStub.CacheEntryOptions(context);
 

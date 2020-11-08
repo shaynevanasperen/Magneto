@@ -4,14 +4,14 @@ using FluentAssertions;
 using Magneto.Core;
 using TestStack.BDDfy;
 
-namespace Magneto.Tests.Core.KeyConfigTests
+namespace Magneto.Tests.Core.CacheKeyTests
 {
-	public abstract class SettingPrefix : ScenarioFor<KeyConfig>
+	public abstract class SettingPrefix : ScenarioFor<CacheKey>
 	{
 		public override void Setup()
 		{
-			SUT = new KeyConfig(TestPrefix.Value);
-			SUT.Key.Should().Be(TestPrefix.Value);
+			SUT = new CacheKey(TestPrefix.Value);
+			SUT.Value.Should().Be(TestPrefix.Value);
 		}
 
 		public abstract class InvalidValue : SettingPrefix
@@ -39,43 +39,43 @@ namespace Magneto.Tests.Core.KeyConfigTests
 		public class ValidValue : SettingPrefix
 		{
 			void WhenSettingPrefixToValidValue() => SUT.Prefix = "NewPrefix";
-			void ThenTheKeyContainsTheNewPrefix() => SUT.Key.Should().Be("NewPrefix");
+			void ThenTheKeyContainsTheNewPrefix() => SUT.Value.Should().Be("NewPrefix");
 		}
 	}
 
-	public class SettingVaryBy : ScenarioFor<KeyConfig>
+	public class SettingVaryBy : ScenarioFor<CacheKey>
 	{
 		public override void Setup()
 		{
-			SUT = new KeyConfig(TestPrefix.Value) { VaryBy = "VaryBy" };
-			SUT.Key.Should().Be(TestPrefix.Value + "_VaryBy");
+			SUT = new CacheKey(TestPrefix.Value) { VaryBy = "VaryBy" };
+			SUT.Value.Should().Be(TestPrefix.Value + "_VaryBy");
 		}
 
 		void WhenSettingVaryBy() => SUT.VaryBy = "NewVaryBy";
-		void ThenTheKeyContainsTheNewVaryBy() => SUT.Key.Should().Be(TestPrefix.Value + "_NewVaryBy");
+		void ThenTheKeyContainsTheNewVaryBy() => SUT.Value.Should().Be(TestPrefix.Value + "_NewVaryBy");
 	}
 
-	public abstract class GettingKey : ScenarioFor<KeyConfig>
+	public abstract class GettingValue : ScenarioFor<CacheKey>
 	{
 		protected object Result;
 
-		public override void Setup() => SUT = new KeyConfig(TestPrefix.Value);
+		public override void Setup() => SUT = new CacheKey(TestPrefix.Value);
 
-		protected void WhenGettingKey() => Result = SUT.Key;
+		protected void WhenGettingKey() => Result = SUT.Value;
 
-		public class NoVaryBy : GettingKey
+		public class NoVaryBy : GettingValue
 		{
 			void GivenNoVaryBy() => SUT.VaryBy = null;
 			void ThenTheResultIsTheCachePrefix() => Result.Should().Be(TestPrefix.Value);
 		}
 
-		public class VaryByHavingOnlyNulls : GettingKey
+		public class VaryByHavingOnlyNulls : GettingValue
 		{
 			void GivenAVaryByHavingOnlyNulls() => SUT.VaryBy = new { a = (object)null, b = (object)null };
 			void ThenTheResultIsTheCachePrefixPlusUnderscoresForEachNull() => Result.Should().Be(TestPrefix.Value + "__");
 		}
 
-		public class VaryByAsAnObject : GettingKey
+		public class VaryByAsAnObject : GettingValue
 		{
 			void GivenAVaryAsAnObject() => SUT.VaryBy = new
 			{
@@ -90,7 +90,7 @@ namespace Magneto.Tests.Core.KeyConfigTests
 			void ThenTheResultIsThePrefixAndTheFlattenedVaryByPropertyValuesOrderedByNameJoinedByUnderscores() => Result.Should().Be(TestPrefix.Value + "_string_1__Absolute_one_two_three_x_y_z_i_ii_iii_£_$_#_first_second");
 		}
 
-		public class VaryByAsAnArray : GettingKey
+		public class VaryByAsAnArray : GettingValue
 		{
 			void GivenAVaryAsAnEnumerable() => SUT.VaryBy = new[]
 			{
@@ -101,7 +101,7 @@ namespace Magneto.Tests.Core.KeyConfigTests
 			void ThenTheResultIsThePrefixAndTheVaryByValuesJoinedByUnderscores() => Result.Should().Be(TestPrefix.Value + "_1_2_3");
 		}
 
-		public class VaryByAsAnEnumerable : GettingKey
+		public class VaryByAsAnEnumerable : GettingValue
 		{
 			void GivenAVaryAsAnEnumerable() => SUT.VaryBy = new[]
 			{
@@ -116,13 +116,13 @@ namespace Magneto.Tests.Core.KeyConfigTests
 			void ThenTheResultIsThePrefixAndTheFlattenedVaryByValuesOrderedByNameJoinedByUnderscores() => Result.Should().Be(TestPrefix.Value + "_Absolute_one_two_three_x_y_z_i_ii_iii_£_$_#_string_1__first_second");
 		}
 
-		public class VaryByAsAStringOnly : GettingKey
+		public class VaryByAsAStringOnly : GettingValue
 		{
 			void GivenAVaryByAsAStringOnly() => SUT.VaryBy = "varyby";
 			void ThenTheResultIsTheCachePrefixPlusTheVaryByStringJoinedByAnUnderscore() => Result.Should().Be(TestPrefix.Value + "_varyby");
 		}
 
-		public class VaryByAsAPrimitive : GettingKey
+		public class VaryByAsAPrimitive : GettingValue
 		{
 			public VaryByAsAPrimitive() => Examples = new ExampleTable("VaryBy")
 			{
@@ -146,25 +146,25 @@ namespace Magneto.Tests.Core.KeyConfigTests
 			void ThenTheResultIsThePrefixPlusTheVaryByJoinedByAnUnderscore(object varyBy) => Result.Should().Be(TestPrefix.Value + "_" + varyBy);
 		}
 
-		public class VaryByAsAnEnumValue : GettingKey
+		public class VaryByAsAnEnumValue : GettingValue
 		{
 			void GivenAVaryByAsAnEnumValue() => SUT.VaryBy = UriKind.Absolute;
 			void ThenTheResultIsThePrefixPlusTheVaryByValueJoinedByAnUnderscore() => Result.Should().Be(TestPrefix.Value + "_" + UriKind.Absolute);
 		}
 
-		public class VaryByAsADateTime : GettingKey
+		public class VaryByAsADateTime : GettingValue
 		{
 			void GivenAVaryByAsADateTime() => SUT.VaryBy = DateTime.Today;
 			void ThenTheResultIsThePrefixPlusTheVaryByStringRepresentationJoinedByAnUnderscore() => Result.Should().Be(TestPrefix.Value + "_" + DateTime.Today);
 		}
 
-		public class VaryByAsADecimal : GettingKey
+		public class VaryByAsADecimal : GettingValue
 		{
 			void GivenAVaryByAsADecimal() => SUT.VaryBy = decimal.MinValue;
 			void ThenTheResultIsThePrefixPlusTheVaryByJoinedByAnUnderscore() => Result.Should().Be(TestPrefix.Value + "_" + decimal.MinValue);
 		}
 
-		public class VaryByAsAnObjectWithoutPublicProperties : GettingKey
+		public class VaryByAsAnObjectWithoutPublicProperties : GettingValue
 		{
 			readonly Guid _guid = Guid.NewGuid();
 
