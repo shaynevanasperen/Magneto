@@ -6,6 +6,7 @@
 		<LangVersion>latest</LangVersion>
 		<DebugType>embedded</DebugType>
 		<Deterministic>true</Deterministic>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<ContinuousIntegrationBuild Condition="'$(APPVEYOR_BUILD_NUMBER)' != ''">true</ContinuousIntegrationBuild>
 		<IsTestProject>$(MSBuildProjectName.EndsWith('Tests'))</IsTestProject>
 		<IsSampleProject>$(MSBuildProjectName.StartsWith('Sample'))</IsSampleProject>
