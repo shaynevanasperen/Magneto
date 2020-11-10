@@ -30,13 +30,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Condition="$(NotNCrunch)" Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0" PrivateAssets="All" />
-		<PackageReference Condition="$(NotNCrunch)" Include="Microsoft.CodeQuality.Analyzers" Version="3.3.0" PrivateAssets="All" />
-		<PackageReference Condition="$(NotNCrunch)" Include="Microsoft.NetCore.Analyzers" Version="3.3.0" PrivateAssets="All" />
+		<PackageReference Condition="$(NotNCrunch)" Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.1" PrivateAssets="All" />
+		<PackageReference Condition="$(NotNCrunch)" Include="Microsoft.CodeQuality.Analyzers" Version="3.3.1" PrivateAssets="All" />
+		<PackageReference Condition="$(NotNCrunch)" Include="Microsoft.NetCore.Analyzers" Version="3.3.1" PrivateAssets="All" />
 		<PackageReference Condition="$(NotNCrunch) AND $(IsPackable)" Include="MinVer" Version="2.3.1" PrivateAssets="All" />
 		<PackageReference Condition="$(NotNCrunch) AND $(IsPackable)" Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
 		<PackageReference Condition="$(IsTestProject)" Include="FluentAssertions" Version="5.10.3" />
-		<PackageReference Condition="$(IsTestProject)" Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+		<PackageReference Condition="$(IsTestProject)" Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
 		<PackageReference Condition="$(IsTestProject)" Include="NSubstitute" Version="4.2.2" />
 		<PackageReference Condition="$(IsTestProject)" Include="Serilog" Version="2.10.0" />
 		<PackageReference Condition="$(IsTestProject)" Include="Specify" Version="2.4.0" />

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<TargetFramework>net5.0</TargetFramework>
 		<NoWarn>$(NoWarn);CA1054;CA1062;CA1819;CA2007;CA2234</NoWarn>
 	</PropertyGroup>
 
@@ -12,7 +12,7 @@
 	<ItemGroup>
 		<PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
-		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.9" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="5.0.0" />
 	</ItemGroup>
 	
 	<ItemGroup>
