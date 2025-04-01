@@ -1,6 +1,7 @@
-﻿namespace Magneto.Tests
-{
-	public class QueryContext { }
-	public class CacheEntryOptions { }
-	public class QueryResult { }
-}
+namespace Magneto.Tests;
+
+public class QueryContext;
+
+public class CacheEntryOptions;
+
+public class QueryResult;

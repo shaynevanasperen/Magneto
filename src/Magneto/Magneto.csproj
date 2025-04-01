@@ -1,19 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+		<TargetFrameworks>net8;net9</TargetFrameworks>
 		<Description>A library for implementing the Command Pattern, providing of a set of base classes and an invoker class. Useful for abstracting data access and API calls as either queries (for read operations) or commands (for write operations).</Description>
 		<PackageTags>query command object queryobject commandobject mediator cqs cqrs operation read write cache caching async mock mocking</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Code.Extensions.Generic.QuasiEquals" Version="1.0.1" PrivateAssets="All" />
-		<PackageReference Include="Code.Extensions.Object.Flatten" Version="1.0.3" PrivateAssets="All" />
-		<PackageReference Include="Code.Extensions.ValueTuple.ServiceProvider" Version="1.0.0" PrivateAssets="All" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="5.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-		<PackageReference Include="System.Text.Json" Version="5.0.0" />
-		<PackageReference Condition="'$(TargetFramework)' == 'net461'" Include="System.ValueTuple" Version="4.5.0" />
+		<PackageReference Include="Code.Extensions.Generic.QuasiEquals" Version="2.0.0" PrivateAssets="All" />
+		<PackageReference Include="Code.Extensions.Object.Flatten" Version="2.0.0" PrivateAssets="All" />
+		<PackageReference Include="Code.Extensions.ValueTuple.ServiceProvider" Version="2.0.0" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.3" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
+		<PackageReference Include="System.Text.Json" Version="9.0.3" />
 	</ItemGroup>
 
 </Project>

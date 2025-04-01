@@ -1,10 +1,9 @@
-﻿using Samples.Domain;
+using Samples.Domain;
 
-namespace Samples.Models
+namespace Samples.Models;
+
+public class PostViewModel
 {
-    public class PostViewModel
-    {
-	    public Post Post { get; set; }
-	    public Comment[] Comments { get; set; }
-	}
+	public required Post Post { get; init; }
+	public required Comment[] Comments { get; init; }
 }

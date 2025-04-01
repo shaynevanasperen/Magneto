@@ -73,7 +73,7 @@ Leverage built-in caching by deriving from a base class and specifying the type 
 public class CommentsByPostId : AsyncCachedQuery<HttpClient, MemoryCacheEntryOptions, Comment[]>
 {
     // Here we get to specify which parameters comprise the cache key
-    protected override void CacheKey(ICache cache) => cache.VaryBy = PostId;
+    protected override void CacheKey(IKey key) => key.VaryBy = PostId;
     
     // Here we get to specify the caching policy (absolute/sliding)
     protected override MemoryCacheEntryOptions CacheEntryOptions(HttpClient context) =>
@@ -127,20 +127,20 @@ var postComments = await _magneto.QueryAsync(new CommentsByPostId { PostId = id 
 Easily evict a previously cached result for a query:
 
 ```cs
-var commentsByPostById = new CommentsByPostId { PostId = 1 };
-var comments = await _magneto.QueryAsync(commentsByPostById, CacheOption.Default);
+var commentsByPostId = new CommentsByPostId { PostId = 1 };
+var comments = await _magneto.QueryAsync(commentsByPostId, CacheOption.Default);
 ...
-await _magneto.EvictCachedResultAsync(commentsByPostById);
+await _magneto.EvictCachedResultAsync(commentsByPostId);
 ```
 
 When using a distributed cache store, changes to a previously cached result for a query can be updated:
 
 ```cs
-var commentsByPostById = new CommentsByPostId { PostId = 1 };
-var comments = await _magneto.QueryAsync(commentsByPostById, CacheOption.Refresh);
+var commentsByPostId = new CommentsByPostId { PostId = 1 };
+var comments = await _magneto.QueryAsync(commentsByPostId, CacheOption.Refresh);
 ...
 comments[0].Votes++;
-await _magneto.UpdateCachedResultAsync(commentsByPostById);
+await _magneto.UpdateCachedResultAsync(commentsByPostId);
 ```
 
 Register a decorator to apply cross-cutting concerns:

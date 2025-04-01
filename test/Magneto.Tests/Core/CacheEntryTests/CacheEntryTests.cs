@@ -1,78 +1,75 @@
 using FluentAssertions;
 using Magneto.Core;
 
-namespace Magneto.Tests.Core.CacheEntryTests
+namespace Magneto.Tests.Core.CacheEntryTests;
+
+public abstract class CheckingEquality : ScenarioFor<CacheEntry<object>>
 {
-	public abstract class CheckingEquality : ScenarioFor<CacheEntry<object>>
+	protected object? Object;
+
+	bool _objectsAreEqual;
+	bool _cacheEntriesAreEqual;
+	bool _hashCodesAreEqual;
+
+	protected void WhenCheckingEquality()
 	{
-#pragma warning disable CA1720 // Identifier contains type name
-		protected object Object;
-#pragma warning restore CA1720 // Identifier contains type name
+		_objectsAreEqual = SUT.Equals(Object);
+		_cacheEntriesAreEqual = SUT.Equals((CacheEntry<object>?)Object);
+		_hashCodesAreEqual = SUT.GetHashCode() == Object?.GetHashCode();
+	}
 
-		bool _objectsAreEqual;
-		bool _cacheEntriesAreEqual;
-		bool _hashCodesAreEqual;
+	protected void AssertEqual()
+	{
+		_objectsAreEqual.Should().BeTrue();
+		_cacheEntriesAreEqual.Should().BeTrue();
+		_hashCodesAreEqual.Should().BeTrue();
+	}
 
-		protected void WhenCheckingEquality()
+	protected void AssertNotEqual()
+	{
+		_objectsAreEqual.Should().BeFalse();
+		_cacheEntriesAreEqual.Should().BeFalse();
+		_hashCodesAreEqual.Should().BeFalse();
+	}
+
+	public class WithNull : CheckingEquality
+	{
+		void GivenACacheEntryAndANullReference()
 		{
-			_objectsAreEqual = SUT.Equals(Object);
-			_cacheEntriesAreEqual = SUT.Equals((CacheEntry<object>)Object);
-			_hashCodesAreEqual = SUT.GetHashCode() == Object?.GetHashCode();
+			SUT = new(new());
+			Object = null;
 		}
+		void ThenTheyAreNotEqual() => AssertNotEqual();
+	}
 
-		protected void AssertEqual()
+	public class WithItself : CheckingEquality
+	{
+		void GivenTwoReferencesToTheSameCacheEntry()
 		{
-			_objectsAreEqual.Should().BeTrue();
-			_cacheEntriesAreEqual.Should().BeTrue();
-			_hashCodesAreEqual.Should().BeTrue();
+			SUT = new(new());
+			Object = SUT;
 		}
+		void ThenTheyAreEqual() => AssertEqual();
+	}
 
-		protected void AssertNotEqual()
+	public class WithAnotherCacheEntryHavingTheSameValue : CheckingEquality
+	{
+		void GivenTwoReferencesToTheSameCacheEntry()
 		{
-			_objectsAreEqual.Should().BeFalse();
-			_cacheEntriesAreEqual.Should().BeFalse();
-			_hashCodesAreEqual.Should().BeFalse();
+			var value = new object();
+			SUT = new(value);
+			Object = new CacheEntry<object>(value);
 		}
+		void ThenTheyAreEqual() => AssertEqual();
+	}
 
-		public class WithNull : CheckingEquality
+	public class WithAnotherCacheEntryHavingADifferentValue : CheckingEquality
+	{
+		void GivenTwoReferencesToTheSameCacheEntry()
 		{
-			void GivenACacheEntryAndANullReference()
-			{
-				SUT = new CacheEntry<object>(new object());
-				Object = null;
-			}
-			void ThenTheyAreNotEqual() => AssertNotEqual();
+			SUT = new(new());
+			Object = new CacheEntry<object>(new());
 		}
-
-		public class WithItself : CheckingEquality
-		{
-			void GivenTwoReferencesToTheSameCacheEntry()
-			{
-				SUT = new CacheEntry<object>(new object());
-				Object = SUT;
-			}
-			void ThenTheyAreEqual() => AssertEqual();
-		}
-
-		public class WithAnotherCacheEntryHavingTheSameValue : CheckingEquality
-		{
-			void GivenTwoReferencesToTheSameCacheEntry()
-			{
-				var value = new object();
-				SUT = new CacheEntry<object>(value);
-				Object = new CacheEntry<object>(value);
-			}
-			void ThenTheyAreEqual() => AssertEqual();
-		}
-
-		public class WithAnotherCacheEntryHavingADifferentValue : CheckingEquality
-		{
-			void GivenTwoReferencesToTheSameCacheEntry()
-			{
-				SUT = new CacheEntry<object>(new object());
-				Object = new CacheEntry<object>(new object());
-			}
-			void ThenTheyAreNotEqual() => AssertNotEqual();
-		}
+		void ThenTheyAreNotEqual() => AssertNotEqual();
 	}
 }

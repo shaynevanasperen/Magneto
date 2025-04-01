@@ -2,51 +2,50 @@ using System.Threading;
 using System.Threading.Tasks;
 using Magneto.Core;
 
-namespace Magneto
+namespace Magneto;
+
+/// <summary>
+/// <para>A base class for synchronous commands which don't return results.</para>
+/// <para>Implementors must override <see cref="Execute"/> in order to define how the command is executed.</para>
+/// </summary>
+/// <typeparam name="TContext">The type of context with which the command is executed.</typeparam>
+public abstract class SyncCommand<TContext> : Operation, ISyncCommand<TContext>
 {
-	/// <summary>
-	/// <para>A base class for synchronous commands which don't return results.</para>
-	/// <para>Implementors must override <see cref="Execute"/> in order to define how the command is executed.</para>
-	/// </summary>
-	/// <typeparam name="TContext">The type of context with which the command is executed.</typeparam>
-	public abstract class SyncCommand<TContext> : Operation, ISyncCommand<TContext>
-	{
-		/// <inheritdoc cref="ISyncCommand{TContext}.Execute"/>
-		public abstract void Execute(TContext context);
-	}
+	/// <inheritdoc cref="ISyncCommand{TContext}.Execute"/>
+	public abstract void Execute(TContext context);
+}
 
-	/// <summary>
-	/// <para>A base class for synchronous commands which return results.</para>
-	/// <para>Implementors must override <see cref="Execute"/> in order to define how the command is executed.</para>
-	/// </summary>
-	/// <typeparam name="TContext">The type of context with which the command is executed.</typeparam>
-	/// <typeparam name="TResult">The type of the command result.</typeparam>
-	public abstract class SyncCommand<TContext, TResult> : Operation, ISyncCommand<TContext, TResult>
-	{
-		/// <inheritdoc cref="ISyncCommand{TContext,TResult}.Execute"/>
-		public abstract TResult Execute(TContext context);
-	}
+/// <summary>
+/// <para>A base class for synchronous commands which return results.</para>
+/// <para>Implementors must override <see cref="Execute"/> in order to define how the command is executed.</para>
+/// </summary>
+/// <typeparam name="TContext">The type of context with which the command is executed.</typeparam>
+/// <typeparam name="TResult">The type of the command result.</typeparam>
+public abstract class SyncCommand<TContext, TResult> : Operation, ISyncCommand<TContext, TResult>
+{
+	/// <inheritdoc cref="ISyncCommand{TContext,TResult}.Execute"/>
+	public abstract TResult Execute(TContext context);
+}
 
-	/// <summary>
-	/// <para>A base class for asynchronous commands which don't return results.</para>
-	/// <para>Implementors must override <see cref="Execute"/> in order to define how the command is executed.</para>
-	/// </summary>
-	/// <typeparam name="TContext">The type of context with which the command is executed.</typeparam>
-	public abstract class AsyncCommand<TContext> : Operation, IAsyncCommand<TContext>
-	{
-		/// <inheritdoc cref="IAsyncCommand{TContext}.Execute"/>
-		public abstract Task Execute(TContext context, CancellationToken cancellationToken);
-	}
+/// <summary>
+/// <para>A base class for asynchronous commands which don't return results.</para>
+/// <para>Implementors must override <see cref="Execute"/> in order to define how the command is executed.</para>
+/// </summary>
+/// <typeparam name="TContext">The type of context with which the command is executed.</typeparam>
+public abstract class AsyncCommand<TContext> : Operation, IAsyncCommand<TContext>
+{
+	/// <inheritdoc cref="IAsyncCommand{TContext}.Execute"/>
+	public abstract Task Execute(TContext context, CancellationToken cancellationToken);
+}
 
-	/// <summary>
-	/// <para>A base class for asynchronous commands which return results.</para>
-	/// <para>Implementors must override <see cref="Execute"/> in order to define how the command is executed.</para>
-	/// </summary>
-	/// <typeparam name="TContext">The type of context with which the command is executed.</typeparam>
-	/// <typeparam name="TResult">The type of the command result.</typeparam>
-	public abstract class AsyncCommand<TContext, TResult> : Operation, IAsyncCommand<TContext, TResult>
-	{
-		/// <inheritdoc cref="IAsyncCommand{TContext,TResult}.Execute"/>
-		public abstract Task<TResult> Execute(TContext context, CancellationToken cancellationToken);
-	}
+/// <summary>
+/// <para>A base class for asynchronous commands which return results.</para>
+/// <para>Implementors must override <see cref="Execute"/> in order to define how the command is executed.</para>
+/// </summary>
+/// <typeparam name="TContext">The type of context with which the command is executed.</typeparam>
+/// <typeparam name="TResult">The type of the command result.</typeparam>
+public abstract class AsyncCommand<TContext, TResult> : Operation, IAsyncCommand<TContext, TResult>
+{
+	/// <inheritdoc cref="IAsyncCommand{TContext,TResult}.Execute"/>
+	public abstract Task<TResult> Execute(TContext context, CancellationToken cancellationToken);
 }

@@ -1,10 +1,9 @@
-﻿using Samples.Domain;
+using Samples.Domain;
 
-namespace Samples.Models
+namespace Samples.Models;
+
+public class UserViewModel
 {
-    public class UserViewModel
-    {
-	    public User User { get; set; }
-	    public Album[] Albums { get; set; }
-	}
+	public required User User { get; init; }
+	public required Album[] Albums { get; init; }
 }
