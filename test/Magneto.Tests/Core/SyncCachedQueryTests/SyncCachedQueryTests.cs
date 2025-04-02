@@ -114,11 +114,7 @@ public class ExecutingMultipleTimes : ScenarioFor<SyncCachedQuery<QueryContext, 
 
 public class EvictingCachedResult : ScenarioFor<SyncCachedQuery<QueryContext, CacheEntryOptions, QueryResult>>
 {
-	public override void Setup()
-	{
-		SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
-		SUT.Execute(new(), The<ISyncCacheStore<CacheEntryOptions>>(), CacheOption.Default);
-	}
+	public override void Setup() => SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
 
 	void WhenEvictingCachedResult() => SUT.EvictCachedResult(The<ISyncCacheStore<CacheEntryOptions>>());
 	void ThenItDelegatesToTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(1).RemoveEntry(SUT.PeekCacheKey());

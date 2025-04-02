@@ -127,8 +127,7 @@ public abstract class CachedQuery<TContext, TCacheEntryOptions, TCachedResult> :
 		internal Store(CachedQuery<TContext, TCacheEntryOptions, TCachedResult> query)
 		{
 			_query = query;
-			_cacheKey = new(() => string.Empty);
-			_cacheEntryOptions = new(() => default!);
+			SetContext(default!);
 		}
 
 		internal void SetContext(TContext context)
@@ -138,10 +137,10 @@ public abstract class CachedQuery<TContext, TCacheEntryOptions, TCachedResult> :
 			_cacheEntryOptions = new(() => _query.CacheEntryOptions(context));
 		}
 
-		Lazy<string> _cacheKey;
+		Lazy<string> _cacheKey = null!;
 		internal string CacheKey => _cacheKey.Value;
 
-		Lazy<TCacheEntryOptions> _cacheEntryOptions;
+		Lazy<TCacheEntryOptions> _cacheEntryOptions = null!;
 		internal TCacheEntryOptions CacheEntryOptions => _cacheEntryOptions.Value;
 
 		internal TCachedResult SetCachedResult(TCachedResult value)

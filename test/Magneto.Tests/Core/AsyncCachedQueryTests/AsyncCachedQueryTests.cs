@@ -120,11 +120,7 @@ public class EvictingCachedResult : ScenarioFor<AsyncCachedQuery<QueryContext, C
 {
 	readonly CancellationToken _cancellationToken = new CancellationTokenSource().Token;
 
-	public override void Setup()
-	{
-		SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
-		SUT.Execute(new(), The<IAsyncCacheStore<CacheEntryOptions>>(), CacheOption.Default, CancellationToken.None);
-	}
+	public override void Setup() => SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
 
 	void WhenEvictingCachedResult() => SUT.EvictCachedResult(The<IAsyncCacheStore<CacheEntryOptions>>(), _cancellationToken);
 	void ThenItDelegatesToTheCacheStore() => The<IAsyncCacheStore<CacheEntryOptions>>().Received(1).RemoveEntryAsync(SUT.PeekCacheKey(), _cancellationToken);
