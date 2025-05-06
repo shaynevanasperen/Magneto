@@ -7,7 +7,7 @@ namespace Magneto.Tests.Core.CacheKeyTests;
 
 public abstract class SettingPrefix : ScenarioFor<CacheKey>
 {
-	public override void Setup()
+	public void Setup()
 	{
 		SUT = new(TestPrefix.Value);
 		SUT.Value.Should().Be(TestPrefix.Value);
@@ -44,7 +44,7 @@ public abstract class SettingPrefix : ScenarioFor<CacheKey>
 
 public class SettingVaryBy : ScenarioFor<CacheKey>
 {
-	public override void Setup()
+	public void Setup()
 	{
 		SUT = new(TestPrefix.Value) { VaryBy = "VaryBy" };
 		SUT.Value.Should().Be(TestPrefix.Value + "_VaryBy");
@@ -58,7 +58,7 @@ public abstract class GettingValue : ScenarioFor<CacheKey>
 {
 	protected object? Result;
 
-	public override void Setup() => SUT = new(TestPrefix.Value);
+	public void Setup() => SUT = new(TestPrefix.Value);
 
 	protected void WhenGettingKey() => Result = SUT.Value;
 

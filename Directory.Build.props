@@ -34,14 +34,14 @@
 	<ItemGroup>
 		<PackageReference Condition="$(NotNCrunch) AND $(IsPackable)" Include="MinVer" Version="6.0.0" PrivateAssets="All" />
 		<PackageReference Condition="$(NotNCrunch) AND $(IsPackable)" Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
-		<PackageReference Condition="$(IsTestProject)" Include="FluentAssertions" Version="5.10.3" />
+		<PackageReference Condition="$(IsTestProject)" Include="FluentAssertions" Version="[6.12.2]" />
 		<PackageReference Condition="$(IsTestProject)" Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
 		<PackageReference Condition="$(IsTestProject)" Include="NSubstitute" Version="4.2.2" />
-		<PackageReference Condition="$(IsTestProject)" Include="Serilog" Version="2.10.0" />
-		<PackageReference Condition="$(IsTestProject)" Include="Specify" Version="2.4.0" />
-		<PackageReference Condition="$(IsTestProject)" Include="TestStack.BDDfy.Xunit" Version="1.2.0" />
-		<PackageReference Condition="$(IsTestProject)" Include="xunit" Version="2.4.1" />
-		<PackageReference Condition="$(IsTestProject)" Include="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="All" />
+		<PackageReference Condition="$(IsTestProject)" Include="Serilog" Version="4.2.0" />
+		<PackageReference Condition="$(IsTestProject)" Include="Specify" Version="3.0.0" />
+		<PackageReference Condition="$(IsTestProject)" Include="TestStack.BDDfy.Xunit" Version="2.0.1" />
+		<PackageReference Condition="$(IsTestProject)" Include="xunit" Version="2.9.3" />
+		<PackageReference Condition="$(IsTestProject)" Include="xunit.runner.visualstudio" Version="3.1.0" PrivateAssets="All" />
 	</ItemGroup>
 
 	<ItemGroup>

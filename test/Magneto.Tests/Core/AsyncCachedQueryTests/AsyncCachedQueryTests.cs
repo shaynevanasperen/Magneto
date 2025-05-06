@@ -19,7 +19,7 @@ public abstract class Executing : ScenarioFor<AsyncCachedQuery<QueryContext, Cac
 	protected QueryResult Result = null!;
 	protected CancellationToken CancellationToken = new CancellationTokenSource().Token;
 
-	public override void Setup()
+	public void Setup()
 	{
 		SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
 		The<IAsyncCachedQueryStub>().When(x => x.CacheKey(Arg.Any<IKey>())).Do(x => x.ArgAt<IKey>(0).VaryBy = nameof(IKey.VaryBy));
@@ -85,7 +85,7 @@ public class ExecutingMultipleTimes : ScenarioFor<AsyncCachedQuery<QueryContext,
 	QueryResult _cachedResult1 = null!;
 	QueryResult _cachedResult2 = null!;
 
-	public override void Setup()
+	public void Setup()
 	{
 		SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
 		The<IAsyncCachedQueryStub>().When(x => x.CacheKey(Arg.Any<IKey>())).Do(x => x.ArgAt<IKey>(0).VaryBy = Guid.NewGuid().ToString());
@@ -120,7 +120,7 @@ public class EvictingCachedResult : ScenarioFor<AsyncCachedQuery<QueryContext, C
 {
 	readonly CancellationToken _cancellationToken = new CancellationTokenSource().Token;
 
-	public override void Setup() => SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
+	public void Setup() => SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
 
 	void WhenEvictingCachedResult() => SUT.EvictCachedResult(The<IAsyncCacheStore<CacheEntryOptions>>(), _cancellationToken);
 	void ThenItDelegatesToTheCacheStore() => The<IAsyncCacheStore<CacheEntryOptions>>().Received(1).RemoveEntryAsync(SUT.PeekCacheKey(), _cancellationToken);
@@ -135,7 +135,7 @@ public abstract class UpdatingCachedResult : ScenarioFor<AsyncCachedQuery<QueryC
 
 	protected string ExpectedCacheKey = null!;
 
-	public override void Setup()
+	public void Setup()
 	{
 		SUT = new ConcreteAsyncCachedQuery(The<IAsyncCachedQueryStub>());
 		The<IAsyncCachedQueryStub>().When(x => x.CacheKey(Arg.Any<IKey>())).Do(x => x.ArgAt<IKey>(0).VaryBy = nameof(IKey.VaryBy));
@@ -150,7 +150,7 @@ public abstract class UpdatingCachedResult : ScenarioFor<AsyncCachedQuery<QueryC
 		void GivenTheQueryWasNotExecuted() { }
 		void WhenUpdatingCachedResult() => _invocation = SUT.Invoking(x => x.UpdateCachedResult(The<IAsyncCacheStore<CacheEntryOptions>>(), CancellationToken));
 		void ThenTheCacheKeyIsNotRequested() => The<IAsyncCachedQueryStub>().DidNotReceive().CacheKey(Arg.Any<IKey>());
-		void AndThenItThrowsAnExceptionStatingThatTheCachedResultIsNotAvailable() => _invocation.Should().Throw<InvalidOperationException>().Which.Message.Should().Be("Cached result is not available");
+		void AndThenItThrowsAnExceptionStatingThatTheCachedResultIsNotAvailable() => _invocation.Should().ThrowAsync<InvalidOperationException>().Result.Which.Message.Should().Be("Cached result is not available");
 		void AndThenTheCacheEntryOptionsIsNotRequested() => The<IAsyncCachedQueryStub>().DidNotReceive().CacheEntryOptions(Arg.Any<QueryContext>());
 	}
 

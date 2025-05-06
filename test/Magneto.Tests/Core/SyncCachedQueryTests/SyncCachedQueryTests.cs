@@ -16,7 +16,7 @@ public abstract class Executing : ScenarioFor<SyncCachedQuery<QueryContext, Cach
 	protected CacheOption CacheOption;
 	protected QueryResult Result = null!;
 
-	public override void Setup()
+	public void Setup()
 	{
 		SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
 		The<ISyncCachedQueryStub>().When(x => x.CacheKey(Arg.Any<IKey>())).Do(x => x.ArgAt<IKey>(0).VaryBy = nameof(IKey.VaryBy));
@@ -81,7 +81,7 @@ public class ExecutingMultipleTimes : ScenarioFor<SyncCachedQuery<QueryContext, 
 	QueryResult _cachedResult1 = null!;
 	QueryResult _cachedResult2 = null!;
 
-	public override void Setup()
+	public void Setup()
 	{
 		SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
 		The<ISyncCachedQueryStub>().When(x => x.CacheKey(Arg.Any<IKey>())).Do(x => x.ArgAt<IKey>(0).VaryBy = Guid.NewGuid().ToString());
@@ -114,7 +114,7 @@ public class ExecutingMultipleTimes : ScenarioFor<SyncCachedQuery<QueryContext, 
 
 public class EvictingCachedResult : ScenarioFor<SyncCachedQuery<QueryContext, CacheEntryOptions, QueryResult>>
 {
-	public override void Setup() => SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
+	public void Setup() => SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
 
 	void WhenEvictingCachedResult() => SUT.EvictCachedResult(The<ISyncCacheStore<CacheEntryOptions>>());
 	void ThenItDelegatesToTheCacheStore() => The<ISyncCacheStore<CacheEntryOptions>>().Received(1).RemoveEntry(SUT.PeekCacheKey());
@@ -128,7 +128,7 @@ public abstract class UpdatingCachedResult : ScenarioFor<SyncCachedQuery<QueryCo
 
 	protected string ExpectedCacheKey = null!;
 
-	public override void Setup()
+	public void Setup()
 	{
 		SUT = new ConcreteSyncCachedQuery(The<ISyncCachedQueryStub>());
 		The<ISyncCachedQueryStub>().When(x => x.CacheKey(Arg.Any<IKey>())).Do(x => x.ArgAt<IKey>(0).VaryBy = nameof(IKey.VaryBy));

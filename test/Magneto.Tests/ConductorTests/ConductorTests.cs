@@ -12,7 +12,7 @@ public abstract class GettingContext : ScenarioFor<ConductorTest>
 	protected Bar ResolvedBar = null!;
 	protected Baz ResolvedBaz = null!;
 
-	public override void Setup()
+	public void Setup()
 	{
 		_serviceProvider.Register(new Foo());
 		_serviceProvider.Register(new Bar());

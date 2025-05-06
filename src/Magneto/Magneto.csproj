@@ -10,9 +10,9 @@
 		<PackageReference Include="Code.Extensions.Generic.QuasiEquals" Version="2.0.0" PrivateAssets="All" />
 		<PackageReference Include="Code.Extensions.Object.Flatten" Version="2.0.0" PrivateAssets="All" />
 		<PackageReference Include="Code.Extensions.ValueTuple.ServiceProvider" Version="2.0.0" PrivateAssets="All" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.3" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
-		<PackageReference Include="System.Text.Json" Version="9.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.4" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+		<PackageReference Include="System.Text.Json" Version="9.0.4" />
 	</ItemGroup>
 
 </Project>
